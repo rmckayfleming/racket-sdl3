@@ -30,6 +30,10 @@
          SDL-SetRenderDrawColor
          SDL-RenderClear
          SDL-RenderPresent
+         ;; Texture
+         SDL-DestroyTexture
+         SDL-RenderTexture
+         SDL-GetTextureSize
          ;; Events
          SDL-PollEvent
          ;; Keyboard
@@ -113,6 +117,34 @@
 ;; Returns: true on success, false on failure
 (define-sdl SDL-RenderPresent (_fun _SDL_Renderer-pointer -> _sdl-bool)
   #:c-id SDL_RenderPresent)
+
+;; ============================================================================
+;; Texture
+;; ============================================================================
+
+;; SDL_DestroyTexture: Destroy a texture
+(define-sdl SDL-DestroyTexture (_fun _SDL_Texture-pointer -> _void)
+  #:c-id SDL_DestroyTexture)
+
+;; SDL_RenderTexture: Copy texture to renderer at destination rectangle
+;; srcrect: portion of texture (NULL for whole texture)
+;; dstrect: destination rectangle (NULL for whole renderer)
+;; Returns: true on success, false on failure
+(define-sdl SDL-RenderTexture
+  (_fun _SDL_Renderer-pointer
+        _SDL_Texture-pointer
+        _SDL_FRect-pointer/null
+        _SDL_FRect-pointer/null
+        -> _sdl-bool)
+  #:c-id SDL_RenderTexture)
+
+;; SDL_GetTextureSize: Query texture dimensions
+;; texture: the texture to query
+;; w, h: pointers to receive width and height (can be NULL)
+;; Returns: true on success, false on failure
+(define-sdl SDL-GetTextureSize
+  (_fun _SDL_Texture-pointer _pointer _pointer -> _sdl-bool)
+  #:c-id SDL_GetTextureSize)
 
 ;; ============================================================================
 ;; Events

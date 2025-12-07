@@ -15,6 +15,21 @@
          _SDL_Window-pointer/null
          _SDL_Renderer-pointer
          _SDL_Renderer-pointer/null
+         _SDL_Texture-pointer
+         _SDL_Texture-pointer/null
+         ;; Rect structs
+         _SDL_FRect
+         _SDL_FRect-pointer
+         _SDL_FRect-pointer/null
+         make-SDL_FRect
+         SDL_FRect-x
+         SDL_FRect-y
+         SDL_FRect-w
+         SDL_FRect-h
+         set-SDL_FRect-x!
+         set-SDL_FRect-y!
+         set-SDL_FRect-w!
+         set-SDL_FRect-h!
          ;; Event constants
          SDL_EVENT_QUIT
          ;; Window events
@@ -83,6 +98,11 @@
          SDLK_r
          SDLK_g
          SDLK_b
+         ;; Arrow keys
+         SDLK_RIGHT
+         SDLK_LEFT
+         SDLK_DOWN
+         SDLK_UP
          ;; Keycode type
          _SDL_Keycode
          ;; Error handling forward reference
@@ -115,6 +135,18 @@
 ;; ============================================================================
 (define-cpointer-type _SDL_Window-pointer)
 (define-cpointer-type _SDL_Renderer-pointer)
+(define-cpointer-type _SDL_Texture-pointer)
+
+;; ============================================================================
+;; Rectangle Structs
+;; ============================================================================
+
+;; SDL_FRect - floating point rectangle (preferred in SDL3 for rendering)
+(define-cstruct _SDL_FRect
+  ([x _float]
+   [y _float]
+   [w _float]
+   [h _float]))
 
 ;; ============================================================================
 ;; Event Constants
@@ -149,6 +181,12 @@
 (define SDLK_r 114)          ; lowercase 'r'
 (define SDLK_g 103)          ; lowercase 'g'
 (define SDLK_b 98)           ; lowercase 'b'
+
+;; Arrow keys use scancodes with SDLK_SCANCODE_MASK (0x40000000)
+(define SDLK_RIGHT #x4000004F)
+(define SDLK_LEFT  #x40000050)
+(define SDLK_DOWN  #x40000051)
+(define SDLK_UP    #x40000052)
 
 ;; SDL_Keycode type (32-bit)
 (define _SDL_Keycode _uint32)
