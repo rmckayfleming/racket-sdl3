@@ -23,6 +23,7 @@
          ;; Window management
          SDL-CreateWindow
          SDL-DestroyWindow
+         SDL-SetWindowTitle
          ;; Renderer
          SDL-CreateRenderer
          SDL-DestroyRenderer
@@ -30,7 +31,11 @@
          SDL-RenderClear
          SDL-RenderPresent
          ;; Events
-         SDL-PollEvent)
+         SDL-PollEvent
+         ;; Keyboard
+         SDL-GetKeyName
+         ;; Timer
+         SDL-Delay)
 
 ;; ============================================================================
 ;; Initialization
@@ -118,3 +123,33 @@
 ;; Returns: true if there is a pending event, false otherwise
 (define-sdl SDL-PollEvent (_fun _pointer -> _sdl-bool)
   #:c-id SDL_PollEvent)
+
+;; ============================================================================
+;; Keyboard
+;; ============================================================================
+
+;; SDL_GetKeyName: Get a human-readable name for a key
+;; key: SDL_Keycode value
+;; Returns: A human-readable key name string
+(define-sdl SDL-GetKeyName (_fun _SDL_Keycode -> _string)
+  #:c-id SDL_GetKeyName)
+
+;; ============================================================================
+;; Window (additional functions)
+;; ============================================================================
+
+;; SDL_SetWindowTitle: Set the title of a window
+;; window: The window to modify
+;; title: The new title (UTF-8)
+;; Returns: true on success, false on failure
+(define-sdl SDL-SetWindowTitle (_fun _SDL_Window-pointer _string -> _sdl-bool)
+  #:c-id SDL_SetWindowTitle)
+
+;; ============================================================================
+;; Timer
+;; ============================================================================
+
+;; SDL_Delay: Wait a specified number of milliseconds before returning
+;; ms: The number of milliseconds to delay
+(define-sdl SDL-Delay (_fun _uint32 -> _void)
+  #:c-id SDL_Delay)
