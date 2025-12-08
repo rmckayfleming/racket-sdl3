@@ -66,6 +66,8 @@
          SDL-DestroySurface
          ;; Events
          SDL-PollEvent
+         SDL-WaitEvent
+         SDL-WaitEventTimeout
          ;; Keyboard
          SDL-GetKeyName
          ;; Text Input
@@ -442,6 +444,19 @@
 ;; Returns: true if there is a pending event, false otherwise
 (define-sdl SDL-PollEvent (_fun _pointer -> _sdl-bool)
   #:c-id SDL_PollEvent)
+
+;; SDL_WaitEvent: Wait indefinitely for the next available event
+;; event: Pointer to an SDL_Event structure (at least 128 bytes)
+;; Returns: true on success, false on error
+(define-sdl SDL-WaitEvent (_fun _pointer -> _sdl-bool)
+  #:c-id SDL_WaitEvent)
+
+;; SDL_WaitEventTimeout: Wait until timeout for the next available event
+;; event: Pointer to an SDL_Event structure (at least 128 bytes)
+;; timeoutMS: Maximum time to wait in milliseconds (-1 to wait indefinitely)
+;; Returns: true if an event is available, false if timed out or error
+(define-sdl SDL-WaitEventTimeout (_fun _pointer _sint32 -> _sdl-bool)
+  #:c-id SDL_WaitEventTimeout)
 
 ;; ============================================================================
 ;; Keyboard

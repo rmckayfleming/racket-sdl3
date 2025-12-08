@@ -35,6 +35,10 @@
  poll-event
  in-events
 
+ ;; Blocking event functions
+ wait-event
+ wait-event-timeout
+
  ;; Key utilities
  key-name
 
@@ -195,6 +199,24 @@
       (λ (ev) ev)
       #f
       #f))))
+
+;; ============================================================================
+;; Blocking Event Functions
+;; ============================================================================
+
+;; Wait indefinitely for the next event. Returns an event struct.
+;; Blocks until an event is available.
+(define (wait-event)
+  (if (SDL-WaitEvent event-buffer)
+      (parse-event event-buffer)
+      (error 'wait-event "SDL_WaitEvent failed: ~a" (SDL-GetError))))
+
+;; Wait up to timeout-ms milliseconds for the next event.
+;; Returns an event struct if one is available, or #f if timed out.
+(define (wait-event-timeout timeout-ms)
+  (if (SDL-WaitEventTimeout event-buffer timeout-ms)
+      (parse-event event-buffer)
+      #f))
 
 ;; ============================================================================
 ;; Key Utilities
