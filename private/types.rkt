@@ -156,6 +156,11 @@
          SDL_BLENDMODE_MOD
          SDL_BLENDMODE_MUL
          SDL_BLENDMODE_INVALID
+         ;; Flip mode
+         _SDL_FlipMode
+         SDL_FLIP_NONE
+         SDL_FLIP_HORIZONTAL
+         SDL_FLIP_VERTICAL
          ;; Error handling forward reference
          sdl-get-error-proc)
 
@@ -296,6 +301,17 @@
 (define SDL_BLENDMODE_MOD                 #x00000004)  ; color modulate
 (define SDL_BLENDMODE_MUL                 #x00000008)  ; color multiply
 (define SDL_BLENDMODE_INVALID             #x7FFFFFFF)
+
+;; ============================================================================
+;; Flip Modes
+;; ============================================================================
+
+;; SDL_FlipMode - for texture rendering with flipping
+(define _SDL_FlipMode _int)
+
+(define SDL_FLIP_NONE       0)  ; no flipping
+(define SDL_FLIP_HORIZONTAL 1)  ; flip horizontally
+(define SDL_FLIP_VERTICAL   2)  ; flip vertically
 
 ;; ============================================================================
 ;; Event Structs

@@ -34,6 +34,7 @@
          ;; Texture
          SDL-DestroyTexture
          SDL-RenderTexture
+         SDL-RenderTextureRotated
          SDL-GetTextureSize
          SDL-CreateTextureFromSurface
          ;; Drawing primitives
@@ -172,6 +173,26 @@
         _SDL_FRect-pointer/null
         -> _sdl-bool)
   #:c-id SDL_RenderTexture)
+
+;; SDL_RenderTextureRotated: Copy texture with rotation and flipping
+;; renderer: the renderer
+;; texture: the source texture
+;; srcrect: portion of texture (NULL for whole texture)
+;; dstrect: destination rectangle (NULL for whole renderer)
+;; angle: rotation angle in degrees (clockwise)
+;; center: point around which to rotate (NULL for center of dstrect)
+;; flip: SDL_FlipMode value for flipping
+;; Returns: true on success, false on failure
+(define-sdl SDL-RenderTextureRotated
+  (_fun _SDL_Renderer-pointer
+        _SDL_Texture-pointer
+        _SDL_FRect-pointer/null
+        _SDL_FRect-pointer/null
+        _double
+        _SDL_FPoint-pointer/null
+        _SDL_FlipMode
+        -> _sdl-bool)
+  #:c-id SDL_RenderTextureRotated)
 
 ;; SDL_GetTextureSize: Query texture dimensions
 ;; texture: the texture to query

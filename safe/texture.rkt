@@ -23,6 +23,10 @@
  texture-set-alpha-mod!
  texture-get-alpha-mod
 
+ ;; Flip mode conversion
+ symbol->flip-mode
+ flip-mode->symbol
+
  ;; Rendering
  render-texture!)
 
@@ -114,19 +118,50 @@
   alpha)
 
 ;; ============================================================================
+;; Flip Mode Conversion
+;; ============================================================================
+
+;; Convert a flip mode symbol to SDL constant
+(define (symbol->flip-mode sym)
+  (case sym
+    [(none) SDL_FLIP_NONE]
+    [(horizontal h) SDL_FLIP_HORIZONTAL]
+    [(vertical v) SDL_FLIP_VERTICAL]
+    [(both hv vh)
+     (bitwise-ior SDL_FLIP_HORIZONTAL SDL_FLIP_VERTICAL)]
+    [else (error 'symbol->flip-mode
+                 "unknown flip mode: ~a (expected: none, horizontal, vertical, both)"
+                 sym)]))
+
+;; Convert an SDL flip mode constant to a symbol
+(define (flip-mode->symbol mode)
+  (cond
+    [(= mode SDL_FLIP_NONE) 'none]
+    [(= mode SDL_FLIP_HORIZONTAL) 'horizontal]
+    [(= mode SDL_FLIP_VERTICAL) 'vertical]
+    [(= mode (bitwise-ior SDL_FLIP_HORIZONTAL SDL_FLIP_VERTICAL)) 'both]
+    [else 'unknown]))
+
+;; ============================================================================
 ;; Texture Rendering
 ;; ============================================================================
 
 ;; Render a texture at position (x, y)
 ;; Optional #:width and #:height to scale the texture
 ;; Optional #:src-x, #:src-y, #:src-w, #:src-h to specify source rectangle
+;; Optional #:angle for rotation in degrees (clockwise)
+;; Optional #:center for rotation center as (cons cx cy), defaults to texture center
+;; Optional #:flip for flipping: 'none, 'horizontal, 'vertical, 'both
 (define (render-texture! rend tex x y
                          #:width [w #f]
                          #:height [h #f]
                          #:src-x [src-x #f]
                          #:src-y [src-y #f]
                          #:src-w [src-w #f]
-                         #:src-h [src-h #f])
+                         #:src-h [src-h #f]
+                         #:angle [angle #f]
+                         #:center [center #f]
+                         #:flip [flip #f])
   ;; Get texture size if width/height not specified
   (define-values (tex-w tex-h)
     (if (or (not w) (not h))
@@ -151,4 +186,22 @@
                         (exact->inexact src-h))
         #f))
 
-  (SDL-RenderTexture (renderer-ptr rend) (texture-ptr tex) src-rect dst-rect))
+  ;; Use rotated render if angle, center, or flip is specified
+  (if (or angle center flip)
+      (let* ([angle-val (exact->inexact (or angle 0.0))]
+             [center-point (if center
+                               (make-SDL_FPoint (exact->inexact (car center))
+                                                (exact->inexact (cdr center)))
+                               #f)]
+             [flip-val (cond
+                         [(not flip) SDL_FLIP_NONE]
+                         [(symbol? flip) (symbol->flip-mode flip)]
+                         [else flip])])
+        (SDL-RenderTextureRotated (renderer-ptr rend)
+                                  (texture-ptr tex)
+                                  src-rect
+                                  dst-rect
+                                  angle-val
+                                  center-point
+                                  flip-val))
+      (SDL-RenderTexture (renderer-ptr rend) (texture-ptr tex) src-rect dst-rect)))
