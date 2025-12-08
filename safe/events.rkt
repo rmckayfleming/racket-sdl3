@@ -35,6 +35,9 @@
  poll-event
  in-events
 
+ ;; Key utilities
+ key-name
+
  ;; Re-export key constants for convenience
  SDLK_ESCAPE SDLK_SPACE
  SDLK_r SDLK_g SDLK_b
@@ -136,7 +139,7 @@
                 (SDL_KeyboardEvent-key kb)
                 (SDL_KeyboardEvent-scancode kb)
                 (SDL_KeyboardEvent-mod kb)
-                (not (zero? (SDL_KeyboardEvent-repeat kb))))]
+                (SDL_KeyboardEvent-repeat kb))]
 
     ;; Mouse motion
     [(= type SDL_EVENT_MOUSE_MOTION)
@@ -192,3 +195,11 @@
       (λ (ev) ev)
       #f
       #f))))
+
+;; ============================================================================
+;; Key Utilities
+;; ============================================================================
+
+;; Get a human-readable name for a keycode
+(define (key-name keycode)
+  (SDL-GetKeyName keycode))

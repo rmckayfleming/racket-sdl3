@@ -5,13 +5,15 @@
 ;; - Mouse position shown in window title
 ;; - Press Escape or close window to quit
 ;; - Key presses printed to console
+;;
+;; This example uses the idiomatic safe interface.
 
-(require ffi/unsafe
-         sdl3)
+(require racket/match
+         sdl3/safe)
 
-(define WINDOW_WIDTH 800)
-(define WINDOW_HEIGHT 600)
-(define INITIAL_TITLE "SDL3 Input - Move mouse, press R/G/B")
+(define window-width 800)
+(define window-height 600)
+(define initial-title "SDL3 Input - Move mouse, press R/G/B")
 
 ;; Current background color (mutable)
 (define bg-r 0)
@@ -23,105 +25,65 @@
   (set! bg-g g)
   (set! bg-b b))
 
-(define (handle-key-down event-ptr)
-  (define kb (event->keyboard event-ptr))
-  (define keycode (SDL_KeyboardEvent-key kb))
-  (define key-name (SDL-GetKeyName keycode))
-
-  ;; Print key name to console
-  (printf "Key pressed: ~a~n" key-name)
-
-  ;; Check for color keys (both uppercase and lowercase)
-  (cond
-    [(or (= keycode SDLK_r) (= keycode SDLK_R))
-     (set-color! 255 0 0)]
-    [(or (= keycode SDLK_g) (= keycode SDLK_G))
-     (set-color! 0 255 0)]
-    [(or (= keycode SDLK_b) (= keycode SDLK_B))
-     (set-color! 0 0 255)]
-    [else (void)])
-
-  ;; Return whether to quit (escape pressed)
-  (= keycode SDLK_ESCAPE))
-
-(define (handle-mouse-motion event-ptr window)
-  (define motion (event->mouse-motion event-ptr))
-  (define x (inexact->exact (round (SDL_MouseMotionEvent-x motion))))
-  (define y (inexact->exact (round (SDL_MouseMotionEvent-y motion))))
-  (define title (format "SDL3 Input - Mouse: (~a, ~a)" x y))
-  (SDL-SetWindowTitle window title))
-
 (define (main)
   ;; Initialize SDL video subsystem
-  (unless (SDL-Init SDL_INIT_VIDEO)
-    (error 'main "Failed to initialize SDL: ~a" (SDL-GetError)))
+  (sdl-init!)
 
-  (define window #f)
-  (define renderer #f)
+  ;; Create window and renderer (automatically cleaned up on exit)
+  (define-values (window renderer)
+    (make-window+renderer initial-title window-width window-height
+                          #:window-flags SDL_WINDOW_RESIZABLE))
 
-  (dynamic-wind
-    void
-    (lambda ()
-      ;; Create window
-      (set! window (SDL-CreateWindow INITIAL_TITLE
-                                     WINDOW_WIDTH
-                                     WINDOW_HEIGHT
-                                     SDL_WINDOW_RESIZABLE))
-      (unless window
-        (error 'main "Failed to create window: ~a" (SDL-GetError)))
+  ;; Main loop
+  (let loop ([running? #t])
+    (when running?
+      ;; Process all pending events
+      (define still-running?
+        (for/fold ([running? #t])
+                  ([ev (in-events)]
+                   #:break (not running?))
+          (match ev
+            ;; Quit events
+            [(or (quit-event) (window-event 'close-requested))
+             #f]
 
-      ;; Create renderer (use default renderer by passing #f)
-      (set! renderer (SDL-CreateRenderer window #f))
-      (unless renderer
-        (error 'main "Failed to create renderer: ~a" (SDL-GetError)))
+            ;; Key down events
+            [(key-event 'down key _ _ _)
+             ;; Print key name
+             (printf "Key pressed: ~a~n" (key-name key))
 
-      ;; Event buffer - SDL_Event is 128 bytes in SDL3
-      (define event (malloc SDL_EVENT_SIZE 'atomic-interior))
-      (define running? #t)
+             ;; Check for color keys or escape
+             (cond
+               [(= key SDLK_ESCAPE) #f]
+               [(or (= key SDLK_r) (= key SDLK_R))
+                (set-color! 255 0 0)
+                running?]
+               [(or (= key SDLK_g) (= key SDLK_G))
+                (set-color! 0 255 0)
+                running?]
+               [(or (= key SDLK_b) (= key SDLK_B))
+                (set-color! 0 0 255)
+                running?]
+               [else running?])]
 
-      ;; Main loop
-      (let loop ()
-        (when running?
-          ;; Poll all pending events
-          (let event-loop ()
-            (when (SDL-PollEvent event)
-              (define type (sdl-event-type event))
-              (cond
-                [(= type SDL_EVENT_QUIT)
-                 (set! running? #f)]
-                [(= type SDL_EVENT_WINDOW_CLOSE_REQUESTED)
-                 (set! running? #f)]
-                [(= type SDL_EVENT_KEY_DOWN)
-                 (when (handle-key-down event)
-                   (set! running? #f))]
-                [(= type SDL_EVENT_MOUSE_MOTION)
-                 (handle-mouse-motion event window)]
-                [else (void)])
-              (event-loop)))
+            ;; Mouse motion - update window title
+            [(mouse-motion-event x y _ _ _)
+             (define title (format "SDL3 Input - Mouse: (~a, ~a)"
+                                   (inexact->exact (round x))
+                                   (inexact->exact (round y))))
+             (window-set-title! window title)
+             running?]
 
-          ;; Render if still running
-          (when running?
-            ;; Set draw color to current background
-            (SDL-SetRenderDrawColor renderer bg-r bg-g bg-b 255)
+            ;; Ignore other events
+            [_ running?])))
 
-            ;; Clear the screen
-            (SDL-RenderClear renderer)
-
-            ;; Present the rendered frame
-            (SDL-RenderPresent renderer)
-
-            ;; Small delay to not spin CPU (approx 60fps)
-            (SDL-Delay 16)
-
-            (loop)))))
-
-    ;; Cleanup
-    (lambda ()
-      (when renderer
-        (SDL-DestroyRenderer renderer))
-      (when window
-        (SDL-DestroyWindow window))
-      (SDL-Quit))))
+      ;; Render if still running
+      (when still-running?
+        (set-draw-color! renderer bg-r bg-g bg-b)
+        (render-clear! renderer)
+        (render-present! renderer)
+        (delay! 16)
+        (loop still-running?)))))
 
 ;; Run the main function
 (main)

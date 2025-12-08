@@ -90,20 +90,22 @@ Key improvements:
 
 ---
 
-## Phase 2: Input Handling (`hello-input.rkt`) - PENDING
+## Phase 2: Input Handling (`hello-input.rkt`) - COMPLETED
 
-### Planned Additions
+### Additions
 
-The event structs are already complete from Phase 1. Need to:
+- Added `key-name` function to `safe/events.rkt` (wraps `SDL-GetKeyName`)
 
-1. Add `window-set-title!` to safe/window.rkt (DONE - already added)
-2. Update `examples/hello-input.rkt` to use safe interface
+### Example Update
 
-### Key Changes for Example
+`hello-input.rkt`: **Reduced from 127 lines to 89 lines** (30% reduction)
 
-- Use `key-event` struct with match instead of `event->keyboard` + `SDL_KeyboardEvent-key`
-- Use `mouse-motion-event` struct instead of `event->mouse-motion` + accessors
-- Use `window-set-title!` instead of `SDL-SetWindowTitle`
+Key improvements:
+- No `ffi/unsafe` require
+- No `malloc` for event buffer
+- No `dynamic-wind` cleanup
+- Clean `match` on `key-event` and `mouse-motion-event` structs
+- No manual event type casting (`event->keyboard`, `SDL_KeyboardEvent-key`, etc.)
 
 ---
 
@@ -178,7 +180,7 @@ Mostly benefits from earlier phases.
 | Phase | Status | Files | Example |
 |-------|--------|-------|---------|
 | 1 | **DONE** | `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe.rkt` | `hello-window.rkt` |
-| 2 | PENDING | (events already done) | `hello-input.rkt` |
+| 2 | **DONE** | `safe/events.rkt` (added `key-name`) | `hello-input.rkt` |
 | 3 | PENDING | `safe/texture.rkt` | `hello-image.rkt` |
 | 4 | PENDING | `safe/ttf.rkt` | `hello-text.rkt` |
 | 5 | PENDING | `safe/draw.rkt` (shapes) | `hello-shapes.rkt` |

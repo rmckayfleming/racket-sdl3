@@ -91,11 +91,13 @@
          _SDL_KeyboardEvent-pointer
          SDL_KeyboardEvent-type
          SDL_KeyboardEvent-windowID
-         SDL_KeyboardEvent-state
-         SDL_KeyboardEvent-repeat
-         SDL_KeyboardEvent-mod
+         SDL_KeyboardEvent-which
          SDL_KeyboardEvent-scancode
          SDL_KeyboardEvent-key
+         SDL_KeyboardEvent-mod
+         SDL_KeyboardEvent-raw
+         SDL_KeyboardEvent-down
+         SDL_KeyboardEvent-repeat
          _SDL_MouseMotionEvent
          _SDL_MouseMotionEvent-pointer
          SDL_MouseMotionEvent-type
@@ -284,13 +286,13 @@
    [reserved _uint32]
    [timestamp _uint64]
    [windowID _uint32]
-   [state _uint8]
-   [repeat _uint8]
-   [padding2 _uint8]
-   [padding3 _uint8]
-   [mod _uint16]
-   [scancode _uint32]
-   [key _uint32]))
+   [which _uint32]       ; SDL_KeyboardID - keyboard instance id
+   [scancode _uint32]    ; SDL_Scancode - physical key code
+   [key _uint32]         ; SDL_Keycode - virtual key code
+   [mod _uint16]         ; SDL_Keymod - current key modifiers
+   [raw _uint16]         ; platform dependent scancode
+   [down _bool]          ; true if key is pressed
+   [repeat _bool]))
 
 ;; SDL_MouseMotionEvent - mouse movement
 (define-cstruct _SDL_MouseMotionEvent
