@@ -18,6 +18,12 @@
  window-destroy!
  window-set-title!
  window-pixel-density
+ window-size
+ window-set-size!
+ window-position
+ window-set-position!
+ window-fullscreen?
+ window-set-fullscreen!
 
  ;; Renderer management
  make-renderer
@@ -88,6 +94,42 @@
 
 (define (window-pixel-density win)
   (SDL-GetWindowPixelDensity (window-ptr win)))
+
+;; Get the size of a window's client area
+;; Returns: (values width height)
+(define (window-size win)
+  (define-values (success w h) (SDL-GetWindowSize (window-ptr win)))
+  (unless success
+    (error 'window-size "Failed to get window size: ~a" (SDL-GetError)))
+  (values w h))
+
+;; Set the size of a window's client area
+(define (window-set-size! win w h)
+  (unless (SDL-SetWindowSize (window-ptr win) w h)
+    (error 'window-set-size! "Failed to set window size: ~a" (SDL-GetError))))
+
+;; Get the position of a window
+;; Returns: (values x y)
+(define (window-position win)
+  (define-values (success x y) (SDL-GetWindowPosition (window-ptr win)))
+  (unless success
+    (error 'window-position "Failed to get window position: ~a" (SDL-GetError)))
+  (values x y))
+
+;; Set the position of a window
+(define (window-set-position! win x y)
+  (unless (SDL-SetWindowPosition (window-ptr win) x y)
+    (error 'window-set-position! "Failed to set window position: ~a" (SDL-GetError))))
+
+;; Check if window is fullscreen
+(define (window-fullscreen? win)
+  (not (zero? (bitwise-and (SDL-GetWindowFlags (window-ptr win))
+                           SDL_WINDOW_FULLSCREEN))))
+
+;; Set window fullscreen mode
+(define (window-set-fullscreen! win fullscreen?)
+  (unless (SDL-SetWindowFullscreen (window-ptr win) fullscreen?)
+    (error 'window-set-fullscreen! "Failed to set fullscreen: ~a" (SDL-GetError))))
 
 ;; ============================================================================
 ;; Renderer Management

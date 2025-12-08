@@ -9,6 +9,7 @@
          SDL_INIT_VIDEO
          ;; Window flags
          _SDL_WindowFlags
+         SDL_WINDOW_FULLSCREEN
          SDL_WINDOW_RESIZABLE
          SDL_WINDOW_HIGH_PIXEL_DENSITY
          ;; Pointer types
@@ -181,6 +182,7 @@
 ;; ============================================================================
 ;; Window Flags (SDL_WindowFlags) - 64-bit in SDL3
 ;; ============================================================================
+(define SDL_WINDOW_FULLSCREEN          #x0000000000000001)
 (define SDL_WINDOW_RESIZABLE           #x0000000000000020)
 (define SDL_WINDOW_HIGH_PIXEL_DENSITY  #x0000000000002000)
 

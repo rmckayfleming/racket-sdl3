@@ -21,15 +21,30 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [x] `SDL_DestroyWindow`
 - [x] `SDL_SetWindowTitle`
 - [x] `SDL_GetWindowPixelDensity`
+- [x] `SDL_GetWindowSize`
+- [x] `SDL_SetWindowSize`
+- [x] `SDL_GetWindowPosition`
+- [x] `SDL_SetWindowPosition`
+- [x] `SDL_GetWindowFlags`
+- [x] `SDL_SetWindowFullscreen`
 - [x] `SDL_CreateRenderer`
 - [x] `SDL_DestroyRenderer`
 - [x] `SDL_SetRenderDrawColor`
 - [x] `SDL_RenderClear`
 - [x] `SDL_RenderPresent`
+- [x] `SDL_SetRenderDrawBlendMode`
+- [x] `SDL_GetRenderDrawBlendMode`
 - [x] `SDL_DestroyTexture`
 - [x] `SDL_RenderTexture`
+- [x] `SDL_RenderTextureRotated`
 - [x] `SDL_GetTextureSize`
 - [x] `SDL_CreateTextureFromSurface`
+- [x] `SDL_SetTextureBlendMode`
+- [x] `SDL_GetTextureBlendMode`
+- [x] `SDL_SetTextureColorMod`
+- [x] `SDL_GetTextureColorMod`
+- [x] `SDL_SetTextureAlphaMod`
+- [x] `SDL_GetTextureAlphaMod`
 - [x] `SDL_DestroySurface`
 - [x] `SDL_PollEvent`
 - [x] `SDL_GetKeyName`
@@ -62,14 +77,16 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 ### Types & Constants (`private/types.rkt`)
 - [x] `_sdl-bool`, `_SDL_InitFlags`, `_SDL_WindowFlags`
 - [x] `SDL_INIT_VIDEO`
-- [x] `SDL_WINDOW_RESIZABLE`, `SDL_WINDOW_HIGH_PIXEL_DENSITY`
+- [x] `SDL_WINDOW_FULLSCREEN`, `SDL_WINDOW_RESIZABLE`, `SDL_WINDOW_HIGH_PIXEL_DENSITY`
 - [x] Pointer types: `_SDL_Window-pointer`, `_SDL_Renderer-pointer`, `_SDL_Texture-pointer`, `_SDL_Surface-pointer`
-- [x] `_SDL_FRect` struct
+- [x] `_SDL_FPoint` struct, `_SDL_FRect` struct
 - [x] `_SDL_Color` struct
 - [x] Event constants: `SDL_EVENT_QUIT`, window events, keyboard events, mouse events, text input
 - [x] Event structs: `_SDL_CommonEvent`, `_SDL_KeyboardEvent`, `_SDL_MouseMotionEvent`, `_SDL_MouseButtonEvent`, `_SDL_TextInputEvent`
 - [x] Key constants: `SDLK_ESCAPE`, `SDLK_SPACE`, arrow keys, R/G/B keys
 - [x] `_SDL_Keycode`
+- [x] `_SDL_BlendMode` and all blend mode constants
+- [x] `_SDL_FlipMode` and flip mode constants (`SDL_FLIP_NONE`, `SDL_FLIP_HORIZONTAL`, `SDL_FLIP_VERTICAL`)
 
 ---
 
@@ -97,18 +114,18 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_CreateWindowAndRenderer`
 - [ ] `SDL_GetWindowTitle`
 - [ ] `SDL_SetWindowIcon`
-- [ ] `SDL_GetWindowSize`
-- [ ] `SDL_SetWindowSize`
-- [ ] `SDL_GetWindowPosition`
-- [ ] `SDL_SetWindowPosition`
-- [ ] `SDL_GetWindowFlags`
+- [x] `SDL_GetWindowSize`
+- [x] `SDL_SetWindowSize`
+- [x] `SDL_GetWindowPosition`
+- [x] `SDL_SetWindowPosition`
+- [x] `SDL_GetWindowFlags`
 - [ ] `SDL_ShowWindow`
 - [ ] `SDL_HideWindow`
 - [ ] `SDL_RaiseWindow`
 - [ ] `SDL_MaximizeWindow`
 - [ ] `SDL_MinimizeWindow`
 - [ ] `SDL_RestoreWindow`
-- [ ] `SDL_SetWindowFullscreen`
+- [x] `SDL_SetWindowFullscreen`
 - [ ] `SDL_SetWindowBordered`
 - [ ] `SDL_SetWindowResizable`
 - [ ] `SDL_GetWindowSurface`
@@ -156,8 +173,8 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_SetRenderDrawColorFloat`
 - [ ] `SDL_GetRenderDrawColor`
 - [ ] `SDL_GetRenderDrawColorFloat`
-- [ ] `SDL_SetRenderDrawBlendMode`
-- [ ] `SDL_GetRenderDrawBlendMode`
+- [x] `SDL_SetRenderDrawBlendMode`
+- [x] `SDL_GetRenderDrawBlendMode`
 - [ ] `SDL_SetRenderVSync`
 - [ ] `SDL_GetRenderVSync`
 
@@ -170,7 +187,7 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [x] `SDL_RenderRects`
 - [x] `SDL_RenderFillRect`
 - [x] `SDL_RenderFillRects`
-- [ ] `SDL_RenderTextureRotated`
+- [x] `SDL_RenderTextureRotated`
 - [ ] `SDL_RenderTextureAffine`
 - [ ] `SDL_RenderTextureTiled`
 - [ ] `SDL_RenderTexture9Grid`
@@ -184,16 +201,16 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_CreateTexture`
 - [ ] `SDL_CreateTextureWithProperties`
 - [ ] `SDL_GetTextureProperties`
-- [ ] `SDL_SetTextureColorMod`
-- [ ] `SDL_GetTextureColorMod`
+- [x] `SDL_SetTextureColorMod`
+- [x] `SDL_GetTextureColorMod`
 - [ ] `SDL_SetTextureColorModFloat`
 - [ ] `SDL_GetTextureColorModFloat`
-- [ ] `SDL_SetTextureAlphaMod`
-- [ ] `SDL_GetTextureAlphaMod`
+- [x] `SDL_SetTextureAlphaMod`
+- [x] `SDL_GetTextureAlphaMod`
 - [ ] `SDL_SetTextureAlphaModFloat`
 - [ ] `SDL_GetTextureAlphaModFloat`
-- [ ] `SDL_SetTextureBlendMode`
-- [ ] `SDL_GetTextureBlendMode`
+- [x] `SDL_SetTextureBlendMode`
+- [x] `SDL_GetTextureBlendMode`
 - [ ] `SDL_SetTextureScaleMode`
 - [ ] `SDL_GetTextureScaleMode`
 - [ ] `SDL_UpdateTexture`
@@ -658,7 +675,7 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_INIT_CAMERA`
 
 ### Window Flags (P1)
-- [ ] `SDL_WINDOW_FULLSCREEN`
+- [x] `SDL_WINDOW_FULLSCREEN`
 - [ ] `SDL_WINDOW_OPENGL`
 - [ ] `SDL_WINDOW_OCCLUDED`
 - [ ] `SDL_WINDOW_HIDDEN`
@@ -731,14 +748,14 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [x] `SDL_FPoint`
 
 ### Blend Mode (P1)
-- [ ] `SDL_BlendMode` type
-- [ ] `SDL_BLENDMODE_NONE`
-- [ ] `SDL_BLENDMODE_BLEND`
-- [ ] `SDL_BLENDMODE_BLEND_PREMULTIPLIED`
-- [ ] `SDL_BLENDMODE_ADD`
-- [ ] `SDL_BLENDMODE_ADD_PREMULTIPLIED`
-- [ ] `SDL_BLENDMODE_MOD`
-- [ ] `SDL_BLENDMODE_MUL`
+- [x] `SDL_BlendMode` type
+- [x] `SDL_BLENDMODE_NONE`
+- [x] `SDL_BLENDMODE_BLEND`
+- [x] `SDL_BLENDMODE_BLEND_PREMULTIPLIED`
+- [x] `SDL_BLENDMODE_ADD`
+- [x] `SDL_BLENDMODE_ADD_PREMULTIPLIED`
+- [x] `SDL_BLENDMODE_MOD`
+- [x] `SDL_BLENDMODE_MUL`
 
 ### Texture Access (P1)
 - [ ] `SDL_TextureAccess` enum
@@ -760,10 +777,10 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_SCALEMODE_LINEAR`
 
 ### Flip Mode (P2)
-- [ ] `SDL_FlipMode` enum
-- [ ] `SDL_FLIP_NONE`
-- [ ] `SDL_FLIP_HORIZONTAL`
-- [ ] `SDL_FLIP_VERTICAL`
+- [x] `SDL_FlipMode` enum
+- [x] `SDL_FLIP_NONE`
+- [x] `SDL_FLIP_HORIZONTAL`
+- [x] `SDL_FLIP_VERTICAL`
 
 ### System Cursor (P2)
 - [ ] `SDL_SystemCursor` enum
@@ -791,13 +808,13 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 
 ## Implementation Statistics
 
-**Currently Implemented:** ~50 functions
+**Currently Implemented:** ~65 functions
 **Estimated Total Available:** 500+ functions
 
 ### Coverage by Library
 | Library | Implemented | Estimated Total | Coverage |
 |---------|-------------|-----------------|----------|
-| SDL3 Core | 32 | ~350 | ~9% |
+| SDL3 Core | 47 | ~350 | ~13% |
 | SDL3_image | 2 | ~60 | ~3% |
 | SDL3_ttf | 16 | ~120 | ~13% |
 
@@ -806,11 +823,10 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 ## Next Steps (Suggested Order)
 
 1. **P0 - Blocking Events:** `SDL_WaitEvent`, `SDL_WaitEventTimeout`
-2. **P0 - Window Queries:** `SDL_GetWindowSize`, `SDL_GetWindowPosition`, `SDL_GetWindowFlags`
-3. **P0 - Integer Rect:** `SDL_Rect`, `SDL_Point` types
-4. **P1 - Image Loading:** `IMG_Load` (surface), `IMG_SavePNG`
-5. **P1 - Texture Ops:** `SDL_CreateTexture`, `SDL_SetTextureColorMod`, `SDL_SetTextureAlphaMod`
-6. **P1 - Blend Modes:** `SDL_BlendMode` type and constants
-7. **P1 - More Keys:** Expand keycode and scancode constants
-8. **P1 - Mouse:** `SDL_GetRelativeMouseState`, cursor functions
-9. **P2 - Timer:** `SDL_GetPerformanceCounter`, `SDL_GetPerformanceFrequency`
+2. **P0 - Integer Rect:** `SDL_Rect`, `SDL_Point` types
+3. **P1 - Image Loading:** `IMG_Load` (surface), `IMG_SavePNG`
+4. **P1 - Texture Creation:** `SDL_CreateTexture`, `SDL_SetTextureScaleMode`
+5. **P1 - More Keys:** Expand keycode and scancode constants
+6. **P1 - Mouse:** `SDL_GetRelativeMouseState`, cursor functions
+7. **P2 - Timer:** `SDL_GetPerformanceCounter`, `SDL_GetPerformanceFrequency`
+8. **P2 - Clipboard:** `SDL_SetClipboardText`, `SDL_GetClipboardText`

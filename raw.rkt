@@ -25,6 +25,12 @@
          SDL-DestroyWindow
          SDL-SetWindowTitle
          SDL-GetWindowPixelDensity
+         SDL-GetWindowSize
+         SDL-SetWindowSize
+         SDL-GetWindowPosition
+         SDL-SetWindowPosition
+         SDL-GetWindowFlags
+         SDL-SetWindowFullscreen
          ;; Renderer
          SDL-CreateRenderer
          SDL-DestroyRenderer
@@ -120,6 +126,59 @@
 ;; Returns: the pixel density (e.g., 2.0 for Retina displays)
 (define-sdl SDL-GetWindowPixelDensity (_fun _SDL_Window-pointer -> _float)
   #:c-id SDL_GetWindowPixelDensity)
+
+;; SDL_GetWindowSize: Get the size of a window's client area
+;; window: the window to query
+;; Returns: (values success? width height)
+(define-sdl SDL-GetWindowSize
+  (_fun _SDL_Window-pointer
+        (w : (_ptr o _int))
+        (h : (_ptr o _int))
+        -> (result : _sdl-bool)
+        -> (values result w h))
+  #:c-id SDL_GetWindowSize)
+
+;; SDL_SetWindowSize: Set the size of a window's client area
+;; window: the window to resize
+;; w, h: the new width and height
+;; Returns: true on success, false on failure
+(define-sdl SDL-SetWindowSize
+  (_fun _SDL_Window-pointer _int _int -> _sdl-bool)
+  #:c-id SDL_SetWindowSize)
+
+;; SDL_GetWindowPosition: Get the position of a window
+;; window: the window to query
+;; Returns: (values success? x y)
+(define-sdl SDL-GetWindowPosition
+  (_fun _SDL_Window-pointer
+        (x : (_ptr o _int))
+        (y : (_ptr o _int))
+        -> (result : _sdl-bool)
+        -> (values result x y))
+  #:c-id SDL_GetWindowPosition)
+
+;; SDL_SetWindowPosition: Set the position of a window
+;; window: the window to move
+;; x, y: the new position
+;; Returns: true on success, false on failure
+(define-sdl SDL-SetWindowPosition
+  (_fun _SDL_Window-pointer _int _int -> _sdl-bool)
+  #:c-id SDL_SetWindowPosition)
+
+;; SDL_GetWindowFlags: Get the window flags
+;; window: the window to query
+;; Returns: SDL_WindowFlags bitmask
+(define-sdl SDL-GetWindowFlags
+  (_fun _SDL_Window-pointer -> _SDL_WindowFlags)
+  #:c-id SDL_GetWindowFlags)
+
+;; SDL_SetWindowFullscreen: Set the fullscreen mode of a window
+;; window: the window to modify
+;; fullscreen: true for fullscreen, false for windowed
+;; Returns: true on success, false on failure
+(define-sdl SDL-SetWindowFullscreen
+  (_fun _SDL_Window-pointer _bool -> _sdl-bool)
+  #:c-id SDL_SetWindowFullscreen)
 
 ;; ============================================================================
 ;; Renderer
