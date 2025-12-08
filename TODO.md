@@ -303,7 +303,7 @@ This document tracks the implementation status of SDL3, SDL3_image, and SDL3_ttf
 - [ ] `SDL_CursorVisible`
 
 ### Timer (P2)
-- [ ] `SDL_GetTicks`
+- [x] `SDL_GetTicks`
 - [ ] `SDL_GetTicksNS`
 - [ ] `SDL_GetPerformanceCounter`
 - [ ] `SDL_GetPerformanceFrequency`

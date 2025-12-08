@@ -55,6 +55,7 @@
          SDL-StartTextInput
          SDL-StopTextInput
          ;; Timer
+         SDL-GetTicks
          SDL-Delay)
 
 ;; ============================================================================
@@ -308,6 +309,11 @@
 ;; ============================================================================
 ;; Timer
 ;; ============================================================================
+
+;; SDL_GetTicks: Get the number of milliseconds since SDL library initialization
+;; Returns: Uint64 milliseconds since SDL_Init was called
+(define-sdl SDL-GetTicks (_fun -> _uint64)
+  #:c-id SDL_GetTicks)
 
 ;; SDL_Delay: Wait a specified number of milliseconds before returning
 ;; ms: The number of milliseconds to delay
