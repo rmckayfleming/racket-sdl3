@@ -1,181 +1,127 @@
 #lang racket/base
 
-;; Hello Animation - SDL3 Racket Bindings Example
-;;
-;; Demonstrates time-based animation using SDL_GetTicks.
-;; Shows bouncing ball, rotating shapes, and pulsing colors.
-;; Press ESC or close the window to exit.
+;; Hello Animation - SDL3 idiomatic example
+;; Demonstrates time-based animation using current-ticks.
 
-(require ffi/unsafe
+(require racket/match
          racket/math
-         sdl3)
+         sdl3/safe)
 
-(define WINDOW_WIDTH 800)
-(define WINDOW_HEIGHT 600)
-(define WINDOW_TITLE "SDL3 Racket - Hello Animation")
+(define window-width 800)
+(define window-height 600)
+(define window-title "SDL3 Racket - Hello Animation")
 
-(define PI 3.141592653589793)
+(define (clamp v lo hi)
+  (max lo (min v hi)))
 
 (define (main)
-  ;; Initialize SDL video subsystem
-  (unless (SDL-Init SDL_INIT_VIDEO)
-    (error 'main "Failed to initialize SDL: ~a" (SDL-GetError)))
+  (sdl-init!)
 
-  (define window #f)
-  (define renderer #f)
+  (define-values (window renderer)
+    (make-window+renderer window-title window-width window-height
+                          #:window-flags SDL_WINDOW_RESIZABLE))
 
-  (dynamic-wind
-    void
-    (λ ()
-      ;; Create window
-      (set! window (SDL-CreateWindow WINDOW_TITLE
-                                     WINDOW_WIDTH
-                                     WINDOW_HEIGHT
-                                     SDL_WINDOW_RESIZABLE))
-      (unless window
-        (error 'main "Failed to create window: ~a" (SDL-GetError)))
+  (let loop ([ball-x 400.0] [ball-y 300.0]
+             [ball-vx 200.0] [ball-vy 150.0]
+             [ball-radius 20.0]
+             [last-ticks (current-ticks)]
+             [running? #t])
+    (when running?
+      (define now (current-ticks))
+      (define dt (/ (- now last-ticks) 1000.0))
+      (define time-sec (/ now 1000.0))
 
-      ;; Create renderer
-      (set! renderer (SDL-CreateRenderer window #f))
-      (unless renderer
-        (error 'main "Failed to create renderer: ~a" (SDL-GetError)))
+      ;; Process events
+      (define still-running?
+        (for/fold ([run? #t])
+                  ([ev (in-events)]
+                   #:break (not run?))
+          (match ev
+            [(or (quit-event) (window-event 'close-requested)) #f]
+            [(key-event 'down key _ _ _) (if (= key SDLK_ESCAPE) #f run?)]
+            [_ run?])))
 
-      ;; Event buffer
-      (define event-buf (malloc SDL_EVENT_SIZE))
-      (define running? #t)
+      (when still-running?
+        ;; Integrate ball motion
+        (define next-x (+ ball-x (* ball-vx dt)))
+        (define next-y (+ ball-y (* ball-vy dt)))
+        (define next-vx ball-vx)
+        (define next-vy ball-vy)
 
-      ;; Animation state
-      ;; Bouncing ball
-      (define ball-x 400.0)
-      (define ball-y 300.0)
-      (define ball-vx 200.0)  ; pixels per second
-      (define ball-vy 150.0)
-      (define ball-radius 20.0)
+        (when (or (< next-x ball-radius)
+                  (> next-x (- window-width ball-radius)))
+          (set! next-vx (- next-vx))
+          (set! next-x (clamp next-x ball-radius (- window-width ball-radius))))
 
-      ;; Track time
-      (define last-ticks (SDL-GetTicks))
+        (when (or (< next-y ball-radius)
+                  (> next-y (- window-height ball-radius)))
+          (set! next-vy (- next-vy))
+          (set! next-y (clamp next-y ball-radius (- window-height ball-radius))))
 
-      ;; Main loop
-      (let loop ()
-        (when running?
-          ;; Calculate delta time
-          (define current-ticks (SDL-GetTicks))
-          (define dt (/ (- current-ticks last-ticks) 1000.0)) ; seconds
-          (set! last-ticks current-ticks)
+        ;; Wave points for the bottom oscillation
+        (define wave-points
+          (for/list ([x (in-range 0 window-width 4)])
+            (list (exact->inexact x)
+                  (+ 550.0
+                     (* 20.0 (sin (+ (* x 0.02) (* time-sec 4))))
+                     (* 10.0 (sin (+ (* x 0.05) (* time-sec 2))))))))
 
-          ;; Poll all pending events
-          (let poll-events ()
-            (when (SDL-PollEvent event-buf)
-              (define event-type (sdl-event-type event-buf))
-              (cond
-                [(= event-type SDL_EVENT_QUIT)
-                 (set! running? #f)]
-                [(= event-type SDL_EVENT_KEY_DOWN)
-                 (define kb-event (event->keyboard event-buf))
-                 (define key (SDL_KeyboardEvent-key kb-event))
-                 (when (= key SDLK_ESCAPE)
-                   (set! running? #f))])
-              (poll-events)))
+        ;; Clear and draw
+        (set-draw-color! renderer 20 20 30)
+        (render-clear! renderer)
 
-          (when running?
-            ;; Update ball position
-            (set! ball-x (+ ball-x (* ball-vx dt)))
-            (set! ball-y (+ ball-y (* ball-vy dt)))
+        ;; Bouncing ball (drawn as filled rect)
+        (set-draw-color! renderer 255 100 100)
+        (fill-rect! renderer (- next-x ball-radius) (- next-y ball-radius)
+                    (* 2 ball-radius) (* 2 ball-radius))
 
-            ;; Bounce off walls
-            (when (or (< ball-x ball-radius)
-                      (> ball-x (- WINDOW_WIDTH ball-radius)))
-              (set! ball-vx (- ball-vx))
-              (set! ball-x (max ball-radius (min ball-x (- WINDOW_WIDTH ball-radius)))))
-            (when (or (< ball-y ball-radius)
-                      (> ball-y (- WINDOW_HEIGHT ball-radius)))
-              (set! ball-vy (- ball-vy))
-              (set! ball-y (max ball-radius (min ball-y (- WINDOW_HEIGHT ball-radius)))))
+        ;; Orbiting squares with cycling colors
+        (define center-x 400.0)
+        (define center-y 300.0)
+        (define orbit-radius 150.0)
+        (for ([i (in-range 6)])
+          (define angle (+ (* time-sec 1.5) (* i (/ (* 2 pi) 6))))
+          (define ox (+ center-x (* orbit-radius (cos angle))))
+          (define oy (+ center-y (* orbit-radius (sin angle))))
+          (define size 20.0)
+          (define r (exact-round (+ 128 (* 127 (cos angle)))))
+          (define g (exact-round (+ 128 (* 127 (cos (+ angle (* 2 (/ pi 3))))))))
+          (define b (exact-round (+ 128 (* 127 (cos (+ angle (* 4 (/ pi 3))))))))
+          (set-draw-color! renderer r g b)
+          (fill-rect! renderer (- ox (/ size 2)) (- oy (/ size 2)) size size))
 
-            ;; Time-based values for animations
-            (define time-sec (/ current-ticks 1000.0))
+        ;; Pulsing square
+        (define pulse (+ 0.5 (* 0.5 (sin (* time-sec 3)))))
+        (define pulse-size (+ 30 (* 20 pulse)))
+        (define pulse-color (exact-round (* 255 pulse)))
+        (set-draw-color! renderer pulse-color pulse-color 255)
+        (fill-rect! renderer 50.0 50.0 pulse-size pulse-size)
 
-            ;; Clear screen with dark background
-            (SDL-SetRenderDrawColor renderer 20 20 30 255)
-            (SDL-RenderClear renderer)
+        ;; Spinning line
+        (define spin-angle (* time-sec 2))
+        (define spin-cx 650.0)
+        (define spin-cy 100.0)
+        (define spin-len 60.0)
+        (set-draw-color! renderer 100 255 100)
+        (draw-line! renderer
+                    (+ spin-cx (* spin-len (cos spin-angle)))
+                    (+ spin-cy (* spin-len (sin spin-angle)))
+                    (- spin-cx (* spin-len (cos spin-angle)))
+                    (- spin-cy (* spin-len (sin spin-angle))))
 
-            ;; Draw bouncing ball (filled rectangle approximation)
-            (define ball-rect (make-SDL_FRect (- ball-x ball-radius)
-                                               (- ball-y ball-radius)
-                                               (* 2 ball-radius)
-                                               (* 2 ball-radius)))
-            (SDL-SetRenderDrawColor renderer 255 100 100 255)
-            (SDL-RenderFillRect renderer ball-rect)
+        ;; Oscillating wave
+        (set-draw-color! renderer 100 200 255)
+        (draw-points! renderer wave-points)
 
-            ;; Draw orbiting squares around center
-            (define center-x 400.0)
-            (define center-y 300.0)
-            (define orbit-radius 150.0)
-            (for ([i (in-range 6)])
-              (define angle (+ (* time-sec 1.5) (* i (/ (* 2 PI) 6))))
-              (define ox (+ center-x (* orbit-radius (cos angle))))
-              (define oy (+ center-y (* orbit-radius (sin angle))))
-              (define size 20.0)
-              (define rect (make-SDL_FRect (- ox (/ size 2))
-                                           (- oy (/ size 2))
-                                           size size))
-              ;; Color based on position in orbit
-              (define r (exact-round (+ 128 (* 127 (cos angle)))))
-              (define g (exact-round (+ 128 (* 127 (cos (+ angle (* 2 (/ PI 3))))))))
-              (define b (exact-round (+ 128 (* 127 (cos (+ angle (* 4 (/ PI 3))))))))
-              (SDL-SetRenderDrawColor renderer r g b 255)
-              (SDL-RenderFillRect renderer rect))
+        ;; FPS indicator bar
+        (define fps-width (min 100.0 (if (> dt 0) (/ 1.0 dt) 60.0)))
+        (set-draw-color! renderer 0 255 0)
+        (fill-rect! renderer 10.0 580.0 fps-width 10.0)
 
-            ;; Draw pulsing rectangle in corner
-            (define pulse (+ 0.5 (* 0.5 (sin (* time-sec 3)))))
-            (define pulse-size (+ 30 (* 20 pulse)))
-            (define pulse-rect (make-SDL_FRect 50.0 50.0 pulse-size pulse-size))
-            (define pulse-color (exact-round (* 255 pulse)))
-            (SDL-SetRenderDrawColor renderer pulse-color pulse-color 255 255)
-            (SDL-RenderFillRect renderer pulse-rect)
+        (render-present! renderer)
+        (delay! 16)
 
-            ;; Draw spinning line
-            (define spin-angle (* time-sec 2))
-            (define spin-cx 650.0)
-            (define spin-cy 100.0)
-            (define spin-len 60.0)
-            (define x1 (+ spin-cx (* spin-len (cos spin-angle))))
-            (define y1 (+ spin-cy (* spin-len (sin spin-angle))))
-            (define x2 (- spin-cx (* spin-len (cos spin-angle))))
-            (define y2 (- spin-cy (* spin-len (sin spin-angle))))
-            (SDL-SetRenderDrawColor renderer 100 255 100 255)
-            (SDL-RenderLine renderer x1 y1 x2 y2)
+        (loop next-x next-y next-vx next-vy ball-radius now still-running?)))))
 
-            ;; Draw oscillating wave at bottom
-            (SDL-SetRenderDrawColor renderer 100 200 255 255)
-            (for ([x (in-range 0 800 4)])
-              (define wave-y (+ 550.0
-                               (* 20.0 (sin (+ (* x 0.02) (* time-sec 4))))
-                               (* 10.0 (sin (+ (* x 0.05) (* time-sec 2))))))
-              (SDL-RenderPoint renderer (exact->inexact x) wave-y))
-
-            ;; Display FPS (approximate, via frame time)
-            ;; We'll just draw a simple indicator bar
-            (define fps-width (min 100.0 (if (> dt 0) (/ 1.0 dt) 60.0)))
-            (define fps-rect (make-SDL_FRect 10.0 580.0 fps-width 10.0))
-            (SDL-SetRenderDrawColor renderer 0 255 0 255)
-            (SDL-RenderFillRect renderer fps-rect)
-
-            ;; Present the rendered frame
-            (SDL-RenderPresent renderer)
-
-            ;; Small delay to cap frame rate roughly
-            (SDL-Delay 16)
-
-            (loop)))))
-
-    ;; Cleanup
-    (λ ()
-      (when renderer
-        (SDL-DestroyRenderer renderer))
-      (when window
-        (SDL-DestroyWindow window))
-      (SDL-Quit))))
-
-;; Run the main function
+;; Run the example
 (main)

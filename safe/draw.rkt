@@ -16,6 +16,7 @@
 
  ;; Timer
  delay!
+ current-ticks
 
  ;; Shapes
  draw-point!
@@ -50,6 +51,9 @@
 
 (define (delay! ms)
   (SDL-Delay ms))
+
+(define (current-ticks)
+  (SDL-GetTicks))
 
 ;; =========================================================================
 ;; Internal helpers

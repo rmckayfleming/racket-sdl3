@@ -182,15 +182,17 @@ Key improvements:
 
 ---
 
-## Phase 6: Animation (`hello-animation.rkt`) - PENDING
+## Phase 6: Animation (`hello-animation.rkt`) - COMPLETED
 
 ### Additions to `safe/draw.rkt`
 
 ```racket
-(current-ticks)  ; wraps SDL-GetTicks
+(current-ticks)  ; wraps SDL-GetTicks for time-based animation
 ```
 
-Mostly benefits from earlier phases.
+### Example Update
+
+`hello-animation.rkt`: rewritten to use `sdl3/safe` with match-based events and draw helpers. Uses `current-ticks` for delta time, `draw-line!`/`draw-points!`/`fill-rect!`, and custodian-managed window/renderer. (Testing requires a display; not runnable in headless sandbox.)
 
 ---
 
@@ -214,7 +216,7 @@ Mostly benefits from earlier phases.
 | 3 | **DONE** | `safe/texture.rkt` | `hello-image.rkt` |
 | 4 | **DONE** | `safe/ttf.rkt`, `safe/texture.rkt` (wrap helper) | `hello-text.rkt` |
 | 5 | **DONE** | `safe/draw.rkt` (shapes) | `hello-shapes.rkt` |
-| 6 | PENDING | (uses previous) | `hello-animation.rkt` |
+| 6 | **DONE** | `safe/draw.rkt` (`current-ticks`) | `hello-animation.rkt` |
 | 7 | PENDING | `safe/mouse.rkt` | `hello-mouse.rkt` |
 
 ---
