@@ -20,6 +20,15 @@
          _SDL_Texture-pointer/null
          _SDL_Surface-pointer
          _SDL_Surface-pointer/null
+         ;; Point struct
+         _SDL_FPoint
+         _SDL_FPoint-pointer
+         _SDL_FPoint-pointer/null
+         make-SDL_FPoint
+         SDL_FPoint-x
+         SDL_FPoint-y
+         set-SDL_FPoint-x!
+         set-SDL_FPoint-y!
          ;; Rect structs
          _SDL_FRect
          _SDL_FRect-pointer
@@ -161,6 +170,11 @@
 ;; ============================================================================
 ;; Rectangle Structs
 ;; ============================================================================
+
+;; SDL_FPoint - floating point 2D point
+(define-cstruct _SDL_FPoint
+  ([x _float]
+   [y _float]))
 
 ;; SDL_FRect - floating point rectangle (preferred in SDL3 for rendering)
 (define-cstruct _SDL_FRect

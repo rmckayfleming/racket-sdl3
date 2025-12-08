@@ -36,6 +36,15 @@
          SDL-RenderTexture
          SDL-GetTextureSize
          SDL-CreateTextureFromSurface
+         ;; Drawing primitives
+         SDL-RenderPoint
+         SDL-RenderPoints
+         SDL-RenderLine
+         SDL-RenderLines
+         SDL-RenderRect
+         SDL-RenderRects
+         SDL-RenderFillRect
+         SDL-RenderFillRects
          ;; Surface
          SDL-DestroySurface
          ;; Events
@@ -166,6 +175,79 @@
 (define-sdl SDL-CreateTextureFromSurface
   (_fun _SDL_Renderer-pointer _SDL_Surface-pointer -> _SDL_Texture-pointer/null)
   #:c-id SDL_CreateTextureFromSurface)
+
+;; ============================================================================
+;; Drawing Primitives
+;; ============================================================================
+
+;; SDL_RenderPoint: Draw a point (single pixel) at (x, y)
+;; renderer: the renderer to draw on
+;; x, y: coordinates of the point
+;; Returns: true on success, false on failure
+(define-sdl SDL-RenderPoint
+  (_fun _SDL_Renderer-pointer _float _float -> _sdl-bool)
+  #:c-id SDL_RenderPoint)
+
+;; SDL_RenderPoints: Draw multiple points at once
+;; renderer: the renderer to draw on
+;; points: pointer to array of SDL_FPoint structs
+;; count: number of points to draw
+;; Returns: true on success, false on failure
+(define-sdl SDL-RenderPoints
+  (_fun _SDL_Renderer-pointer _pointer _int -> _sdl-bool)
+  #:c-id SDL_RenderPoints)
+
+;; SDL_RenderLine: Draw a line from (x1, y1) to (x2, y2)
+;; renderer: the renderer to draw on
+;; x1, y1: start point coordinates
+;; x2, y2: end point coordinates
+;; Returns: true on success, false on failure
+(define-sdl SDL-RenderLine
+  (_fun _SDL_Renderer-pointer _float _float _float _float -> _sdl-bool)
+  #:c-id SDL_RenderLine)
+
+;; SDL_RenderLines: Draw a series of connected lines
+;; renderer: the renderer to draw on
+;; points: pointer to array of SDL_FPoint structs (vertices)
+;; count: number of points (draws count-1 lines)
+;; Returns: true on success, false on failure
+(define-sdl SDL-RenderLines
+  (_fun _SDL_Renderer-pointer _pointer _int -> _sdl-bool)
+  #:c-id SDL_RenderLines)
+
+;; SDL_RenderRect: Draw a rectangle outline
+;; renderer: the renderer to draw on
+;; rect: the rectangle to draw (NULL draws the entire renderer)
+;; Returns: true on success, false on failure
+(define-sdl SDL-RenderRect
+  (_fun _SDL_Renderer-pointer _SDL_FRect-pointer/null -> _sdl-bool)
+  #:c-id SDL_RenderRect)
+
+;; SDL_RenderRects: Draw multiple rectangle outlines at once
+;; renderer: the renderer to draw on
+;; rects: pointer to array of SDL_FRect structs
+;; count: number of rectangles to draw
+;; Returns: true on success, false on failure
+(define-sdl SDL-RenderRects
+  (_fun _SDL_Renderer-pointer _pointer _int -> _sdl-bool)
+  #:c-id SDL_RenderRects)
+
+;; SDL_RenderFillRect: Draw a filled rectangle
+;; renderer: the renderer to draw on
+;; rect: the rectangle to fill (NULL fills the entire renderer)
+;; Returns: true on success, false on failure
+(define-sdl SDL-RenderFillRect
+  (_fun _SDL_Renderer-pointer _SDL_FRect-pointer/null -> _sdl-bool)
+  #:c-id SDL_RenderFillRect)
+
+;; SDL_RenderFillRects: Draw multiple filled rectangles at once
+;; renderer: the renderer to draw on
+;; rects: pointer to array of SDL_FRect structs
+;; count: number of rectangles to fill
+;; Returns: true on success, false on failure
+(define-sdl SDL-RenderFillRects
+  (_fun _SDL_Renderer-pointer _pointer _int -> _sdl-bool)
+  #:c-id SDL_RenderFillRects)
 
 ;; ============================================================================
 ;; Surface

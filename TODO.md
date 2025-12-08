@@ -153,14 +153,14 @@ This document tracks the implementation status of SDL3, SDL3_image, and SDL3_ttf
 - [ ] `SDL_GetRenderVSync`
 
 ### Renderer Drawing (P0)
-- [ ] `SDL_RenderPoint`
-- [ ] `SDL_RenderPoints`
-- [ ] `SDL_RenderLine`
-- [ ] `SDL_RenderLines`
-- [ ] `SDL_RenderRect`
-- [ ] `SDL_RenderRects`
-- [ ] `SDL_RenderFillRect`
-- [ ] `SDL_RenderFillRects`
+- [x] `SDL_RenderPoint`
+- [x] `SDL_RenderPoints`
+- [x] `SDL_RenderLine`
+- [x] `SDL_RenderLines`
+- [x] `SDL_RenderRect`
+- [x] `SDL_RenderRects`
+- [x] `SDL_RenderFillRect`
+- [x] `SDL_RenderFillRects`
 - [ ] `SDL_RenderTextureRotated`
 - [ ] `SDL_RenderTextureAffine`
 - [ ] `SDL_RenderTextureTiled`
@@ -719,7 +719,7 @@ This document tracks the implementation status of SDL3, SDL3_image, and SDL3_ttf
 ### Rect Structs (P0)
 - [ ] `SDL_Rect` (integer version)
 - [ ] `SDL_Point`
-- [ ] `SDL_FPoint`
+- [x] `SDL_FPoint`
 
 ### Blend Mode (P1)
 - [ ] `SDL_BlendMode` type
