@@ -21,6 +21,8 @@
          _SDL_Texture-pointer/null
          _SDL_Surface-pointer
          _SDL_Surface-pointer/null
+         _SDL_Cursor-pointer
+         _SDL_Cursor-pointer/null
          ;; Integer point struct
          _SDL_Point
          _SDL_Point-pointer
@@ -269,6 +271,29 @@
          SDL_PIXELFORMAT_ARGB8888
          SDL_PIXELFORMAT_ABGR8888
          SDL_PIXELFORMAT_BGRA8888
+         ;; System cursor types
+         _SDL_SystemCursor
+         SDL_SYSTEM_CURSOR_DEFAULT
+         SDL_SYSTEM_CURSOR_TEXT
+         SDL_SYSTEM_CURSOR_WAIT
+         SDL_SYSTEM_CURSOR_CROSSHAIR
+         SDL_SYSTEM_CURSOR_PROGRESS
+         SDL_SYSTEM_CURSOR_NWSE_RESIZE
+         SDL_SYSTEM_CURSOR_NESW_RESIZE
+         SDL_SYSTEM_CURSOR_EW_RESIZE
+         SDL_SYSTEM_CURSOR_NS_RESIZE
+         SDL_SYSTEM_CURSOR_MOVE
+         SDL_SYSTEM_CURSOR_NOT_ALLOWED
+         SDL_SYSTEM_CURSOR_POINTER
+         SDL_SYSTEM_CURSOR_NW_RESIZE
+         SDL_SYSTEM_CURSOR_N_RESIZE
+         SDL_SYSTEM_CURSOR_NE_RESIZE
+         SDL_SYSTEM_CURSOR_E_RESIZE
+         SDL_SYSTEM_CURSOR_SE_RESIZE
+         SDL_SYSTEM_CURSOR_S_RESIZE
+         SDL_SYSTEM_CURSOR_SW_RESIZE
+         SDL_SYSTEM_CURSOR_W_RESIZE
+         SDL_SYSTEM_CURSOR_COUNT
          ;; Error handling forward reference
          sdl-get-error-proc)
 
@@ -303,6 +328,7 @@
 (define-cpointer-type _SDL_Renderer-pointer)
 (define-cpointer-type _SDL_Texture-pointer)
 (define-cpointer-type _SDL_Surface-pointer)
+(define-cpointer-type _SDL_Cursor-pointer)
 
 ;; ============================================================================
 ;; Point and Rectangle Structs
@@ -632,6 +658,35 @@
 (define SDL_FLIP_NONE       0)  ; no flipping
 (define SDL_FLIP_HORIZONTAL 1)  ; flip horizontally
 (define SDL_FLIP_VERTICAL   2)  ; flip vertically
+
+;; ============================================================================
+;; System Cursor Types
+;; ============================================================================
+
+;; SDL_SystemCursor - predefined system cursor types
+(define _SDL_SystemCursor _int)
+
+(define SDL_SYSTEM_CURSOR_DEFAULT      0)   ; Default cursor (usually an arrow)
+(define SDL_SYSTEM_CURSOR_TEXT         1)   ; Text selection (usually an I-beam)
+(define SDL_SYSTEM_CURSOR_WAIT         2)   ; Wait (hourglass or spinning ball)
+(define SDL_SYSTEM_CURSOR_CROSSHAIR    3)   ; Crosshair
+(define SDL_SYSTEM_CURSOR_PROGRESS     4)   ; Program busy but interactive
+(define SDL_SYSTEM_CURSOR_NWSE_RESIZE  5)   ; Double arrow NW-SE
+(define SDL_SYSTEM_CURSOR_NESW_RESIZE  6)   ; Double arrow NE-SW
+(define SDL_SYSTEM_CURSOR_EW_RESIZE    7)   ; Double arrow E-W
+(define SDL_SYSTEM_CURSOR_NS_RESIZE    8)   ; Double arrow N-S
+(define SDL_SYSTEM_CURSOR_MOVE         9)   ; Four-pointed arrow (move)
+(define SDL_SYSTEM_CURSOR_NOT_ALLOWED  10)  ; Not permitted (slashed circle)
+(define SDL_SYSTEM_CURSOR_POINTER      11)  ; Pointer/link (pointing hand)
+(define SDL_SYSTEM_CURSOR_NW_RESIZE    12)  ; Window resize top-left
+(define SDL_SYSTEM_CURSOR_N_RESIZE     13)  ; Window resize top
+(define SDL_SYSTEM_CURSOR_NE_RESIZE    14)  ; Window resize top-right
+(define SDL_SYSTEM_CURSOR_E_RESIZE     15)  ; Window resize right
+(define SDL_SYSTEM_CURSOR_SE_RESIZE    16)  ; Window resize bottom-right
+(define SDL_SYSTEM_CURSOR_S_RESIZE     17)  ; Window resize bottom
+(define SDL_SYSTEM_CURSOR_SW_RESIZE    18)  ; Window resize bottom-left
+(define SDL_SYSTEM_CURSOR_W_RESIZE     19)  ; Window resize left
+(define SDL_SYSTEM_CURSOR_COUNT        20)  ; Number of system cursors
 
 ;; ============================================================================
 ;; Event Structs
