@@ -6,16 +6,31 @@
          ffi/unsafe/custodian
          "../raw.rkt"
          "../image.rkt"
-         "window.rkt")
+         "window.rkt"
+         "draw.rkt")
 
 (provide
  ;; Texture management
  load-texture
+ create-texture
  texture-from-pointer
  texture?
  texture-ptr
  texture-destroy!
  texture-size
+
+ ;; Render targets
+ set-render-target!
+ get-render-target
+ with-render-target
+
+ ;; Texture scale mode
+ texture-set-scale-mode!
+ texture-get-scale-mode
+
+ ;; Texture blend mode
+ set-texture-blend-mode!
+ get-texture-blend-mode
 
  ;; Color/Alpha modulation
  texture-set-color-mod!
@@ -26,6 +41,14 @@
  ;; Flip mode conversion
  symbol->flip-mode
  flip-mode->symbol
+
+ ;; Texture access mode symbols
+ symbol->texture-access
+ texture-access->symbol
+
+ ;; Scale mode symbols
+ symbol->scale-mode
+ scale-mode->symbol
 
  ;; Rendering
  render-texture!)
@@ -72,6 +95,162 @@
   (unless (texture-destroyed? tex)
     (SDL-DestroyTexture (texture-ptr tex))
     (set-texture-destroyed?! tex #t)))
+
+;; ============================================================================
+;; Texture Access Mode Conversion
+;; ============================================================================
+
+;; Convert a texture access mode symbol to SDL constant
+(define (symbol->texture-access sym)
+  (case sym
+    [(static) SDL_TEXTUREACCESS_STATIC]
+    [(streaming) SDL_TEXTUREACCESS_STREAMING]
+    [(target) SDL_TEXTUREACCESS_TARGET]
+    [else (error 'symbol->texture-access
+                 "unknown texture access: ~a (expected: static, streaming, target)"
+                 sym)]))
+
+;; Convert an SDL texture access constant to a symbol
+(define (texture-access->symbol access)
+  (cond
+    [(= access SDL_TEXTUREACCESS_STATIC) 'static]
+    [(= access SDL_TEXTUREACCESS_STREAMING) 'streaming]
+    [(= access SDL_TEXTUREACCESS_TARGET) 'target]
+    [else 'unknown]))
+
+;; ============================================================================
+;; Scale Mode Conversion
+;; ============================================================================
+
+;; Convert a scale mode symbol to SDL constant
+(define (symbol->scale-mode sym)
+  (case sym
+    [(nearest) SDL_SCALEMODE_NEAREST]
+    [(linear) SDL_SCALEMODE_LINEAR]
+    [else (error 'symbol->scale-mode
+                 "unknown scale mode: ~a (expected: nearest, linear)"
+                 sym)]))
+
+;; Convert an SDL scale mode constant to a symbol
+(define (scale-mode->symbol mode)
+  (cond
+    [(= mode SDL_SCALEMODE_NEAREST) 'nearest]
+    [(= mode SDL_SCALEMODE_LINEAR) 'linear]
+    [else 'unknown]))
+
+;; ============================================================================
+;; Texture Creation
+;; ============================================================================
+
+;; Create a blank texture for the given renderer
+;; renderer: the renderer to create the texture for
+;; width, height: texture dimensions in pixels
+;; #:access: texture access mode symbol (default: 'target)
+;;   - 'static: changes rarely, not lockable
+;;   - 'streaming: changes frequently, lockable
+;;   - 'target: can be used as render target
+;; #:scale: scale mode symbol (default: 'nearest)
+;;   - 'nearest: nearest pixel sampling (pixelated)
+;;   - 'linear: linear filtering (smooth)
+;; #:format: pixel format (default: SDL_PIXELFORMAT_RGBA8888)
+(define (create-texture rend width height
+                        #:access [access 'target]
+                        #:scale [scale 'nearest]
+                        #:format [format SDL_PIXELFORMAT_RGBA8888]
+                        #:custodian [cust (current-custodian)])
+  (define access-val (if (symbol? access)
+                         (symbol->texture-access access)
+                         access))
+  (define ptr (SDL-CreateTexture (renderer-ptr rend)
+                                 format
+                                 access-val
+                                 width
+                                 height))
+  (unless ptr
+    (error 'create-texture "Failed to create texture: ~a" (SDL-GetError)))
+
+  (define tex (texture-from-pointer ptr #:custodian cust))
+
+  ;; Set scale mode if specified
+  (when scale
+    (define scale-val (if (symbol? scale)
+                          (symbol->scale-mode scale)
+                          scale))
+    (unless (SDL-SetTextureScaleMode (texture-ptr tex) scale-val)
+      (error 'create-texture "Failed to set scale mode: ~a" (SDL-GetError))))
+
+  tex)
+
+;; ============================================================================
+;; Render Targets
+;; ============================================================================
+
+;; Set a texture as the current render target
+;; Pass #f to restore rendering to the default target (the window)
+(define (set-render-target! rend tex)
+  (define tex-ptr (if tex (texture-ptr tex) #f))
+  (unless (SDL-SetRenderTarget (renderer-ptr rend) tex-ptr)
+    (error 'set-render-target! "Failed to set render target: ~a" (SDL-GetError))))
+
+;; Get the current render target
+;; Returns #f if rendering to the default target (window)
+(define (get-render-target rend)
+  (define ptr (SDL-GetRenderTarget (renderer-ptr rend)))
+  (if ptr
+      ;; Wrap in texture struct but don't register with custodian
+      ;; since we don't own this pointer
+      (texture ptr #f)
+      #f))
+
+;; Temporarily render to a texture, then restore the previous target
+;; Usage: (with-render-target renderer texture body ...)
+(define-syntax-rule (with-render-target rend tex body ...)
+  (let ([old-target (SDL-GetRenderTarget (renderer-ptr rend))])
+    (dynamic-wind
+      (λ () (set-render-target! rend tex))
+      (λ () body ...)
+      (λ () (SDL-SetRenderTarget (renderer-ptr rend) old-target)))))
+
+;; ============================================================================
+;; Texture Scale Mode
+;; ============================================================================
+
+;; Set the scale mode for a texture
+(define (texture-set-scale-mode! tex mode)
+  (define mode-val (if (symbol? mode)
+                       (symbol->scale-mode mode)
+                       mode))
+  (unless (SDL-SetTextureScaleMode (texture-ptr tex) mode-val)
+    (error 'texture-set-scale-mode! "Failed to set scale mode: ~a" (SDL-GetError))))
+
+;; Get the scale mode for a texture
+;; Returns a symbol: 'nearest or 'linear
+(define (texture-get-scale-mode tex)
+  (define-values (success mode) (SDL-GetTextureScaleMode (texture-ptr tex)))
+  (unless success
+    (error 'texture-get-scale-mode "Failed to get scale mode: ~a" (SDL-GetError)))
+  (scale-mode->symbol mode))
+
+;; ============================================================================
+;; Texture Blend Mode
+;; ============================================================================
+
+;; Set the blend mode for a texture
+;; mode can be a symbol ('none, 'blend, 'add, 'mod, 'mul) or an SDL constant
+(define (set-texture-blend-mode! tex mode)
+  (define blend-mode
+    (if (symbol? mode)
+        (symbol->blend-mode mode)
+        mode))
+  (unless (SDL-SetTextureBlendMode (texture-ptr tex) blend-mode)
+    (error 'set-texture-blend-mode! "Failed to set blend mode: ~a" (SDL-GetError))))
+
+;; Get the current blend mode for a texture (returns a symbol)
+(define (get-texture-blend-mode tex)
+  (define-values (success mode) (SDL-GetTextureBlendMode (texture-ptr tex)))
+  (if success
+      (blend-mode->symbol mode)
+      (error 'get-texture-blend-mode "Failed to get blend mode: ~a" (SDL-GetError))))
 
 ;; ============================================================================
 ;; Texture Properties

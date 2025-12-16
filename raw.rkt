@@ -38,11 +38,18 @@
          SDL-RenderClear
          SDL-RenderPresent
          ;; Texture
+         SDL-CreateTexture
          SDL-DestroyTexture
          SDL-RenderTexture
          SDL-RenderTextureRotated
          SDL-GetTextureSize
          SDL-CreateTextureFromSurface
+         ;; Render targets
+         SDL-SetRenderTarget
+         SDL-GetRenderTarget
+         ;; Texture scale mode
+         SDL-SetTextureScaleMode
+         SDL-GetTextureScaleMode
          ;; Drawing primitives
          SDL-RenderPoint
          SDL-RenderPoints
@@ -270,6 +277,57 @@
 (define-sdl SDL-CreateTextureFromSurface
   (_fun _SDL_Renderer-pointer _SDL_Surface-pointer -> _SDL_Texture-pointer/null)
   #:c-id SDL_CreateTextureFromSurface)
+
+;; SDL_CreateTexture: Create a texture for a renderer
+;; renderer: the rendering context
+;; format: the pixel format (SDL_PixelFormat)
+;; access: the access pattern (SDL_TextureAccess)
+;; w, h: the width and height of the texture in pixels
+;; Returns: pointer to the texture, or NULL on failure
+(define-sdl SDL-CreateTexture
+  (_fun _SDL_Renderer-pointer _SDL_PixelFormat _SDL_TextureAccess _int _int
+        -> _SDL_Texture-pointer/null)
+  #:c-id SDL_CreateTexture)
+
+;; ============================================================================
+;; Render Targets
+;; ============================================================================
+
+;; SDL_SetRenderTarget: Set a texture as the current rendering target
+;; renderer: the rendering context
+;; texture: the texture to use as render target, or NULL to render to the window
+;; Returns: true on success, false on failure
+(define-sdl SDL-SetRenderTarget
+  (_fun _SDL_Renderer-pointer _SDL_Texture-pointer/null -> _sdl-bool)
+  #:c-id SDL_SetRenderTarget)
+
+;; SDL_GetRenderTarget: Get the current render target
+;; renderer: the rendering context
+;; Returns: the current render target, or NULL for the default (window)
+(define-sdl SDL-GetRenderTarget
+  (_fun _SDL_Renderer-pointer -> _SDL_Texture-pointer/null)
+  #:c-id SDL_GetRenderTarget)
+
+;; ============================================================================
+;; Texture Scale Mode
+;; ============================================================================
+
+;; SDL_SetTextureScaleMode: Set the scale mode used for texture scale operations
+;; texture: the texture to update
+;; scaleMode: the scale mode to use
+;; Returns: true on success, false on failure
+(define-sdl SDL-SetTextureScaleMode
+  (_fun _SDL_Texture-pointer _SDL_ScaleMode -> _sdl-bool)
+  #:c-id SDL_SetTextureScaleMode)
+
+;; SDL_GetTextureScaleMode: Get the scale mode used for texture scale operations
+;; texture: the texture to query
+;; Returns: (values success? scaleMode)
+(define-sdl SDL-GetTextureScaleMode
+  (_fun _SDL_Texture-pointer (scaleMode : (_ptr o _SDL_ScaleMode))
+        -> (result : _sdl-bool)
+        -> (values result scaleMode))
+  #:c-id SDL_GetTextureScaleMode)
 
 ;; ============================================================================
 ;; Drawing Primitives

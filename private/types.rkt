@@ -230,6 +230,23 @@
          SDL_FLIP_NONE
          SDL_FLIP_HORIZONTAL
          SDL_FLIP_VERTICAL
+         ;; Texture access modes
+         _SDL_TextureAccess
+         SDL_TEXTUREACCESS_STATIC
+         SDL_TEXTUREACCESS_STREAMING
+         SDL_TEXTUREACCESS_TARGET
+         ;; Scale modes
+         _SDL_ScaleMode
+         SDL_SCALEMODE_INVALID
+         SDL_SCALEMODE_NEAREST
+         SDL_SCALEMODE_LINEAR
+         ;; Pixel formats (commonly used)
+         _SDL_PixelFormat
+         SDL_PIXELFORMAT_UNKNOWN
+         SDL_PIXELFORMAT_RGBA8888
+         SDL_PIXELFORMAT_ARGB8888
+         SDL_PIXELFORMAT_ABGR8888
+         SDL_PIXELFORMAT_BGRA8888
          ;; Error handling forward reference
          sdl-get-error-proc)
 
@@ -676,6 +693,41 @@
 
 (define (event->mouse-wheel event-ptr)
   (cast event-ptr _pointer _SDL_MouseWheelEvent-pointer))
+
+;; ============================================================================
+;; Texture Access Modes
+;; ============================================================================
+
+;; SDL_TextureAccess - how the texture data will be accessed
+(define _SDL_TextureAccess _int)
+
+(define SDL_TEXTUREACCESS_STATIC    0)  ; changes rarely, not lockable
+(define SDL_TEXTUREACCESS_STREAMING 1)  ; changes frequently, lockable
+(define SDL_TEXTUREACCESS_TARGET    2)  ; can be used as render target
+
+;; ============================================================================
+;; Scale Modes
+;; ============================================================================
+
+;; SDL_ScaleMode - how texture scaling is performed
+(define _SDL_ScaleMode _int)
+
+(define SDL_SCALEMODE_INVALID -1)
+(define SDL_SCALEMODE_NEAREST  0)  ; nearest pixel sampling (pixelated)
+(define SDL_SCALEMODE_LINEAR   1)  ; linear filtering (smooth)
+
+;; ============================================================================
+;; Pixel Formats
+;; ============================================================================
+
+;; SDL_PixelFormat - pixel format values
+(define _SDL_PixelFormat _uint32)
+
+(define SDL_PIXELFORMAT_UNKNOWN   #x00000000)
+(define SDL_PIXELFORMAT_RGBA8888  #x16462004)
+(define SDL_PIXELFORMAT_ARGB8888  #x16362004)
+(define SDL_PIXELFORMAT_ABGR8888  #x16762004)
+(define SDL_PIXELFORMAT_BGRA8888  #x16862004)
 
 ;; ============================================================================
 ;; Error Handling
