@@ -1,266 +1,226 @@
-# Implementation Plan: Textures, Geometry & Input
+# Implementation Plan: Audio Support
 
-This document outlines the next set of features to add to the SDL3 Racket bindings.
+This document outlines the plan for adding audio support to the SDL3 Racket bindings.
 
 ## Goals
 
-Enable render-to-texture workflows, add integer geometry types, expand image I/O, and improve mouse control for game-style input.
+Enable audio playback for games and applications, including loading WAV files, streaming audio, and basic device management.
 
 ---
 
-## Phase 1: Render Targets & Texture Creation
+## Phase 1: Audio Types & Constants
 
-Add ability to create blank textures and render to them for off-screen drawing.
+Add necessary types and constants for audio support.
 
 ### Types (`private/types.rkt`)
 
 ```racket
-;; Texture access modes
-_SDL_TextureAccess
-SDL_TEXTUREACCESS_STATIC     ; 0 - changes rarely, not lockable
-SDL_TEXTUREACCESS_STREAMING  ; 1 - changes frequently, lockable
-SDL_TEXTUREACCESS_TARGET     ; 2 - can be used as render target
+;; Audio device ID (uint32)
+_SDL_AudioDeviceID
 
-;; Scale modes for texture filtering
-_SDL_ScaleMode
-SDL_SCALEMODE_NEAREST  ; 0 - nearest pixel sampling (pixelated)
-SDL_SCALEMODE_LINEAR   ; 1 - linear filtering (smooth)
+;; Audio format enum (SDL_AudioFormat)
+_SDL_AudioFormat
+SDL_AUDIO_S16      ; signed 16-bit samples
+SDL_AUDIO_S32      ; signed 32-bit samples
+SDL_AUDIO_F32      ; 32-bit floating point samples
+
+;; Audio spec struct
+_SDL_AudioSpec
+  - format : SDL_AudioFormat
+  - channels : int
+  - freq : int
+
+;; Pointer types
+_SDL_AudioStream-pointer
 ```
+
+### Init Flags
+
+```racket
+SDL_INIT_AUDIO  ; 0x00000010 - add to existing init flags
+```
+
+---
+
+## Phase 2: Audio Device Management
+
+Basic device enumeration and control.
 
 ### Raw Bindings (`raw.rkt`)
 
 ```racket
-SDL-CreateTexture          ; renderer format access w h -> texture
-SDL-SetRenderTarget        ; renderer texture -> bool
-SDL-GetRenderTarget        ; renderer -> texture or #f
-SDL-SetTextureScaleMode    ; texture scalemode -> bool
-SDL-GetTextureScaleMode    ; texture -> (values bool scalemode)
+;; Drivers
+SDL-GetNumAudioDrivers    ; -> int
+SDL-GetAudioDriver        ; index -> string
+SDL-GetCurrentAudioDriver ; -> string
+
+;; Device enumeration
+SDL-GetAudioPlaybackDevices  ; count-ptr -> device-id-array
+SDL-GetAudioRecordingDevices ; count-ptr -> device-id-array
+SDL-GetAudioDeviceName       ; devid -> string
+
+;; Device control
+SDL-OpenAudioDevice        ; devid spec-ptr -> device-id (0 = default device)
+SDL-CloseAudioDevice       ; devid -> void
+SDL-PauseAudioDevice       ; devid -> bool
+SDL-ResumeAudioDevice      ; devid -> bool
+SDL-AudioDevicePaused      ; devid -> bool
 ```
-
-### Safe Wrapper (`safe/texture.rkt`)
-
-```racket
-(create-texture renderer width height
-                #:access 'target    ; 'static, 'streaming, or 'target
-                #:scale 'nearest)   ; 'nearest or 'linear
-(with-render-target renderer texture body ...)  ; render to texture, restore after
-```
-
-### Example: `15-render-target.rkt`
-
-- Create an off-screen texture
-- Draw a pattern to the texture once
-- Render the texture multiple times with different positions/scales
-- Show FPS benefit of caching complex drawing
 
 ---
 
-## Phase 2: Integer Rectangles & Points
+## Phase 3: Audio Streams
 
-Add integer-based geometry types for pixel-perfect positioning.
-
-### Types (`private/types.rkt`)
-
-```racket
-;; Integer point
-_SDL_Point
-  - x : int
-  - y : int
-
-;; Integer rectangle
-_SDL_Rect
-  - x : int
-  - y : int
-  - w : int
-  - h : int
-```
-
-### Optional: Rectangle Utilities
-
-```racket
-SDL-HasRectIntersection    ; rect-a rect-b -> bool
-SDL-GetRectIntersection    ; rect-a rect-b result -> bool
-```
-
-### Example: Update existing examples
-
-- Use integer rects for tile-based positioning where appropriate
-
----
-
-## Phase 3: Image I/O
-
-Complete image loading and add saving capabilities.
-
-### Raw Bindings (`image.rkt`)
-
-```racket
-IMG-Load      ; filename -> surface (load to surface, not texture)
-IMG-SavePNG   ; surface filename -> bool
-IMG-SaveJPG   ; surface filename quality -> bool
-```
-
-### Safe Wrapper (`safe/texture.rkt`)
-
-```racket
-(load-surface filename)           ; -> surface
-(save-surface-png surface path)   ; -> bool
-(save-surface-jpg surface path quality)  ; quality 0-100
-```
-
-### Example: `16-screenshot.rkt`
-
-- Render a scene
-- Press S to save screenshot as PNG
-- Show confirmation message
-
----
-
-## Phase 4: Relative Mouse & Cursor Control
-
-Enable first-person style mouse input and cursor customization.
+SDL3's primary audio API uses audio streams for all playback.
 
 ### Raw Bindings (`raw.rkt`)
 
 ```racket
-SDL-GetRelativeMouseState      ; -> (values buttons dx dy)
-SDL-SetWindowRelativeMouseMode ; window bool -> bool
-SDL-GetWindowRelativeMouseMode ; window -> bool
-SDL-ShowCursor                 ; -> bool
-SDL-HideCursor                 ; -> bool
-SDL-CursorVisible              ; -> bool
-SDL-CreateSystemCursor         ; cursor-id -> cursor
-SDL-SetCursor                  ; cursor -> bool
-SDL-DestroyCursor              ; cursor -> void
+;; Stream lifecycle
+SDL-CreateAudioStream      ; src-spec dst-spec -> stream
+SDL-DestroyAudioStream     ; stream -> void
+
+;; Stream properties
+SDL-GetAudioStreamFormat   ; stream src-spec-ptr dst-spec-ptr -> bool
+SDL-SetAudioStreamFormat   ; stream src-spec dst-spec -> bool
+
+;; Data operations
+SDL-PutAudioStreamData     ; stream data len -> bool
+SDL-GetAudioStreamData     ; stream buf len -> int (bytes read)
+SDL-GetAudioStreamAvailable ; stream -> int (bytes available)
+SDL-FlushAudioStream       ; stream -> bool
+SDL-ClearAudioStream       ; stream -> bool
+
+;; Binding streams to devices
+SDL-BindAudioStream        ; devid stream -> bool
+SDL-UnbindAudioStream      ; stream -> void
 ```
-
-### Types (`private/types.rkt`)
-
-```racket
-;; System cursor types
-_SDL_SystemCursor
-SDL_SYSTEM_CURSOR_DEFAULT
-SDL_SYSTEM_CURSOR_TEXT
-SDL_SYSTEM_CURSOR_WAIT
-SDL_SYSTEM_CURSOR_CROSSHAIR
-SDL_SYSTEM_CURSOR_POINTER
-SDL_SYSTEM_CURSOR_MOVE
-; ... etc
-```
-
-### Safe Wrapper (`safe/mouse.rkt`)
-
-```racket
-(get-relative-mouse-state)        ; -> (values buttons dx dy)
-(set-relative-mouse-mode! window on?)
-(relative-mouse-mode? window)
-(show-cursor!)
-(hide-cursor!)
-(cursor-visible?)
-(with-system-cursor cursor-type body ...)
-```
-
-### Example: `17-mouselook.rkt`
-
-- Simple 3D-style camera controlled by mouse
-- Click to capture mouse (relative mode)
-- Escape to release
-- Show dx/dy values and accumulated rotation
 
 ---
 
-## Phase 5: Clipboard
+## Phase 4: WAV Loading & Convenience Functions
 
-Add system clipboard support for text.
+Load WAV files and provide simpler APIs.
 
 ### Raw Bindings (`raw.rkt`)
 
 ```racket
-SDL-SetClipboardText   ; text -> bool
-SDL-GetClipboardText   ; -> string
-SDL-HasClipboardText   ; -> bool
+SDL-LoadWAV                 ; path spec-ptr buf-ptr len-ptr -> bool
+SDL-OpenAudioDeviceStream   ; devid spec callback userdata -> stream (convenience)
 ```
 
-### Safe Wrapper
+### Safe Wrapper (`safe/audio.rkt`)
 
 ```racket
-(clipboard-text)          ; -> string or #f
-(set-clipboard-text! str) ; -> bool
-(clipboard-has-text?)     ; -> bool
-```
+;; Device management
+(open-audio-device)                  ; open default playback device
+(open-audio-device #:device id)      ; open specific device
+(close-audio-device! dev)
+(pause-audio-device! dev)
+(resume-audio-device! dev)
+(audio-device-paused? dev)
 
-### Example: Update `14-keyboard.rkt` or text input example
+;; WAV loading
+(load-wav path)                      ; -> (values spec audio-data)
 
-- Ctrl+C to copy displayed text
-- Ctrl+V to paste from clipboard
+;; Stream management
+(create-audio-stream src-spec dst-spec)
+(destroy-audio-stream! stream)
+(put-audio-stream-data! stream data)
+(bind-audio-stream! device stream)
+(unbind-audio-stream! stream)
 
----
-
-## Phase 6: High-Precision Timer
-
-Add performance counters for accurate timing.
-
-### Raw Bindings (`raw.rkt`)
-
-```racket
-SDL-GetPerformanceCounter    ; -> uint64
-SDL-GetPerformanceFrequency  ; -> uint64
-SDL-DelayPrecise             ; nanoseconds -> void
-```
-
-### Safe Wrapper
-
-```racket
-(current-time-ns)  ; -> nanoseconds as exact integer
-(with-timing body ...)  ; -> (values result elapsed-ns)
+;; High-level convenience
+(play-wav device path)               ; load and play WAV file
 ```
 
 ---
 
-## Phase 7: Audio Foundation
+## Phase 5: Example
 
-Basic audio playback (larger undertaking).
+### Example: `18-audio.rkt`
 
-### Core Functions
+Demonstrate basic audio playback:
 
-```racket
-SDL-OpenAudioDevice
-SDL-CloseAudioDevice
-SDL-LoadWAV
-SDL-CreateAudioStream
-SDL-PutAudioStreamData
-SDL-BindAudioStream
-SDL-DestroyAudioStream
-```
-
-### Safe Wrapper
+- Initialize SDL with audio
+- Open default audio device
+- Load a WAV file
+- Create an audio stream and bind to device
+- Play sound on keypress
+- Clean shutdown
 
 ```racket
-(with-audio-device body ...)
-(load-wav path)
-(play-sound wav)
+;; Pseudocode structure
+(define (main)
+  (SDL-Init (bitwise-ior SDL_INIT_VIDEO SDL_INIT_AUDIO))
+
+  ;; Open audio
+  (define dev (open-audio-device))
+  (define-values (spec data) (load-wav "sound.wav"))
+
+  ;; Create stream matching WAV format
+  (define stream (create-audio-stream spec spec))
+  (bind-audio-stream! dev stream)
+
+  ;; Main loop
+  (let loop ()
+    (match (poll-event)
+      [(key-down-event #:key 'space)
+       (put-audio-stream-data! stream data)
+       (loop)]
+      [(quit-event) 'done]
+      [_ (loop)]))
+
+  ;; Cleanup
+  (unbind-audio-stream! stream)
+  (destroy-audio-stream! stream)
+  (close-audio-device! dev)
+  (SDL-Quit))
 ```
 
 ---
 
 ## Implementation Order
 
-| Phase | Priority | Files | Deliverable |
-|-------|----------|-------|-------------|
-| 1 | High | `types.rkt`, `raw.rkt`, `safe/texture.rkt` | Render targets |
-| 2 | High | `types.rkt` | Integer geometry |
-| 3 | Medium | `image.rkt`, `safe/texture.rkt` | Screenshot save |
-| 4 | Medium | `raw.rkt`, `types.rkt`, `safe/mouse.rkt` | FPS mouse |
-| 5 | Low | `raw.rkt` | Copy/paste |
-| 6 | Low | `raw.rkt` | Precise timing |
-| 7 | Low | New `audio.rkt`, `safe/audio.rkt` | Sound |
+| Step | Files | Deliverable |
+|------|-------|-------------|
+| 1 | `private/types.rkt` | Audio types, constants, SDL_INIT_AUDIO |
+| 2 | `raw.rkt` | Audio device functions |
+| 3 | `raw.rkt` | Audio stream functions |
+| 4 | `raw.rkt` | WAV loading |
+| 5 | `safe/audio.rkt` | Idiomatic wrapper |
+| 6 | `examples/18-audio.rkt` | Working example |
+
+---
+
+## Key SDL3 Audio Concepts
+
+1. **Audio Streams**: SDL3 uses streams as the primary abstraction. You push data into a stream, and SDL handles format conversion and buffering.
+
+2. **Device IDs**: `SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK` (0) opens the default playback device.
+
+3. **Audio Spec**: Describes format (S16, F32, etc.), channels (1=mono, 2=stereo), and sample rate (44100, 48000, etc.).
+
+4. **Push Model**: You `SDL_PutAudioStreamData` to queue audio. SDL pulls from the stream as needed.
+
+5. **Binding**: Streams must be bound to a device to play. One device can have multiple streams (mixing).
 
 ---
 
 ## Notes
 
-- Phases 1-2 unlock new rendering patterns (caching, tiles)
-- Phase 3 enables user content export
-- Phase 4 unlocks FPS-style games
-- Phases 5-6 are small quality-of-life additions
-- Phase 7 is substantial but important for games
+- SDL3's audio API is significantly different from SDL2
+- No need for callback-based audio - push model is simpler
+- SDL3 handles mixing of multiple streams automatically
+- Format conversion is automatic when specs differ
+- Need to clear compiled cache after modifying types.rkt
+
+---
+
+## Future Enhancements (not in initial scope)
+
+- Audio recording (microphone input)
+- Real-time audio generation
+- Volume/gain control per stream
+- Audio effects
+- Music streaming for long files

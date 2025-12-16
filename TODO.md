@@ -11,7 +11,7 @@ A complete idiomatic Racket layer on top of the raw bindings, providing:
 - Simpler APIs (fewer pointer manipulations)
 - Drawing helpers, texture management, font/text rendering, mouse state
 
-Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rkt`, `safe/ttf.rkt`, `safe/mouse.rkt`
+Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rkt`, `safe/ttf.rkt`, `safe/mouse.rkt`, `safe/clipboard.rkt`, `safe/timer.rkt`
 
 ### SDL3 Core (`raw.rkt`)
 - [x] `SDL_Init`
@@ -53,12 +53,44 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [x] `SDL_StartTextInput`
 - [x] `SDL_StopTextInput`
 - [x] `SDL_GetMouseState`
+- [x] `SDL_GetRelativeMouseState`
+- [x] `SDL_SetWindowRelativeMouseMode`
+- [x] `SDL_GetWindowRelativeMouseMode`
+- [x] `SDL_CreateSystemCursor`
+- [x] `SDL_SetCursor`
+- [x] `SDL_GetCursor`
+- [x] `SDL_DestroyCursor`
+- [x] `SDL_ShowCursor`
+- [x] `SDL_HideCursor`
+- [x] `SDL_CursorVisible`
 - [x] `SDL_GetTicks`
+- [x] `SDL_GetTicksNS`
+- [x] `SDL_GetPerformanceCounter`
+- [x] `SDL_GetPerformanceFrequency`
 - [x] `SDL_Delay`
+- [x] `SDL_DelayNS`
+- [x] `SDL_DelayPrecise`
+- [x] `SDL_SetClipboardText`
+- [x] `SDL_GetClipboardText`
+- [x] `SDL_HasClipboardText`
+- [x] `SDL_free`
+- [x] `SDL_CreateTexture`
+- [x] `SDL_SetRenderTarget`
+- [x] `SDL_GetRenderTarget`
+- [x] `SDL_SetTextureScaleMode`
+- [x] `SDL_GetTextureScaleMode`
+- [x] `SDL_RenderReadPixels`
+- [x] `SDL_HasRectIntersection`
+- [x] `SDL_GetRectIntersection`
+- [x] `SDL_HasRectIntersectionFloat`
+- [x] `SDL_GetRectIntersectionFloat`
 
 ### SDL3_image (`image.rkt`)
 - [x] `IMG_Version`
 - [x] `IMG_LoadTexture`
+- [x] `IMG_Load`
+- [x] `IMG_SavePNG`
+- [x] `IMG_SaveJPG`
 
 ### SDL3_ttf (`ttf.rkt`)
 - [x] `TTF_Init`
@@ -82,16 +114,21 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [x] `_sdl-bool`, `_SDL_InitFlags`, `_SDL_WindowFlags`
 - [x] `SDL_INIT_VIDEO`
 - [x] `SDL_WINDOW_FULLSCREEN`, `SDL_WINDOW_RESIZABLE`, `SDL_WINDOW_HIGH_PIXEL_DENSITY`
-- [x] Pointer types: `_SDL_Window-pointer`, `_SDL_Renderer-pointer`, `_SDL_Texture-pointer`, `_SDL_Surface-pointer`
-- [x] `_SDL_FPoint` struct, `_SDL_FRect` struct
+- [x] Pointer types: `_SDL_Window-pointer`, `_SDL_Renderer-pointer`, `_SDL_Texture-pointer`, `_SDL_Surface-pointer`, `_SDL_Cursor-pointer`
+- [x] `_SDL_Point` struct, `_SDL_FPoint` struct
+- [x] `_SDL_Rect` struct, `_SDL_FRect` struct
 - [x] `_SDL_Color` struct
 - [x] Event constants: `SDL_EVENT_QUIT`, window events, keyboard events, mouse events (incl. `SDL_EVENT_MOUSE_WHEEL`), text input
 - [x] Event structs: `_SDL_CommonEvent`, `_SDL_KeyboardEvent`, `_SDL_MouseMotionEvent`, `_SDL_MouseButtonEvent`, `_SDL_TextInputEvent`, `_SDL_MouseWheelEvent`
 - [x] Keyboard modifier constants: `SDL_KMOD_NONE`, `SDL_KMOD_LSHIFT`, `SDL_KMOD_RSHIFT`, `SDL_KMOD_CTRL`, `SDL_KMOD_ALT`, etc.
-- [x] Key constants: `SDLK_ESCAPE`, `SDLK_SPACE`, arrow keys, R/G/B keys
+- [x] Key constants: `SDLK_ESCAPE`, `SDLK_SPACE`, arrow keys, R/G/B keys, full alphabet, numbers, F-keys
 - [x] `_SDL_Keycode`
 - [x] `_SDL_BlendMode` and all blend mode constants
 - [x] `_SDL_FlipMode` and flip mode constants (`SDL_FLIP_NONE`, `SDL_FLIP_HORIZONTAL`, `SDL_FLIP_VERTICAL`)
+- [x] `_SDL_TextureAccess` and constants (`SDL_TEXTUREACCESS_STATIC`, `_STREAMING`, `_TARGET`)
+- [x] `_SDL_ScaleMode` and constants (`SDL_SCALEMODE_NEAREST`, `SDL_SCALEMODE_LINEAR`)
+- [x] `_SDL_SystemCursor` enum and all 15 cursor type constants
+- [x] Mouse button constants (`SDL_BUTTON_LEFT`, `_MIDDLE`, `_RIGHT`, `_X1`, `_X2`)
 
 ---
 
@@ -166,8 +203,8 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_GetRendererName`
 - [ ] `SDL_GetRenderOutputSize`
 - [ ] `SDL_GetCurrentRenderOutputSize`
-- [ ] `SDL_SetRenderTarget`
-- [ ] `SDL_GetRenderTarget`
+- [x] `SDL_SetRenderTarget`
+- [x] `SDL_GetRenderTarget`
 - [ ] `SDL_SetRenderViewport`
 - [ ] `SDL_GetRenderViewport`
 - [ ] `SDL_SetRenderClipRect`
@@ -198,12 +235,12 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_RenderTexture9Grid`
 - [ ] `SDL_RenderGeometry`
 - [ ] `SDL_RenderGeometryRaw`
-- [ ] `SDL_RenderReadPixels`
+- [x] `SDL_RenderReadPixels`
 - [ ] `SDL_RenderDebugText`
 - [ ] `SDL_RenderDebugTextFormat`
 
 ### Texture (P1)
-- [ ] `SDL_CreateTexture`
+- [x] `SDL_CreateTexture`
 - [ ] `SDL_CreateTextureWithProperties`
 - [ ] `SDL_GetTextureProperties`
 - [x] `SDL_SetTextureColorMod`
@@ -216,8 +253,8 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_GetTextureAlphaModFloat`
 - [x] `SDL_SetTextureBlendMode`
 - [x] `SDL_GetTextureBlendMode`
-- [ ] `SDL_SetTextureScaleMode`
-- [ ] `SDL_GetTextureScaleMode`
+- [x] `SDL_SetTextureScaleMode`
+- [x] `SDL_GetTextureScaleMode`
 - [ ] `SDL_UpdateTexture`
 - [ ] `SDL_UpdateYUVTexture`
 - [ ] `SDL_UpdateNVTexture`
@@ -316,30 +353,30 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_GetMouseFocus`
 - [x] `SDL_GetMouseState`
 - [ ] `SDL_GetGlobalMouseState`
-- [ ] `SDL_GetRelativeMouseState`
+- [x] `SDL_GetRelativeMouseState`
 - [ ] `SDL_WarpMouseInWindow`
 - [ ] `SDL_WarpMouseGlobal`
-- [ ] `SDL_SetWindowRelativeMouseMode`
-- [ ] `SDL_GetWindowRelativeMouseMode`
+- [x] `SDL_SetWindowRelativeMouseMode`
+- [x] `SDL_GetWindowRelativeMouseMode`
 - [ ] `SDL_CaptureMouse`
 - [ ] `SDL_CreateCursor`
 - [ ] `SDL_CreateColorCursor`
-- [ ] `SDL_CreateSystemCursor`
-- [ ] `SDL_SetCursor`
-- [ ] `SDL_GetCursor`
+- [x] `SDL_CreateSystemCursor`
+- [x] `SDL_SetCursor`
+- [x] `SDL_GetCursor`
 - [ ] `SDL_GetDefaultCursor`
-- [ ] `SDL_DestroyCursor`
-- [ ] `SDL_ShowCursor`
-- [ ] `SDL_HideCursor`
-- [ ] `SDL_CursorVisible`
+- [x] `SDL_DestroyCursor`
+- [x] `SDL_ShowCursor`
+- [x] `SDL_HideCursor`
+- [x] `SDL_CursorVisible`
 
 ### Timer (P2)
 - [x] `SDL_GetTicks`
-- [ ] `SDL_GetTicksNS`
-- [ ] `SDL_GetPerformanceCounter`
-- [ ] `SDL_GetPerformanceFrequency`
-- [ ] `SDL_DelayNS`
-- [ ] `SDL_DelayPrecise`
+- [x] `SDL_GetTicksNS`
+- [x] `SDL_GetPerformanceCounter`
+- [x] `SDL_GetPerformanceFrequency`
+- [x] `SDL_DelayNS`
+- [x] `SDL_DelayPrecise`
 - [ ] `SDL_AddTimer`
 - [ ] `SDL_AddTimerNS`
 - [ ] `SDL_RemoveTimer`
@@ -378,21 +415,21 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_GetAudioFormatName`
 
 ### Rectangle Utilities (P1)
-- [ ] `SDL_HasRectIntersection`
-- [ ] `SDL_GetRectIntersection`
+- [x] `SDL_HasRectIntersection`
+- [x] `SDL_GetRectIntersection`
 - [ ] `SDL_GetRectUnion`
 - [ ] `SDL_GetRectEnclosingPoints`
 - [ ] `SDL_GetRectAndLineIntersection`
-- [ ] `SDL_HasRectIntersectionFloat`
-- [ ] `SDL_GetRectIntersectionFloat`
+- [x] `SDL_HasRectIntersectionFloat`
+- [x] `SDL_GetRectIntersectionFloat`
 - [ ] `SDL_GetRectUnionFloat`
 - [ ] `SDL_GetRectEnclosingPointsFloat`
 - [ ] `SDL_GetRectAndLineIntersectionFloat`
 
 ### Clipboard (P2)
-- [ ] `SDL_SetClipboardText`
-- [ ] `SDL_GetClipboardText`
-- [ ] `SDL_HasClipboardText`
+- [x] `SDL_SetClipboardText`
+- [x] `SDL_GetClipboardText`
+- [x] `SDL_HasClipboardText`
 - [ ] `SDL_SetPrimarySelectionText`
 - [ ] `SDL_GetPrimarySelectionText`
 - [ ] `SDL_HasPrimarySelectionText`
@@ -467,7 +504,7 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 ## SDL3_image
 
 ### Loading - File (P0)
-- [ ] `IMG_Load` (load to surface from file)
+- [x] `IMG_Load` (load to surface from file)
 
 ### Loading - IOStream (P1)
 - [ ] `IMG_Load_IO`
@@ -517,9 +554,9 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `IMG_isXV`
 
 ### Saving (P1)
-- [ ] `IMG_SavePNG`
+- [x] `IMG_SavePNG`
 - [ ] `IMG_SavePNG_IO`
-- [ ] `IMG_SaveJPG`
+- [x] `IMG_SaveJPG`
 - [ ] `IMG_SaveJPG_IO`
 - [ ] `IMG_SaveAVIF`
 - [ ] `IMG_SaveAVIF_IO`
@@ -748,8 +785,8 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [x] Modifier key constants (`SDL_KMOD_NONE`, `SDL_KMOD_LSHIFT`, `SDL_KMOD_RSHIFT`, `SDL_KMOD_CTRL`, `SDL_KMOD_ALT`, `SDL_KMOD_GUI`, etc.)
 
 ### Rect Structs (P0)
-- [ ] `SDL_Rect` (integer version)
-- [ ] `SDL_Point`
+- [x] `SDL_Rect` (integer version)
+- [x] `SDL_Point`
 - [x] `SDL_FPoint`
 
 ### Blend Mode (P1)
@@ -763,10 +800,10 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [x] `SDL_BLENDMODE_MUL`
 
 ### Texture Access (P1)
-- [ ] `SDL_TextureAccess` enum
-- [ ] `SDL_TEXTUREACCESS_STATIC`
-- [ ] `SDL_TEXTUREACCESS_STREAMING`
-- [ ] `SDL_TEXTUREACCESS_TARGET`
+- [x] `SDL_TextureAccess` enum
+- [x] `SDL_TEXTUREACCESS_STATIC`
+- [x] `SDL_TEXTUREACCESS_STREAMING`
+- [x] `SDL_TEXTUREACCESS_TARGET`
 
 ### Pixel Formats (P2)
 - [ ] `SDL_PixelFormat` enum with common formats
@@ -777,9 +814,9 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] ... (many more)
 
 ### Scale Mode (P1)
-- [ ] `SDL_ScaleMode` enum
-- [ ] `SDL_SCALEMODE_NEAREST`
-- [ ] `SDL_SCALEMODE_LINEAR`
+- [x] `SDL_ScaleMode` enum
+- [x] `SDL_SCALEMODE_NEAREST`
+- [x] `SDL_SCALEMODE_LINEAR`
 
 ### Flip Mode (P2)
 - [x] `SDL_FlipMode` enum
@@ -788,13 +825,13 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [x] `SDL_FLIP_VERTICAL`
 
 ### System Cursor (P2)
-- [ ] `SDL_SystemCursor` enum
-- [ ] `SDL_SYSTEM_CURSOR_DEFAULT`
-- [ ] `SDL_SYSTEM_CURSOR_TEXT`
-- [ ] `SDL_SYSTEM_CURSOR_WAIT`
-- [ ] `SDL_SYSTEM_CURSOR_CROSSHAIR`
-- [ ] `SDL_SYSTEM_CURSOR_POINTER`
-- [ ] ... (more cursor types)
+- [x] `SDL_SystemCursor` enum
+- [x] `SDL_SYSTEM_CURSOR_DEFAULT`
+- [x] `SDL_SYSTEM_CURSOR_TEXT`
+- [x] `SDL_SYSTEM_CURSOR_WAIT`
+- [x] `SDL_SYSTEM_CURSOR_CROSSHAIR`
+- [x] `SDL_SYSTEM_CURSOR_POINTER`
+- [x] All 15 system cursor types implemented
 
 ### Mouse Button Constants (P1)
 - [x] `SDL_BUTTON_LEFT`
@@ -813,24 +850,27 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 
 ## Implementation Statistics
 
-**Currently Implemented:** ~70 functions
+**Currently Implemented:** ~90 functions
 **Estimated Total Available:** 500+ functions
 
 ### Coverage by Library
 | Library | Implemented | Estimated Total | Coverage |
 |---------|-------------|-----------------|----------|
-| SDL3 Core | 50 | ~350 | ~14% |
-| SDL3_image | 2 | ~60 | ~3% |
+| SDL3 Core | 71 | ~350 | ~20% |
+| SDL3_image | 5 | ~60 | ~8% |
 | SDL3_ttf | 16 | ~120 | ~13% |
 
 ---
 
 ## Next Steps (Suggested Order)
 
-1. **P0 - Integer Rect:** `SDL_Rect`, `SDL_Point` types
-2. **P1 - Image Loading:** `IMG_Load` (surface), `IMG_SavePNG`
-3. **P1 - Texture Creation:** `SDL_CreateTexture`, `SDL_SetTextureScaleMode`
+1. ~~**P0 - Integer Rect:** `SDL_Rect`, `SDL_Point` types~~ ✓ DONE
+2. ~~**P1 - Image Loading:** `IMG_Load` (surface), `IMG_SavePNG`~~ ✓ DONE
+3. ~~**P1 - Texture Creation:** `SDL_CreateTexture`, `SDL_SetTextureScaleMode`~~ ✓ DONE
 4. **P1 - Scancodes:** Add full scancode enum (`SDL_SCANCODE_*`)
-5. **P1 - Mouse:** `SDL_GetRelativeMouseState`, cursor functions
-6. **P2 - Timer:** `SDL_GetPerformanceCounter`, `SDL_GetPerformanceFrequency`
-7. **P2 - Clipboard:** `SDL_SetClipboardText`, `SDL_GetClipboardText`
+5. ~~**P1 - Mouse:** `SDL_GetRelativeMouseState`, cursor functions~~ ✓ DONE
+6. ~~**P2 - Timer:** `SDL_GetPerformanceCounter`, `SDL_GetPerformanceFrequency`~~ ✓ DONE
+7. ~~**P2 - Clipboard:** `SDL_SetClipboardText`, `SDL_GetClipboardText`~~ ✓ DONE
+8. **P1 - Message Box:** `SDL_ShowSimpleMessageBox`
+9. **P2 - Audio:** Basic audio playback (P2)
+10. **P2 - Joystick/Gamepad:** Basic input support
