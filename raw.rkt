@@ -71,6 +71,11 @@
          SDL-GetTextureAlphaMod
          ;; Surface
          SDL-DestroySurface
+         ;; Rectangle utilities
+         SDL-HasRectIntersection
+         SDL-GetRectIntersection
+         SDL-HasRectIntersectionFloat
+         SDL-GetRectIntersectionFloat
          ;; Events
          SDL-PollEvent
          SDL-WaitEvent
@@ -492,6 +497,44 @@
 ;; surface: the surface to destroy
 (define-sdl SDL-DestroySurface (_fun _SDL_Surface-pointer -> _void)
   #:c-id SDL_DestroySurface)
+
+;; ============================================================================
+;; Rectangle Utilities
+;; ============================================================================
+
+;; SDL_HasRectIntersection: Determine whether two rectangles intersect
+;; A: an SDL_Rect structure representing the first rectangle
+;; B: an SDL_Rect structure representing the second rectangle
+;; Returns: true if there is an intersection, false otherwise
+(define-sdl SDL-HasRectIntersection
+  (_fun _SDL_Rect-pointer _SDL_Rect-pointer -> _sdl-bool)
+  #:c-id SDL_HasRectIntersection)
+
+;; SDL_GetRectIntersection: Calculate the intersection of two rectangles
+;; A: an SDL_Rect structure representing the first rectangle
+;; B: an SDL_Rect structure representing the second rectangle
+;; result: an SDL_Rect structure to be filled with the intersection
+;; Returns: true if there is an intersection, false otherwise
+(define-sdl SDL-GetRectIntersection
+  (_fun _SDL_Rect-pointer _SDL_Rect-pointer _SDL_Rect-pointer -> _sdl-bool)
+  #:c-id SDL_GetRectIntersection)
+
+;; SDL_HasRectIntersectionFloat: Determine whether two float rectangles intersect
+;; A: an SDL_FRect structure representing the first rectangle
+;; B: an SDL_FRect structure representing the second rectangle
+;; Returns: true if there is an intersection, false otherwise
+(define-sdl SDL-HasRectIntersectionFloat
+  (_fun _SDL_FRect-pointer _SDL_FRect-pointer -> _sdl-bool)
+  #:c-id SDL_HasRectIntersectionFloat)
+
+;; SDL_GetRectIntersectionFloat: Calculate the intersection of two float rectangles
+;; A: an SDL_FRect structure representing the first rectangle
+;; B: an SDL_FRect structure representing the second rectangle
+;; result: an SDL_FRect structure to be filled with the intersection
+;; Returns: true if there is an intersection, false otherwise
+(define-sdl SDL-GetRectIntersectionFloat
+  (_fun _SDL_FRect-pointer _SDL_FRect-pointer _SDL_FRect-pointer -> _sdl-bool)
+  #:c-id SDL_GetRectIntersectionFloat)
 
 ;; ============================================================================
 ;; Events

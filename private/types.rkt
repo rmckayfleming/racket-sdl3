@@ -21,7 +21,16 @@
          _SDL_Texture-pointer/null
          _SDL_Surface-pointer
          _SDL_Surface-pointer/null
-         ;; Point struct
+         ;; Integer point struct
+         _SDL_Point
+         _SDL_Point-pointer
+         _SDL_Point-pointer/null
+         make-SDL_Point
+         SDL_Point-x
+         SDL_Point-y
+         set-SDL_Point-x!
+         set-SDL_Point-y!
+         ;; Float point struct
          _SDL_FPoint
          _SDL_FPoint-pointer
          _SDL_FPoint-pointer/null
@@ -30,7 +39,20 @@
          SDL_FPoint-y
          set-SDL_FPoint-x!
          set-SDL_FPoint-y!
-         ;; Rect structs
+         ;; Integer rect struct
+         _SDL_Rect
+         _SDL_Rect-pointer
+         _SDL_Rect-pointer/null
+         make-SDL_Rect
+         SDL_Rect-x
+         SDL_Rect-y
+         SDL_Rect-w
+         SDL_Rect-h
+         set-SDL_Rect-x!
+         set-SDL_Rect-y!
+         set-SDL_Rect-w!
+         set-SDL_Rect-h!
+         ;; Float rect struct
          _SDL_FRect
          _SDL_FRect-pointer
          _SDL_FRect-pointer/null
@@ -283,13 +305,25 @@
 (define-cpointer-type _SDL_Surface-pointer)
 
 ;; ============================================================================
-;; Rectangle Structs
+;; Point and Rectangle Structs
 ;; ============================================================================
+
+;; SDL_Point - integer 2D point
+(define-cstruct _SDL_Point
+  ([x _int]
+   [y _int]))
 
 ;; SDL_FPoint - floating point 2D point
 (define-cstruct _SDL_FPoint
   ([x _float]
    [y _float]))
+
+;; SDL_Rect - integer rectangle (for pixel-perfect positioning)
+(define-cstruct _SDL_Rect
+  ([x _int]
+   [y _int]
+   [w _int]
+   [h _int]))
 
 ;; SDL_FRect - floating point rectangle (preferred in SDL3 for rendering)
 (define-cstruct _SDL_FRect
