@@ -20,10 +20,6 @@
  render-clear!
  render-present!
 
- ;; Timer
- delay!
- current-ticks
-
  ;; Shapes
  draw-point!
  draw-points!
@@ -96,16 +92,6 @@
 
 (define (render-present! rend)
   (SDL-RenderPresent (renderer-ptr rend)))
-
-;; ============================================================================
-;; Timer
-;; ============================================================================
-
-(define (delay! ms)
-  (SDL-Delay ms))
-
-(define (current-ticks)
-  (SDL-GetTicks))
 
 ;; =========================================================================
 ;; Internal helpers
