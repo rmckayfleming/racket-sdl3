@@ -51,7 +51,14 @@
  scale-mode->symbol
 
  ;; Rendering
- render-texture!)
+ render-texture!
+
+ ;; Surface/Image I/O
+ load-surface
+ save-surface-png
+ save-surface-jpg
+ render-read-pixels
+ surface-destroy!)
 
 ;; ============================================================================
 ;; Texture wrapper struct
@@ -384,3 +391,49 @@
                                   center-point
                                   flip-val))
       (SDL-RenderTexture (renderer-ptr rend) (texture-ptr tex) src-rect dst-rect)))
+
+;; ============================================================================
+;; Surface/Image I/O
+;; ============================================================================
+
+;; Load an image file to a software surface (CPU memory)
+;; Use this when you need to manipulate pixel data or save images.
+;; For rendering, prefer load-texture instead.
+(define (load-surface path)
+  (define ptr (IMG-Load path))
+  (unless ptr
+    (error 'load-surface "Failed to load surface ~a: ~a" path (SDL-GetError)))
+  ptr)
+
+;; Save a surface to a PNG file
+;; surface: surface pointer from load-surface or render-read-pixels
+;; path: destination file path
+;; Returns: #t on success
+(define (save-surface-png surface path)
+  (unless (IMG-SavePNG surface path)
+    (error 'save-surface-png "Failed to save PNG ~a: ~a" path (SDL-GetError)))
+  #t)
+
+;; Save a surface to a JPG file
+;; surface: surface pointer from load-surface or render-read-pixels
+;; path: destination file path
+;; quality: 0-100 (higher = better quality, larger file)
+;; Returns: #t on success
+(define (save-surface-jpg surface path [quality 90])
+  (unless (IMG-SaveJPG surface path quality)
+    (error 'save-surface-jpg "Failed to save JPG ~a: ~a" path (SDL-GetError)))
+  #t)
+
+;; Read pixels from the renderer into a new surface
+;; This is used for taking screenshots.
+;; Returns: surface pointer (must be freed with surface-destroy!)
+(define (render-read-pixels rend)
+  (define ptr (SDL-RenderReadPixels (renderer-ptr rend) #f))
+  (unless ptr
+    (error 'render-read-pixels "Failed to read pixels: ~a" (SDL-GetError)))
+  ptr)
+
+;; Destroy a surface (free its memory)
+;; Use this to clean up surfaces from load-surface or render-read-pixels
+(define (surface-destroy! surface)
+  (SDL-DestroySurface surface))

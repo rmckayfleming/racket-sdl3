@@ -71,6 +71,8 @@
          SDL-GetTextureAlphaMod
          ;; Surface
          SDL-DestroySurface
+         ;; Screenshots
+         SDL-RenderReadPixels
          ;; Rectangle utilities
          SDL-HasRectIntersection
          SDL-GetRectIntersection
@@ -497,6 +499,20 @@
 ;; surface: the surface to destroy
 (define-sdl SDL-DestroySurface (_fun _SDL_Surface-pointer -> _void)
   #:c-id SDL_DestroySurface)
+
+;; ============================================================================
+;; Screenshots
+;; ============================================================================
+
+;; SDL_RenderReadPixels: Read pixels from the current rendering target to a surface
+;; renderer: the rendering context
+;; rect: area to read (NULL for entire render target)
+;; Returns: a new surface with the pixels, or NULL on failure
+;;
+;; Use with IMG_SavePNG or IMG_SaveJPG to save screenshots.
+(define-sdl SDL-RenderReadPixels
+  (_fun _SDL_Renderer-pointer _SDL_Rect-pointer/null -> _SDL_Surface-pointer/null)
+  #:c-id SDL_RenderReadPixels)
 
 ;; ============================================================================
 ;; Rectangle Utilities

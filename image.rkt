@@ -14,6 +14,9 @@
 
 (provide ;; Functions
          IMG-LoadTexture
+         IMG-Load
+         IMG-SavePNG
+         IMG-SaveJPG
          IMG-Version)
 
 ;; ============================================================================
@@ -67,3 +70,30 @@
 (define-img IMG-LoadTexture
   (_fun _SDL_Renderer-pointer _string/utf-8 -> _SDL_Texture-pointer/null)
   #:c-id IMG_LoadTexture)
+
+;; IMG_Load: Load image to a software surface (CPU memory)
+;; file: path to the image file
+;; Returns: surface pointer, or NULL on failure (use SDL_GetError for message)
+;;
+;; Use this when you need to manipulate pixel data or save images.
+;; For rendering, prefer IMG_LoadTexture instead.
+(define-img IMG-Load
+  (_fun _string/utf-8 -> _SDL_Surface-pointer/null)
+  #:c-id IMG_Load)
+
+;; IMG_SavePNG: Save a surface to a PNG file
+;; surface: the surface to save
+;; file: destination path for the PNG file
+;; Returns: true on success, false on failure
+(define-img IMG-SavePNG
+  (_fun _SDL_Surface-pointer _string/utf-8 -> _bool)
+  #:c-id IMG_SavePNG)
+
+;; IMG_SaveJPG: Save a surface to a JPG file
+;; surface: the surface to save
+;; file: destination path for the JPG file
+;; quality: 0-100 (higher = better quality, larger file)
+;; Returns: true on success, false on failure
+(define-img IMG-SaveJPG
+  (_fun _SDL_Surface-pointer _string/utf-8 _int -> _bool)
+  #:c-id IMG_SaveJPG)
