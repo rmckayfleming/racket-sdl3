@@ -17,7 +17,8 @@
          "safe/ttf.rkt"
          "safe/mouse.rkt"
          "safe/clipboard.rkt"
-         "safe/timer.rkt")
+         "safe/timer.rkt"
+         "safe/audio.rkt")
 
 (provide (all-from-out "safe/window.rkt")
          (all-from-out "safe/events.rkt")
@@ -26,4 +27,5 @@
          (all-from-out "safe/ttf.rkt")
          (all-from-out "safe/mouse.rkt")
          (all-from-out "safe/clipboard.rkt")
-         (all-from-out "safe/timer.rkt"))
+         (all-from-out "safe/timer.rkt")
+         (all-from-out "safe/audio.rkt"))

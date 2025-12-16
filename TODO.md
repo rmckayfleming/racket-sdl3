@@ -11,7 +11,7 @@ A complete idiomatic Racket layer on top of the raw bindings, providing:
 - Simpler APIs (fewer pointer manipulations)
 - Drawing helpers, texture management, font/text rendering, mouse state
 
-Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rkt`, `safe/ttf.rkt`, `safe/mouse.rkt`, `safe/clipboard.rkt`, `safe/timer.rkt`
+Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rkt`, `safe/ttf.rkt`, `safe/mouse.rkt`, `safe/clipboard.rkt`, `safe/timer.rkt`, `safe/audio.rkt`
 
 ### SDL3 Core (`raw.rkt`)
 - [x] `SDL_Init`
@@ -382,33 +382,33 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_RemoveTimer`
 
 ### Audio (P2)
-- [ ] `SDL_GetNumAudioDrivers`
-- [ ] `SDL_GetAudioDriver`
-- [ ] `SDL_GetCurrentAudioDriver`
-- [ ] `SDL_GetAudioPlaybackDevices`
-- [ ] `SDL_GetAudioRecordingDevices`
-- [ ] `SDL_GetAudioDeviceName`
+- [x] `SDL_GetNumAudioDrivers`
+- [x] `SDL_GetAudioDriver`
+- [x] `SDL_GetCurrentAudioDriver`
+- [x] `SDL_GetAudioPlaybackDevices`
+- [x] `SDL_GetAudioRecordingDevices`
+- [x] `SDL_GetAudioDeviceName`
 - [ ] `SDL_GetAudioDeviceFormat`
-- [ ] `SDL_OpenAudioDevice`
-- [ ] `SDL_CloseAudioDevice`
-- [ ] `SDL_PauseAudioDevice`
-- [ ] `SDL_ResumeAudioDevice`
-- [ ] `SDL_AudioDevicePaused`
+- [x] `SDL_OpenAudioDevice`
+- [x] `SDL_CloseAudioDevice`
+- [x] `SDL_PauseAudioDevice`
+- [x] `SDL_ResumeAudioDevice`
+- [x] `SDL_AudioDevicePaused`
 - [ ] `SDL_SetAudioDeviceGain`
 - [ ] `SDL_GetAudioDeviceGain`
-- [ ] `SDL_CreateAudioStream`
-- [ ] `SDL_DestroyAudioStream`
-- [ ] `SDL_GetAudioStreamFormat`
-- [ ] `SDL_SetAudioStreamFormat`
-- [ ] `SDL_PutAudioStreamData`
-- [ ] `SDL_GetAudioStreamData`
-- [ ] `SDL_GetAudioStreamAvailable`
-- [ ] `SDL_FlushAudioStream`
-- [ ] `SDL_ClearAudioStream`
-- [ ] `SDL_BindAudioStream`
-- [ ] `SDL_UnbindAudioStream`
+- [x] `SDL_CreateAudioStream`
+- [x] `SDL_DestroyAudioStream`
+- [x] `SDL_GetAudioStreamFormat`
+- [x] `SDL_SetAudioStreamFormat`
+- [x] `SDL_PutAudioStreamData`
+- [x] `SDL_GetAudioStreamData`
+- [x] `SDL_GetAudioStreamAvailable`
+- [x] `SDL_FlushAudioStream`
+- [x] `SDL_ClearAudioStream`
+- [x] `SDL_BindAudioStream`
+- [x] `SDL_UnbindAudioStream`
 - [ ] `SDL_OpenAudioDeviceStream`
-- [ ] `SDL_LoadWAV`
+- [x] `SDL_LoadWAV`
 - [ ] `SDL_LoadWAV_IO`
 - [ ] `SDL_MixAudio`
 - [ ] `SDL_ConvertAudioSamples`
@@ -708,7 +708,7 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 ## Types & Constants Still Needed
 
 ### Init Flags (P0)
-- [ ] `SDL_INIT_AUDIO`
+- [x] `SDL_INIT_AUDIO`
 - [ ] `SDL_INIT_JOYSTICK`
 - [ ] `SDL_INIT_HAPTIC`
 - [ ] `SDL_INIT_GAMEPAD`
@@ -850,13 +850,13 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 
 ## Implementation Statistics
 
-**Currently Implemented:** ~90 functions
+**Currently Implemented:** ~112 functions
 **Estimated Total Available:** 500+ functions
 
 ### Coverage by Library
 | Library | Implemented | Estimated Total | Coverage |
 |---------|-------------|-----------------|----------|
-| SDL3 Core | 71 | ~350 | ~20% |
+| SDL3 Core | 93 | ~350 | ~27% |
 | SDL3_image | 5 | ~60 | ~8% |
 | SDL3_ttf | 16 | ~120 | ~13% |
 
@@ -871,6 +871,6 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 5. ~~**P1 - Mouse:** `SDL_GetRelativeMouseState`, cursor functions~~ ✓ DONE
 6. ~~**P2 - Timer:** `SDL_GetPerformanceCounter`, `SDL_GetPerformanceFrequency`~~ ✓ DONE
 7. ~~**P2 - Clipboard:** `SDL_SetClipboardText`, `SDL_GetClipboardText`~~ ✓ DONE
-8. **P1 - Message Box:** `SDL_ShowSimpleMessageBox`
-9. **P2 - Audio:** Basic audio playback (P2)
+8. ~~**P2 - Audio:** Basic audio playback~~ ✓ DONE
+9. **P1 - Message Box:** `SDL_ShowSimpleMessageBox`
 10. **P2 - Joystick/Gamepad:** Basic input support

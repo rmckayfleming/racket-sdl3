@@ -6,6 +6,7 @@
          _sdl-bool
          ;; Init flags
          _SDL_InitFlags
+         SDL_INIT_AUDIO
          SDL_INIT_VIDEO
          ;; Window flags
          _SDL_WindowFlags
@@ -294,6 +295,35 @@
          SDL_SYSTEM_CURSOR_SW_RESIZE
          SDL_SYSTEM_CURSOR_W_RESIZE
          SDL_SYSTEM_CURSOR_COUNT
+         ;; Audio types and constants
+         _SDL_AudioDeviceID
+         SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK
+         SDL_AUDIO_DEVICE_DEFAULT_RECORDING
+         _SDL_AudioFormat
+         SDL_AUDIO_UNKNOWN
+         SDL_AUDIO_U8
+         SDL_AUDIO_S8
+         SDL_AUDIO_S16LE
+         SDL_AUDIO_S16BE
+         SDL_AUDIO_S32LE
+         SDL_AUDIO_S32BE
+         SDL_AUDIO_F32LE
+         SDL_AUDIO_F32BE
+         SDL_AUDIO_S16
+         SDL_AUDIO_S32
+         SDL_AUDIO_F32
+         _SDL_AudioSpec
+         _SDL_AudioSpec-pointer
+         _SDL_AudioSpec-pointer/null
+         make-SDL_AudioSpec
+         SDL_AudioSpec-format
+         SDL_AudioSpec-channels
+         SDL_AudioSpec-freq
+         set-SDL_AudioSpec-format!
+         set-SDL_AudioSpec-channels!
+         set-SDL_AudioSpec-freq!
+         _SDL_AudioStream-pointer
+         _SDL_AudioStream-pointer/null
          ;; Error handling forward reference
          sdl-get-error-proc)
 
@@ -306,6 +336,7 @@
 ;; ============================================================================
 ;; Init Flags (SDL_InitFlags) - used with SDL_Init
 ;; ============================================================================
+(define SDL_INIT_AUDIO #x00000010)
 (define SDL_INIT_VIDEO #x00000020)
 
 ;; SDL_InitFlags is a 32-bit unsigned integer (flags can be combined with bitwise-ior)
@@ -817,6 +848,48 @@
 (define SDL_PIXELFORMAT_ARGB8888  #x16362004)
 (define SDL_PIXELFORMAT_ABGR8888  #x16762004)
 (define SDL_PIXELFORMAT_BGRA8888  #x16862004)
+
+;; ============================================================================
+;; Audio Types
+;; ============================================================================
+
+;; SDL_AudioDeviceID - audio device instance ID (uint32)
+;; Zero signifies an invalid/null device
+(define _SDL_AudioDeviceID _uint32)
+
+;; Default device constants
+(define SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK   #xFFFFFFFF)
+(define SDL_AUDIO_DEVICE_DEFAULT_RECORDING  #xFFFFFFFE)
+
+;; SDL_AudioFormat - audio format specifier (uint16 enum)
+(define _SDL_AudioFormat _uint16)
+
+;; Audio format constants
+(define SDL_AUDIO_UNKNOWN  #x0000)  ; Unspecified audio format
+(define SDL_AUDIO_U8       #x0008)  ; Unsigned 8-bit samples
+(define SDL_AUDIO_S8       #x8008)  ; Signed 8-bit samples
+(define SDL_AUDIO_S16LE    #x8010)  ; Signed 16-bit samples (little-endian)
+(define SDL_AUDIO_S16BE    #x9010)  ; Signed 16-bit samples (big-endian)
+(define SDL_AUDIO_S32LE    #x8020)  ; 32-bit integer samples (little-endian)
+(define SDL_AUDIO_S32BE    #x9020)  ; 32-bit integer samples (big-endian)
+(define SDL_AUDIO_F32LE    #x8120)  ; 32-bit floating point samples (little-endian)
+(define SDL_AUDIO_F32BE    #x9120)  ; 32-bit floating point samples (big-endian)
+
+;; Native byte order aliases (little-endian on macOS/x86/ARM)
+(define SDL_AUDIO_S16 SDL_AUDIO_S16LE)
+(define SDL_AUDIO_S32 SDL_AUDIO_S32LE)
+(define SDL_AUDIO_F32 SDL_AUDIO_F32LE)
+
+;; SDL_AudioSpec - audio format specification struct
+;; Note: explicit padding added for C struct alignment (uint16 followed by int)
+(define-cstruct _SDL_AudioSpec
+  ([format _SDL_AudioFormat]  ; Audio data format
+   [_pad _uint16]             ; Padding for alignment
+   [channels _int]            ; Number of channels: 1 mono, 2 stereo, etc
+   [freq _int]))              ; Sample rate: sample frames per second
+
+;; SDL_AudioStream opaque pointer type
+(define-cpointer-type _SDL_AudioStream-pointer)
 
 ;; ============================================================================
 ;; Error Handling
