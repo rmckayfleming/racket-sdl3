@@ -8,9 +8,15 @@
 
 ## Build & Run
 
-**IMPORTANT: You are working in a git worktree.** The `sdl3` package is installed pointing to the main repository, not this worktree. To test code in this worktree, you must use `PLTCOLLECTS` to override the collection path:
+**IMPORTANT: You are working in a git worktree.** The `sdl3` package is installed pointing to the main repository, not this worktree. To test code in this worktree, you must:
+
+1. **Create a symlink** (one-time setup): `ln -sf . sdl3`
+2. **Use PLTCOLLECTS** to override the collection path
 
 ```bash
+# One-time setup: create sdl3 symlink pointing to current directory
+ln -sf . sdl3
+
 # Run examples against THIS worktree's code (not the installed package)
 PLTCOLLECTS="$PWD:" /opt/homebrew/bin/racket examples/01-window.rkt
 
@@ -18,7 +24,9 @@ PLTCOLLECTS="$PWD:" /opt/homebrew/bin/racket examples/01-window.rkt
 PLTCOLLECTS="$PWD:" /opt/homebrew/bin/raco make safe.rkt
 ```
 
-Without `PLTCOLLECTS="$PWD:"`, Racket will load the main repo's code instead of the worktree's code, causing confusing "unbound identifier" errors for new functions.
+The symlink is necessary because `PLTCOLLECTS` adds directories to search for collections, and the collection name is `sdl3`. The symlink `sdl3 -> .` makes the worktree findable as a collection.
+
+Without this setup, Racket will load the main repo's code instead of the worktree's code, causing confusing "unbound identifier" errors for new functions.
 
 Racket automatically creates `compiled/` directories for bytecode caching. Usually this just works. If you hit strange errors after modifying types or structs (e.g., "identifier not found" for something you just added), clear the cache:
 

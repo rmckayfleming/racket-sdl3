@@ -8,3 +8,6 @@
 
 **/compiled/
 .claude/
+
+# Worktree symlink for PLTCOLLECTS override
+/sdl3

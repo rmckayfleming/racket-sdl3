@@ -237,21 +237,17 @@ render-read-pixels  ; renderer -> surface (with custodian cleanup)
 
 ---
 
-## Phase 5: Flip main.rkt to safe
+## Phase 5: Flip main.rkt to safe ✓ COMPLETED
 
 The actual "flip" - make safe the default interface.
 
 ### Steps
 
-1. Update `main.rkt`:
-   ```racket
-   #lang racket/base
-   (require "safe.rkt")
-   (provide (all-from-out "safe.rkt"))
-   ```
-2. Update any examples using `(require sdl3)` expecting raw bindings
-   - `examples/15-repl.rkt` uses raw - change to `(require sdl3/raw)`
-3. Test all examples
+1. ✓ Update `main.rkt` to re-export `safe.rkt` instead of `raw.rkt`
+2. ✓ Verified all examples already use `sdl3/safe` explicitly (no changes needed)
+3. ✓ Tested examples: 01-window, 04-image, 05-text, 15-repl all work
+4. ✓ Updated CLAUDE.md with correct PLTCOLLECTS + symlink documentation
+5. ✓ Added `/sdl3` to .gitignore (worktree symlink)
 
 ---
 
