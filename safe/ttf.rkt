@@ -9,7 +9,7 @@
          "texture.rkt"
          "window.rkt"
          "draw.rkt"
-         "syntax.rkt")
+         "../private/safe-syntax.rkt")
 
 (provide
  ;; Font management

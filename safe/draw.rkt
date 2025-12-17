@@ -5,7 +5,7 @@
 (require ffi/unsafe
          "../raw.rkt"
          "window.rkt"
-         "syntax.rkt")
+         "../private/safe-syntax.rkt")
 
 (provide
  ;; Color

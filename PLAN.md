@@ -102,25 +102,26 @@ racket-sdl3/
 
 ---
 
-## Phase 1: Move safe/syntax.rkt to private/
+## Phase 1: Move safe/syntax.rkt to private/ ✓ COMPLETED
 
 Low-risk change that establishes the pattern.
 
 ### Steps
 
-1. Create `private/safe-syntax.rkt` with contents of `safe/syntax.rkt`
-2. Update all `safe/*.rkt` files to require `"../private/safe-syntax.rkt"` instead of `"syntax.rkt"`
-3. Delete `safe/syntax.rkt`
-4. Test: `raco make safe.rkt && racket examples/01-window.rkt`
+1. ✓ Create `private/safe-syntax.rkt` with contents of `safe/syntax.rkt`
+2. ✓ Update all `safe/*.rkt` files to require `"../private/safe-syntax.rkt"` instead of `"syntax.rkt"`
+3. ✓ Delete `safe/syntax.rkt`
+4. ✓ Test: `raco make safe.rkt && racket examples/01-window.rkt`
 
 ### Files Modified
 - `private/safe-syntax.rkt` (new)
 - `safe/window.rkt`
 - `safe/draw.rkt`
 - `safe/texture.rkt`
-- `safe/display.rkt`
-- `safe/dialog.rkt`
+- `safe/ttf.rkt`
 - `safe/syntax.rkt` (deleted)
+
+Note: `safe/display.rkt` and `safe/dialog.rkt` did not require syntax.rkt, so no changes needed.
 
 ---
 

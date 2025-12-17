@@ -5,7 +5,7 @@
 (require ffi/unsafe
          ffi/unsafe/custodian
          "../raw.rkt"
-         "syntax.rkt")
+         "../private/safe-syntax.rkt")
 
 (provide
  ;; Initialization
