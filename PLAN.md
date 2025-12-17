@@ -1,381 +1,305 @@
-# Implementation Plan: P1 Features
+# Repository Restructuring Plan
 
-This document outlines the plan for implementing P1 (important) features for the SDL3 Racket bindings. With P0 complete, these features round out the library for most game and application development.
+This document outlines the plan for restructuring the racket-sdl3 repository to make the safe, idiomatic interface the default.
 
 ## Goals
 
-Add commonly-needed features for games and applications:
-- Keyboard state queries for smooth input handling
-- Additional mouse functionality
-- Display/monitor information for proper fullscreen and multi-monitor support
-- Message boxes for alerts and confirmations
-- File dialogs for loading/saving user files
+1. **Make safe the default**: `(require sdl3)` gives the idiomatic Racket API
+2. **Raw access via sdl3/raw**: Low-level C-style bindings for power users
+3. **Consistent module structure**: Both raw/ and safe/ follow the same organization
+4. **Move implementation details to private/**: Keep public directories clean
+
+## Current Structure
+
+```
+racket-sdl3/
+├── main.rkt          # Re-exports raw.rkt (PROBLEM: raw is default)
+├── raw.rkt           # Monolithic 1,800-line FFI bindings
+├── safe.rkt          # Aggregates safe/* modules
+├── image.rkt         # Top-level oddity
+├── ttf.rkt           # Top-level oddity
+├── private/
+│   ├── lib.rkt
+│   ├── syntax.rkt
+│   └── types.rkt     # Large 1,300-line file
+├── safe/
+│   ├── syntax.rkt    # Should be in private/
+│   ├── window.rkt
+│   ├── draw.rkt
+│   ├── texture.rkt
+│   ├── events.rkt
+│   ├── keyboard.rkt
+│   ├── mouse.rkt
+│   ├── audio.rkt
+│   ├── display.rkt
+│   ├── clipboard.rkt
+│   ├── dialog.rkt
+│   ├── timer.rkt
+│   └── ttf.rkt
+└── examples/
+```
+
+## Target Structure
+
+```
+racket-sdl3/
+├── main.rkt              # Re-exports safe.rkt (safe is default)
+├── raw.rkt               # Aggregates all raw/* modules
+├── safe.rkt              # Aggregates all safe/* modules
+│
+├── raw/                  # Low-level FFI bindings by subsystem
+│   ├── init.rkt          # SDL-Init, SDL-Quit, version info
+│   ├── window.rkt        # Window creation/management
+│   ├── render.rkt        # Renderer, basic drawing
+│   ├── texture.rkt       # Texture management
+│   ├── surface.rkt       # Surface operations
+│   ├── events.rkt        # Event polling and types
+│   ├── keyboard.rkt      # Keyboard functions
+│   ├── mouse.rkt         # Mouse functions
+│   ├── audio.rkt         # Audio device/stream
+│   ├── display.rkt       # Display/monitor info
+│   ├── clipboard.rkt     # Clipboard access
+│   ├── dialog.rkt        # File dialogs, message boxes
+│   ├── timer.rkt         # Timing functions
+│   ├── hints.rkt         # Configuration hints
+│   ├── image.rkt         # SDL_image bindings (moved from top-level)
+│   └── ttf.rkt           # SDL_ttf bindings (moved from top-level)
+│
+├── safe/                 # Idiomatic wrappers (parallel structure)
+│   ├── window.rkt
+│   ├── draw.rkt
+│   ├── texture.rkt
+│   ├── events.rkt
+│   ├── keyboard.rkt
+│   ├── mouse.rkt
+│   ├── audio.rkt
+│   ├── display.rkt
+│   ├── clipboard.rkt
+│   ├── dialog.rkt
+│   ├── timer.rkt
+│   ├── image.rkt         # New: safe surface loading/saving
+│   └── ttf.rkt           # Updated requires
+│
+├── private/
+│   ├── lib.rkt           # Library loading, define-sdl macro
+│   ├── syntax.rkt        # Error handling helpers
+│   ├── safe-syntax.rkt   # Resource wrapping macros (moved from safe/)
+│   ├── types.rkt         # Struct definitions
+│   ├── constants.rkt     # Flags and enum values (split from types)
+│   └── enums.rkt         # Keycodes, scancodes (split from types)
+│
+└── examples/             # Update imports as needed
+```
+
+## Access Patterns After Restructuring
+
+| Want | Require |
+|------|---------|
+| Safe API (default) | `sdl3` |
+| All raw bindings | `sdl3/raw` |
+| Specific raw module | `sdl3/raw/window` |
+| Specific safe module | `sdl3/safe/window` |
 
 ---
 
-## Phase 1: Keyboard State & Scancodes
+## Phase 1: Move safe/syntax.rkt to private/
 
-Query keyboard state for smooth, polling-based input (complements event-based input). Add full scancode support.
+Low-risk change that establishes the pattern.
 
-### Raw Bindings (`raw.rkt`)
+### Steps
 
-```racket
-;; Keyboard state
-SDL-GetKeyboardState         ; numkeys-ptr -> uint8-array
-SDL-GetModState              ; -> keymod
-SDL-ResetKeyboard            ; -> void
+1. Create `private/safe-syntax.rkt` with contents of `safe/syntax.rkt`
+2. Update all `safe/*.rkt` files to require `"../private/safe-syntax.rkt"` instead of `"syntax.rkt"`
+3. Delete `safe/syntax.rkt`
+4. Test: `raco make safe.rkt && racket examples/01-window.rkt`
 
-;; Scancode/keycode conversion
-SDL-GetKeyFromScancode       ; scancode modstate key-event -> keycode
-SDL-GetScancodeFromKey       ; keycode modstate -> scancode
-SDL-GetScancodeName          ; scancode -> string
-SDL-GetScancodeFromName      ; name -> scancode
-SDL-GetKeyFromName           ; name -> keycode
-```
-
-### Types (`private/types.rkt`)
-
-```racket
-;; Scancode enum (physical key positions)
-_SDL_Scancode
-SDL_SCANCODE_A through SDL_SCANCODE_Z
-SDL_SCANCODE_1 through SDL_SCANCODE_0
-SDL_SCANCODE_RETURN
-SDL_SCANCODE_ESCAPE
-SDL_SCANCODE_BACKSPACE
-SDL_SCANCODE_TAB
-SDL_SCANCODE_SPACE
-SDL_SCANCODE_F1 through SDL_SCANCODE_F12
-SDL_SCANCODE_RIGHT, SDL_SCANCODE_LEFT, SDL_SCANCODE_DOWN, SDL_SCANCODE_UP
-SDL_SCANCODE_LCTRL, SDL_SCANCODE_LSHIFT, SDL_SCANCODE_LALT
-SDL_SCANCODE_RCTRL, SDL_SCANCODE_RSHIFT, SDL_SCANCODE_RALT
-; ... ~120 most useful ones
-```
-
-### Safe Wrappers (`safe/keyboard.rkt`)
-
-```racket
-;; Keyboard state queries
-(get-keyboard-state)         ; -> procedure (scancode -> bool)
-(key-pressed? scancode)      ; -> bool (requires get-keyboard-state first)
-(get-mod-state)              ; -> integer (bitmask)
-(mod-state-has? mod-flag)    ; -> bool
-
-;; Scancode/keycode utilities
-(scancode-name scancode)     ; -> string
-(scancode-from-name name)    ; -> scancode
-(key-from-name name)         ; -> keycode
-```
-
-### Example: `23-keyboard-state.rkt`
-
-Demonstrate keyboard state:
-- Smooth character movement with polling
-- Show all currently pressed keys
-- Modifier state display
-- Compare polling vs event-based input
+### Files Modified
+- `private/safe-syntax.rkt` (new)
+- `safe/window.rkt`
+- `safe/draw.rkt`
+- `safe/texture.rkt`
+- `safe/display.rkt`
+- `safe/dialog.rkt`
+- `safe/syntax.rkt` (deleted)
 
 ---
 
-## Phase 2: Mouse Enhancements
+## Phase 2: Split raw.rkt into raw/*.rkt
 
-Additional mouse functionality for warping and global state.
+The largest mechanical change. Split the monolithic raw.rkt by SDL subsystem.
 
-### Raw Bindings (`raw.rkt`)
+### Module Breakdown
 
-```racket
-;; Mouse warping
-SDL-WarpMouseInWindow        ; window x y -> void
-SDL-WarpMouseGlobal          ; x y -> bool
+Based on the current raw.rkt sections:
 
-;; Global mouse state
-SDL-GetGlobalMouseState      ; x-ptr y-ptr -> button-flags
+| New Module | Contents |
+|------------|----------|
+| `raw/init.rkt` | SDL-Init, SDL-Quit, SDL-WasInit, SDL-GetError, SDL-ClearError, version functions |
+| `raw/window.rkt` | SDL-CreateWindow, SDL-DestroyWindow, SDL-GetWindowSize, SDL-SetWindowTitle, etc. |
+| `raw/render.rkt` | SDL-CreateRenderer, SDL-DestroyRenderer, SDL-RenderClear, SDL-RenderPresent, SDL-SetRenderDrawColor, drawing primitives |
+| `raw/texture.rkt` | SDL-CreateTexture, SDL-DestroyTexture, SDL-CreateTextureFromSurface, SDL-RenderTexture, etc. |
+| `raw/surface.rkt` | SDL-CreateSurface, SDL-DestroySurface, SDL-BlitSurface, etc. |
+| `raw/events.rkt` | SDL-PollEvent, SDL-WaitEvent, SDL-PushEvent, event type constants |
+| `raw/keyboard.rkt` | SDL-GetKeyboardState, SDL-GetModState, scancode/keycode functions |
+| `raw/mouse.rkt` | SDL-GetMouseState, SDL-WarpMouseInWindow, SDL-SetCursor, etc. |
+| `raw/audio.rkt` | SDL-OpenAudioDevice, SDL-CloseAudioDevice, audio stream functions |
+| `raw/display.rkt` | SDL-GetDisplays, SDL-GetDisplayBounds, display mode functions |
+| `raw/clipboard.rkt` | SDL-GetClipboardText, SDL-SetClipboardText, etc. |
+| `raw/dialog.rkt` | SDL-ShowOpenFileDialog, SDL-ShowSaveFileDialog, SDL-ShowMessageBox |
+| `raw/timer.rkt` | SDL-GetTicks, SDL-Delay, performance counter functions |
+| `raw/hints.rkt` | SDL-SetHint, SDL-GetHint |
 
-;; Mouse capture
-SDL-CaptureMouse             ; enabled -> bool
-```
+### Steps
 
-### Safe Wrappers (`safe/mouse.rkt`)
+1. Create `raw/` directory
+2. Create each `raw/*.rkt` module:
+   - Copy relevant functions from current `raw.rkt`
+   - Add appropriate requires (private/lib.rkt, private/types.rkt)
+   - Add provides for all functions
+3. Create new `raw.rkt` that re-exports all `raw/*.rkt` modules
+4. Update `safe/*.rkt` files to require from `raw.rkt` (or specific raw modules)
+5. Delete old raw.rkt content (it becomes the aggregator)
+6. Test: `raco make raw.rkt && raco make safe.rkt`
 
-```racket
-;; Mouse warping
-(warp-mouse! window x y)     ; move mouse to position in window
-(warp-mouse-global! x y)     ; move mouse to screen position
+### Dependencies Between raw/ Modules
 
-;; Global state
-(get-global-mouse-state)     ; -> (values buttons x y)
+Most raw modules are independent, but some share dependencies:
+- All require `private/lib.rkt` and `private/types.rkt`
+- `raw/render.rkt` may need window pointer types
+- `raw/texture.rkt` needs renderer and surface pointer types
 
-;; Capture
-(capture-mouse! enabled?)    ; capture mouse outside window
-```
-
-### Example: `24-mouse-warp.rkt`
-
-Demonstrate mouse features:
-- Warp mouse to center on key press
-- Show global vs window-relative coordinates
-- Mouse capture for drag operations
-
----
-
-## Phase 3: Display Management
-
-Query monitor information for proper fullscreen modes and multi-monitor setups.
-
-### Raw Bindings (`raw.rkt`)
-
-```racket
-;; Display enumeration
-SDL-GetDisplays              ; count-ptr -> display-id-array
-SDL-GetPrimaryDisplay        ; -> display-id
-SDL-GetDisplayName           ; display-id -> string
-
-;; Display bounds
-SDL-GetDisplayBounds         ; display-id rect-ptr -> bool
-SDL-GetDisplayUsableBounds   ; display-id rect-ptr -> bool (excludes taskbar, etc.)
-
-;; Display modes
-SDL-GetCurrentDisplayMode    ; display-id -> display-mode-ptr
-SDL-GetDesktopDisplayMode    ; display-id -> display-mode-ptr
-SDL-GetFullscreenDisplayModes ; display-id count-ptr -> display-mode-array
-
-;; Window-display relationship
-SDL-GetDisplayForWindow      ; window -> display-id
-SDL-GetDisplayContentScale   ; display-id -> float
-SDL-GetWindowDisplayScale    ; window -> float
-```
-
-### Types (`private/types.rkt`)
-
-```racket
-;; Display ID type
-_SDL_DisplayID               ; uint32
-
-;; Display mode struct
-_SDL_DisplayMode
-  - displayID : SDL_DisplayID
-  - format : SDL_PixelFormat
-  - w : int
-  - h : int
-  - pixel_density : float
-  - refresh_rate : float
-```
-
-### Safe Wrappers (`safe/display.rkt`)
-
-```racket
-;; Display enumeration
-(get-displays)               ; -> (listof display-id)
-(primary-display)            ; -> display-id
-(display-name display-id)    ; -> string
-
-;; Display bounds
-(display-bounds display-id)  ; -> (values x y w h)
-(display-usable-bounds display-id) ; -> (values x y w h)
-
-;; Display modes
-(current-display-mode display-id)  ; -> display-mode struct
-(desktop-display-mode display-id)  ; -> display-mode struct
-(fullscreen-display-modes display-id) ; -> (listof display-mode)
-
-;; Window relationship
-(window-display window)      ; -> display-id
-(display-content-scale display-id) ; -> float
-(window-display-scale window) ; -> float
-```
-
-### Example: `25-display-info.rkt`
-
-Show display information:
-- List all connected displays
-- Show resolution, refresh rate, scale factor
-- Demonstrate proper fullscreen mode selection
+These dependencies are on types, not functions, so modules remain independent.
 
 ---
 
-## Phase 4: Message Boxes
+## Phase 3: Move image.rkt and ttf.rkt to raw/
 
-Native dialog boxes for alerts, confirmations, and errors.
+Move the extension library bindings into the raw/ directory structure.
 
-### Raw Bindings (`raw.rkt`)
+### Steps
 
-```racket
-;; Simple message box
-SDL-ShowSimpleMessageBox     ; flags title message window -> bool
-
-;; Full message box (with custom buttons)
-SDL-ShowMessageBox           ; messageboxdata buttonid-ptr -> bool
-```
-
-### Types (`private/types.rkt`)
-
-```racket
-;; Message box flags
-_SDL_MessageBoxFlags
-SDL_MESSAGEBOX_ERROR         ; 0x00000010
-SDL_MESSAGEBOX_WARNING       ; 0x00000020
-SDL_MESSAGEBOX_INFORMATION   ; 0x00000040
-SDL_MESSAGEBOX_BUTTONS_LEFT_TO_RIGHT  ; 0x00000080
-SDL_MESSAGEBOX_BUTTONS_RIGHT_TO_LEFT  ; 0x00000100
-
-;; Message box button data (for custom buttons)
-_SDL_MessageBoxButtonData
-  - flags : uint32
-  - buttonID : int
-  - text : string
-
-;; Message box data
-_SDL_MessageBoxData
-  - flags : uint32
-  - window : window-ptr/null
-  - title : string
-  - message : string
-  - numbuttons : int
-  - buttons : button-array-ptr
-  - colorScheme : color-scheme-ptr/null
-```
-
-### Safe Wrappers (`safe/dialog.rkt`)
-
-```racket
-;; Simple message boxes
-(show-message-box title message
-                  #:type ['info 'warning 'error]
-                  #:window [window #f])
-
-;; Confirmation dialog (returns 'yes, 'no, or 'cancel)
-(show-confirm-dialog title message
-                     #:buttons ['yes-no 'yes-no-cancel 'ok-cancel]
-                     #:window [window #f])
-```
-
-### Example: `26-message-box.rkt`
-
-Demonstrate message boxes:
-- Info, warning, error styles
-- Confirmation dialogs
-- Using with/without parent window
+1. Move `image.rkt` to `raw/image.rkt`
+   - Update require paths (private/ becomes ../private/)
+2. Move `ttf.rkt` to `raw/ttf.rkt`
+   - Update require paths
+3. Update `raw.rkt` aggregator to include image and ttf
+4. Update `safe/texture.rkt` to require `"../raw/image.rkt"` or `"../raw.rkt"`
+5. Update `safe/ttf.rkt` to require `"../raw/ttf.rkt"` or `"../raw.rkt"`
+6. Test: `racket examples/04-image.rkt && racket examples/05-text.rkt`
 
 ---
 
-## Phase 5: File Dialogs
+## Phase 4: Create safe/image.rkt
 
-Native file open/save dialogs for user file selection.
+Add a safe wrapper for image operations that aren't texture-related.
 
-### Raw Bindings (`raw.rkt`)
-
-```racket
-;; Async file dialogs (SDL3 uses callbacks)
-SDL-ShowOpenFileDialog       ; callback userdata window filters nfilters default allow-many -> void
-SDL-ShowSaveFileDialog       ; callback userdata window filters nfilters default -> void
-SDL-ShowOpenFolderDialog     ; callback userdata window default allow-many -> void
-```
-
-### Types (`private/types.rkt`)
+### New Module: safe/image.rkt
 
 ```racket
-;; Dialog file filter
-_SDL_DialogFileFilter
-  - name : string    ; e.g., "Image files"
-  - pattern : string ; e.g., "*.png;*.jpg;*.gif"
+;; Surface loading with custodian cleanup
+load-surface      ; path -> surface
+surface?
+surface-destroy!
 
-;; Callback type
-_SDL_DialogFileCallback      ; (userdata filelist filter) -> void
+;; Saving
+save-png!         ; surface path -> void
+save-jpg!         ; surface path quality -> void
 ```
 
-### Safe Wrappers (`safe/dialog.rkt`)
+### Steps
 
-```racket
-;; Synchronous wrappers (block until user responds)
-(open-file-dialog #:title [title "Open"]
-                  #:filters [filters '()]
-                  #:default-path [path #f]
-                  #:allow-multiple? [multi #f]
-                  #:window [window #f])
-; -> path-string or (listof path-string) or #f
-
-(save-file-dialog #:title [title "Save"]
-                  #:filters [filters '()]
-                  #:default-path [path #f]
-                  #:window [window #f])
-; -> path-string or #f
-
-(open-folder-dialog #:title [title "Select Folder"]
-                    #:default-path [path #f]
-                    #:allow-multiple? [multi #f]
-                    #:window [window #f])
-; -> path-string or (listof path-string) or #f
-```
-
-### Example: `27-file-dialog.rkt`
-
-Demonstrate file dialogs:
-- Open single file with filters
-- Open multiple files
-- Save file dialog
-- Folder selection
+1. Create `safe/image.rkt` with surface wrapper struct
+2. Implement `load-surface` using `IMG-Load` with custodian registration
+3. Implement `save-png!` and `save-jpg!` wrappers
+4. Update `safe.rkt` to require and re-export `safe/image.rkt`
+5. Test with a new example or manual REPL test
 
 ---
 
-## Implementation Order
+## Phase 5: Flip main.rkt to safe
 
-| Step | Phase | Files | Deliverable |
-|------|-------|-------|-------------|
-| 1 | Phase 1 | `private/types.rkt`, `raw.rkt`, `safe/keyboard.rkt` | Keyboard state + scancodes |
-| 2 | Phase 2 | `raw.rkt`, `safe/mouse.rkt` | Mouse warp/capture |
-| 3 | Phase 3 | `private/types.rkt`, `raw.rkt`, `safe/display.rkt` | Display info |
-| 4 | Phase 4 | `private/types.rkt`, `raw.rkt`, `safe/dialog.rkt` | Message boxes |
-| 5 | Phase 5 | `private/types.rkt`, `raw.rkt`, `safe/dialog.rkt` | File dialogs |
+The actual "flip" - make safe the default interface.
 
----
+### Steps
 
-## Dependencies Between Phases
-
-```
-Phase 1 (Keyboard) ─────► Examples
-                              ▲
-Phase 2 (Mouse) ──────────────┤
-                              │
-Phase 3 (Display) ────────────┤
-                              │
-Phase 4 (Message Box) ────────┤
-                              │
-Phase 5 (File Dialog) ────────┘
-```
-
-All phases are independent and can be implemented in any order.
+1. Update `main.rkt`:
+   ```racket
+   #lang racket/base
+   (require "safe.rkt")
+   (provide (all-from-out "safe.rkt"))
+   ```
+2. Update any examples using `(require sdl3)` expecting raw bindings
+   - `examples/15-repl.rkt` uses raw - change to `(require sdl3/raw)`
+3. Test all examples
 
 ---
 
-## Estimated Function Count
+## Phase 6: Update Examples and Documentation
 
-| Phase | Raw Functions | Safe Wrappers | Types/Constants |
-|-------|---------------|---------------|-----------------|
-| Phase 1 | 7 | 6 | ~120 (scancodes) |
-| Phase 2 | 4 | 4 | 0 |
-| Phase 3 | 11 | 10 | ~5 |
-| Phase 4 | 2 | 2 | ~10 |
-| Phase 5 | 3 | 3 | ~5 |
-| **Total** | **27** | **25** | **~140** |
+Ensure everything works with the new structure.
+
+### Steps
+
+1. Run all examples, fix any broken imports
+2. Update CLAUDE.md with new structure documentation
+3. Update any doc comments referring to old structure
 
 ---
 
-## Deferred (P2)
+## Phase 7 (Optional): Split private/types.rkt
 
-These features are useful but lower priority:
+If types.rkt continues to grow, split it for maintainability.
 
-- **Gamepad Input**: Controller support - defer until testable
-- **Joystick API**: Lower-level than gamepad, for non-standard controllers
-- **OpenGL Context**: For users who want raw OpenGL instead of SDL_Renderer
-- **Texture Streaming**: `SDL_LockTexture`/`SDL_UnlockTexture` for dynamic textures
-- **Surface Operations**: `SDL_BlitSurface`, pixel manipulation
+### Proposed Split
+
+| New Module | Contents |
+|------------|----------|
+| `private/types.rkt` | Struct definitions (_SDL_Point, _SDL_Rect, _SDL_Color, etc.) |
+| `private/constants.rkt` | Init flags, window flags, event types, blend modes |
+| `private/enums.rkt` | Keycodes, scancodes, other large enumerations |
+
+### Steps
+
+1. Create `private/constants.rkt` with flag definitions
+2. Create `private/enums.rkt` with keycode/scancode tables
+3. Update `private/types.rkt` to require and re-export (for backwards compat)
+4. Update raw/ modules to require specific files as needed
+5. Test everything
 
 ---
 
 ## Testing Strategy
 
 After each phase:
-1. Clear compiled cache: `rm -rf compiled private/compiled safe/compiled`
-2. Compile: `raco make safe.rkt`
-3. Run the phase's example program
-4. Verify existing examples still work
+
+1. Clear compiled cache: `rm -rf compiled private/compiled safe/compiled raw/compiled examples/compiled`
+2. Compile aggregators: `raco make main.rkt raw.rkt safe.rkt`
+3. Run example subset:
+   - `racket examples/01-window.rkt` (basic)
+   - `racket examples/02-input.rkt` (events)
+   - `racket examples/04-image.rkt` (image loading)
+   - `racket examples/05-text.rkt` (ttf)
+   - `racket examples/15-repl.rkt` (raw bindings)
+
+---
+
+## Rollback Plan
+
+If issues arise:
+1. Git stash or branch before starting each phase
+2. Each phase is independently revertible
+3. The aggregator pattern (raw.rkt re-exporting raw/*) means external code keeps working
+
+---
+
+## Estimated Scope
+
+| Phase | Files Changed | Risk |
+|-------|---------------|------|
+| 1. Move safe/syntax.rkt | ~7 | Low |
+| 2. Split raw.rkt | ~20 | Medium (largest change) |
+| 3. Move image.rkt, ttf.rkt | ~5 | Low |
+| 4. Create safe/image.rkt | ~2 | Low |
+| 5. Flip main.rkt | ~3 | Low |
+| 6. Update docs/examples | ~5 | Low |
+| 7. Split types.rkt | ~10 | Low (optional) |
