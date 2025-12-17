@@ -1,18 +1,17 @@
 #lang racket/base
 
+;; SDL3 Type Definitions
+;; This module contains FFI type definitions (structs, cpointer types, FFI type aliases).
+;; For constants and flags, see constants.rkt.
+;; For keycodes and scancodes, see enums.rkt.
+
 (require ffi/unsafe)
 
 (provide check-sdl-bool
          _sdl-bool
-         ;; Init flags
+         ;; FFI type aliases
          _SDL_InitFlags
-         SDL_INIT_AUDIO
-         SDL_INIT_VIDEO
-         ;; Window flags
          _SDL_WindowFlags
-         SDL_WINDOW_FULLSCREEN
-         SDL_WINDOW_RESIZABLE
-         SDL_WINDOW_HIGH_PIXEL_DENSITY
          ;; Pointer types
          _SDL_Window-pointer
          _SDL_Window-pointer/null
@@ -91,41 +90,6 @@
          SDL_Vertex-position
          SDL_Vertex-color
          SDL_Vertex-tex_coord
-         ;; Event constants
-         SDL_EVENT_QUIT
-         ;; Window events
-         SDL_EVENT_WINDOW_SHOWN
-         SDL_EVENT_WINDOW_HIDDEN
-         SDL_EVENT_WINDOW_EXPOSED
-         SDL_EVENT_WINDOW_MOVED
-         SDL_EVENT_WINDOW_RESIZED
-         SDL_EVENT_WINDOW_FOCUS_GAINED
-         SDL_EVENT_WINDOW_FOCUS_LOST
-         SDL_EVENT_WINDOW_CLOSE_REQUESTED
-         ;; Keyboard events
-         SDL_EVENT_KEY_DOWN
-         SDL_EVENT_KEY_UP
-         ;; Text input
-         SDL_EVENT_TEXT_INPUT
-         ;; Mouse events
-         SDL_EVENT_MOUSE_MOTION
-         SDL_EVENT_MOUSE_BUTTON_DOWN
-         SDL_EVENT_MOUSE_BUTTON_UP
-         SDL_EVENT_MOUSE_WHEEL
-         ;; Mouse wheel direction
-         SDL_MOUSEWHEEL_NORMAL
-         SDL_MOUSEWHEEL_FLIPPED
-         ;; Mouse button constants
-         SDL_BUTTON_LEFT
-         SDL_BUTTON_MIDDLE
-         SDL_BUTTON_RIGHT
-         SDL_BUTTON_X1
-         SDL_BUTTON_X2
-         SDL_BUTTON_LMASK
-         SDL_BUTTON_MMASK
-         SDL_BUTTON_RMASK
-         SDL_BUTTON_X1MASK
-         SDL_BUTTON_X2MASK
          ;; Event structs
          _SDL_CommonEvent
          _SDL_CommonEvent-pointer
@@ -179,199 +143,33 @@
          SDL_MouseWheelEvent-mouse_x
          SDL_MouseWheelEvent-mouse_y
          ;; Event union helpers
-         SDL_EVENT_SIZE
          sdl-event-type
          event->keyboard
          event->mouse-motion
          event->mouse-button
          event->text-input
          event->mouse-wheel
-         ;; Key constants - Special keys
-         SDLK_UNKNOWN SDLK_RETURN SDLK_ESCAPE SDLK_BACKSPACE SDLK_TAB SDLK_SPACE
-         ;; Punctuation and symbols
-         SDLK_EXCLAIM SDLK_DBLAPOSTROPHE SDLK_HASH SDLK_DOLLAR SDLK_PERCENT
-         SDLK_AMPERSAND SDLK_APOSTROPHE SDLK_LEFTPAREN SDLK_RIGHTPAREN
-         SDLK_ASTERISK SDLK_PLUS SDLK_COMMA SDLK_MINUS SDLK_PERIOD SDLK_SLASH
-         ;; Number keys
-         SDLK_0 SDLK_1 SDLK_2 SDLK_3 SDLK_4
-         SDLK_5 SDLK_6 SDLK_7 SDLK_8 SDLK_9
-         ;; More punctuation
-         SDLK_COLON SDLK_SEMICOLON SDLK_LESS SDLK_EQUALS SDLK_GREATER
-         SDLK_QUESTION SDLK_AT SDLK_LEFTBRACKET SDLK_BACKSLASH
-         SDLK_RIGHTBRACKET SDLK_CARET SDLK_UNDERSCORE SDLK_GRAVE
-         ;; Letter keys
-         SDLK_A SDLK_B SDLK_C SDLK_D SDLK_E SDLK_F SDLK_G
-         SDLK_H SDLK_I SDLK_J SDLK_K SDLK_L SDLK_M SDLK_N
-         SDLK_O SDLK_P SDLK_Q SDLK_R SDLK_S SDLK_T SDLK_U
-         SDLK_V SDLK_W SDLK_X SDLK_Y SDLK_Z
-         ;; More punctuation (after letters)
-         SDLK_LEFTBRACE SDLK_PIPE SDLK_RIGHTBRACE SDLK_TILDE SDLK_DELETE
-         ;; Lock keys
-         SDLK_CAPSLOCK SDLK_SCROLLLOCK SDLK_NUMLOCKCLEAR
-         ;; Function keys F1-F12
-         SDLK_F1 SDLK_F2 SDLK_F3 SDLK_F4 SDLK_F5 SDLK_F6
-         SDLK_F7 SDLK_F8 SDLK_F9 SDLK_F10 SDLK_F11 SDLK_F12
-         ;; Function keys F13-F24
-         SDLK_F13 SDLK_F14 SDLK_F15 SDLK_F16 SDLK_F17 SDLK_F18
-         SDLK_F19 SDLK_F20 SDLK_F21 SDLK_F22 SDLK_F23 SDLK_F24
-         ;; Print/Pause
-         SDLK_PRINTSCREEN SDLK_PAUSE
-         ;; Navigation keys
-         SDLK_INSERT SDLK_HOME SDLK_PAGEUP SDLK_END SDLK_PAGEDOWN
-         ;; Arrow keys
-         SDLK_RIGHT SDLK_LEFT SDLK_DOWN SDLK_UP
-         ;; Keypad numbers
-         SDLK_KP_0 SDLK_KP_1 SDLK_KP_2 SDLK_KP_3 SDLK_KP_4
-         SDLK_KP_5 SDLK_KP_6 SDLK_KP_7 SDLK_KP_8 SDLK_KP_9
-         ;; Keypad operators
-         SDLK_KP_DIVIDE SDLK_KP_MULTIPLY SDLK_KP_MINUS SDLK_KP_PLUS
-         SDLK_KP_ENTER SDLK_KP_PERIOD SDLK_KP_EQUALS
-         ;; Application/Menu
-         SDLK_APPLICATION SDLK_MENU
-         ;; Editing keys
-         SDLK_UNDO SDLK_CUT SDLK_COPY SDLK_PASTE SDLK_FIND
-         ;; Media keys
-         SDLK_MUTE SDLK_VOLUMEUP SDLK_VOLUMEDOWN
-         ;; Modifier keycodes
-         SDLK_LCTRL SDLK_LSHIFT SDLK_LALT SDLK_LGUI
-         SDLK_RCTRL SDLK_RSHIFT SDLK_RALT SDLK_RGUI
          ;; Keycode type
          _SDL_Keycode
-         ;; Modifier key masks
+         ;; Modifier key type
          _SDL_Keymod
-         SDL_KMOD_NONE
-         SDL_KMOD_LSHIFT
-         SDL_KMOD_RSHIFT
-         SDL_KMOD_LCTRL
-         SDL_KMOD_RCTRL
-         SDL_KMOD_LALT
-         SDL_KMOD_RALT
-         SDL_KMOD_LGUI
-         SDL_KMOD_RGUI
-         SDL_KMOD_NUM
-         SDL_KMOD_CAPS
-         SDL_KMOD_MODE
-         SDL_KMOD_SCROLL
-         SDL_KMOD_CTRL
-         SDL_KMOD_SHIFT
-         SDL_KMOD_ALT
-         SDL_KMOD_GUI
-         ;; Scancode type and constants
+         ;; Scancode type
          _SDL_Scancode
-         SDL_SCANCODE_UNKNOWN
-         SDL_SCANCODE_A SDL_SCANCODE_B SDL_SCANCODE_C SDL_SCANCODE_D
-         SDL_SCANCODE_E SDL_SCANCODE_F SDL_SCANCODE_G SDL_SCANCODE_H
-         SDL_SCANCODE_I SDL_SCANCODE_J SDL_SCANCODE_K SDL_SCANCODE_L
-         SDL_SCANCODE_M SDL_SCANCODE_N SDL_SCANCODE_O SDL_SCANCODE_P
-         SDL_SCANCODE_Q SDL_SCANCODE_R SDL_SCANCODE_S SDL_SCANCODE_T
-         SDL_SCANCODE_U SDL_SCANCODE_V SDL_SCANCODE_W SDL_SCANCODE_X
-         SDL_SCANCODE_Y SDL_SCANCODE_Z
-         SDL_SCANCODE_1 SDL_SCANCODE_2 SDL_SCANCODE_3 SDL_SCANCODE_4
-         SDL_SCANCODE_5 SDL_SCANCODE_6 SDL_SCANCODE_7 SDL_SCANCODE_8
-         SDL_SCANCODE_9 SDL_SCANCODE_0
-         SDL_SCANCODE_RETURN SDL_SCANCODE_ESCAPE SDL_SCANCODE_BACKSPACE
-         SDL_SCANCODE_TAB SDL_SCANCODE_SPACE
-         SDL_SCANCODE_MINUS SDL_SCANCODE_EQUALS
-         SDL_SCANCODE_LEFTBRACKET SDL_SCANCODE_RIGHTBRACKET
-         SDL_SCANCODE_BACKSLASH SDL_SCANCODE_SEMICOLON SDL_SCANCODE_APOSTROPHE
-         SDL_SCANCODE_GRAVE SDL_SCANCODE_COMMA SDL_SCANCODE_PERIOD
-         SDL_SCANCODE_SLASH SDL_SCANCODE_CAPSLOCK
-         SDL_SCANCODE_F1 SDL_SCANCODE_F2 SDL_SCANCODE_F3 SDL_SCANCODE_F4
-         SDL_SCANCODE_F5 SDL_SCANCODE_F6 SDL_SCANCODE_F7 SDL_SCANCODE_F8
-         SDL_SCANCODE_F9 SDL_SCANCODE_F10 SDL_SCANCODE_F11 SDL_SCANCODE_F12
-         SDL_SCANCODE_PRINTSCREEN SDL_SCANCODE_SCROLLLOCK SDL_SCANCODE_PAUSE
-         SDL_SCANCODE_INSERT SDL_SCANCODE_HOME SDL_SCANCODE_PAGEUP
-         SDL_SCANCODE_DELETE SDL_SCANCODE_END SDL_SCANCODE_PAGEDOWN
-         SDL_SCANCODE_RIGHT SDL_SCANCODE_LEFT SDL_SCANCODE_DOWN SDL_SCANCODE_UP
-         SDL_SCANCODE_NUMLOCKCLEAR
-         SDL_SCANCODE_KP_DIVIDE SDL_SCANCODE_KP_MULTIPLY SDL_SCANCODE_KP_MINUS
-         SDL_SCANCODE_KP_PLUS SDL_SCANCODE_KP_ENTER
-         SDL_SCANCODE_KP_1 SDL_SCANCODE_KP_2 SDL_SCANCODE_KP_3
-         SDL_SCANCODE_KP_4 SDL_SCANCODE_KP_5 SDL_SCANCODE_KP_6
-         SDL_SCANCODE_KP_7 SDL_SCANCODE_KP_8 SDL_SCANCODE_KP_9
-         SDL_SCANCODE_KP_0 SDL_SCANCODE_KP_PERIOD SDL_SCANCODE_KP_EQUALS
-         SDL_SCANCODE_F13 SDL_SCANCODE_F14 SDL_SCANCODE_F15 SDL_SCANCODE_F16
-         SDL_SCANCODE_F17 SDL_SCANCODE_F18 SDL_SCANCODE_F19 SDL_SCANCODE_F20
-         SDL_SCANCODE_F21 SDL_SCANCODE_F22 SDL_SCANCODE_F23 SDL_SCANCODE_F24
-         SDL_SCANCODE_APPLICATION SDL_SCANCODE_MENU
-         SDL_SCANCODE_UNDO SDL_SCANCODE_CUT SDL_SCANCODE_COPY
-         SDL_SCANCODE_PASTE SDL_SCANCODE_FIND
-         SDL_SCANCODE_MUTE SDL_SCANCODE_VOLUMEUP SDL_SCANCODE_VOLUMEDOWN
-         SDL_SCANCODE_LCTRL SDL_SCANCODE_LSHIFT SDL_SCANCODE_LALT SDL_SCANCODE_LGUI
-         SDL_SCANCODE_RCTRL SDL_SCANCODE_RSHIFT SDL_SCANCODE_RALT SDL_SCANCODE_RGUI
-         SDL_NUM_SCANCODES
-         ;; Blend mode
+         ;; Blend mode type
          _SDL_BlendMode
-         SDL_BLENDMODE_NONE
-         SDL_BLENDMODE_BLEND
-         SDL_BLENDMODE_BLEND_PREMULTIPLIED
-         SDL_BLENDMODE_ADD
-         SDL_BLENDMODE_ADD_PREMULTIPLIED
-         SDL_BLENDMODE_MOD
-         SDL_BLENDMODE_MUL
-         SDL_BLENDMODE_INVALID
-         ;; Flip mode
+         ;; Flip mode type
          _SDL_FlipMode
-         SDL_FLIP_NONE
-         SDL_FLIP_HORIZONTAL
-         SDL_FLIP_VERTICAL
-         ;; Texture access modes
+         ;; Texture access type
          _SDL_TextureAccess
-         SDL_TEXTUREACCESS_STATIC
-         SDL_TEXTUREACCESS_STREAMING
-         SDL_TEXTUREACCESS_TARGET
-         ;; Scale modes
+         ;; Scale mode type
          _SDL_ScaleMode
-         SDL_SCALEMODE_INVALID
-         SDL_SCALEMODE_NEAREST
-         SDL_SCALEMODE_LINEAR
-         ;; Pixel formats (commonly used)
+         ;; Pixel format type
          _SDL_PixelFormat
-         SDL_PIXELFORMAT_UNKNOWN
-         SDL_PIXELFORMAT_RGBA8888
-         SDL_PIXELFORMAT_ARGB8888
-         SDL_PIXELFORMAT_ABGR8888
-         SDL_PIXELFORMAT_BGRA8888
-         ;; System cursor types
+         ;; System cursor type
          _SDL_SystemCursor
-         SDL_SYSTEM_CURSOR_DEFAULT
-         SDL_SYSTEM_CURSOR_TEXT
-         SDL_SYSTEM_CURSOR_WAIT
-         SDL_SYSTEM_CURSOR_CROSSHAIR
-         SDL_SYSTEM_CURSOR_PROGRESS
-         SDL_SYSTEM_CURSOR_NWSE_RESIZE
-         SDL_SYSTEM_CURSOR_NESW_RESIZE
-         SDL_SYSTEM_CURSOR_EW_RESIZE
-         SDL_SYSTEM_CURSOR_NS_RESIZE
-         SDL_SYSTEM_CURSOR_MOVE
-         SDL_SYSTEM_CURSOR_NOT_ALLOWED
-         SDL_SYSTEM_CURSOR_POINTER
-         SDL_SYSTEM_CURSOR_NW_RESIZE
-         SDL_SYSTEM_CURSOR_N_RESIZE
-         SDL_SYSTEM_CURSOR_NE_RESIZE
-         SDL_SYSTEM_CURSOR_E_RESIZE
-         SDL_SYSTEM_CURSOR_SE_RESIZE
-         SDL_SYSTEM_CURSOR_S_RESIZE
-         SDL_SYSTEM_CURSOR_SW_RESIZE
-         SDL_SYSTEM_CURSOR_W_RESIZE
-         SDL_SYSTEM_CURSOR_COUNT
-         ;; Audio types and constants
+         ;; Audio types
          _SDL_AudioDeviceID
-         SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK
-         SDL_AUDIO_DEVICE_DEFAULT_RECORDING
          _SDL_AudioFormat
-         SDL_AUDIO_UNKNOWN
-         SDL_AUDIO_U8
-         SDL_AUDIO_S8
-         SDL_AUDIO_S16LE
-         SDL_AUDIO_S16BE
-         SDL_AUDIO_S32LE
-         SDL_AUDIO_S32BE
-         SDL_AUDIO_F32LE
-         SDL_AUDIO_F32BE
-         SDL_AUDIO_S16
-         SDL_AUDIO_S32
-         SDL_AUDIO_F32
          _SDL_AudioSpec
          _SDL_AudioSpec-pointer
          _SDL_AudioSpec-pointer/null
@@ -401,21 +199,11 @@
          SDL_DisplayMode-refresh_rate
          SDL_DisplayMode-refresh_rate_numerator
          SDL_DisplayMode-refresh_rate_denominator
-         ;; Flash operation enum
+         ;; Flash operation type
          _SDL_FlashOperation
-         SDL_FLASH_CANCEL
-         SDL_FLASH_BRIEFLY
-         SDL_FLASH_UNTIL_FOCUSED
-         ;; Message box flags and types
+         ;; Message box types
          _SDL_MessageBoxFlags
-         SDL_MESSAGEBOX_ERROR
-         SDL_MESSAGEBOX_WARNING
-         SDL_MESSAGEBOX_INFORMATION
-         SDL_MESSAGEBOX_BUTTONS_LEFT_TO_RIGHT
-         SDL_MESSAGEBOX_BUTTONS_RIGHT_TO_LEFT
          _SDL_MessageBoxButtonFlags
-         SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT
-         SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT
          _SDL_MessageBoxButtonData
          _SDL_MessageBoxButtonData-pointer
          make-SDL_MessageBoxButtonData
@@ -453,28 +241,20 @@
          ;; Error handling forward reference
          sdl-get-error-proc)
 
-;; SDL3 types, enums, and structs
-;; This file will be expanded with SDL3 type definitions as bindings are added.
+;; ============================================================================
+;; SDL3 Boolean Type
+;; ============================================================================
 
 ;; SDL3 boolean type - SDL3 uses C99 bool (1 byte, not int like SDL2)
 ;; Racket's _bool is 4 bytes, but _stdbool is 1 byte like C99 bool
 (define _sdl-bool _stdbool)
 
 ;; ============================================================================
-;; Init Flags (SDL_InitFlags) - used with SDL_Init
+;; FFI Type Aliases
 ;; ============================================================================
-(define SDL_INIT_AUDIO #x00000010)
-(define SDL_INIT_VIDEO #x00000020)
 
 ;; SDL_InitFlags is a 32-bit unsigned integer (flags can be combined with bitwise-ior)
 (define _SDL_InitFlags _uint32)
-
-;; ============================================================================
-;; Window Flags (SDL_WindowFlags) - 64-bit in SDL3
-;; ============================================================================
-(define SDL_WINDOW_FULLSCREEN          #x0000000000000001)
-(define SDL_WINDOW_RESIZABLE           #x0000000000000020)
-(define SDL_WINDOW_HIGH_PIXEL_DENSITY  #x0000000000002000)
 
 ;; SDL_WindowFlags is a 64-bit unsigned integer in SDL3 (flags can be combined with bitwise-ior)
 (define _SDL_WindowFlags _uint64)
@@ -517,7 +297,7 @@
    [h _float]))
 
 ;; ============================================================================
-;; Color Struct
+;; Color Structs
 ;; ============================================================================
 
 ;; SDL_Color - RGBA color (r, g, b, a each 0-255)
@@ -540,493 +320,6 @@
   ([position _SDL_FPoint]
    [color _SDL_FColor]
    [tex_coord _SDL_FPoint]))
-
-;; ============================================================================
-;; Event Constants
-;; ============================================================================
-(define SDL_EVENT_QUIT #x100)
-;; Window events
-(define SDL_EVENT_WINDOW_SHOWN #x202)
-(define SDL_EVENT_WINDOW_HIDDEN #x203)
-(define SDL_EVENT_WINDOW_EXPOSED #x204)
-(define SDL_EVENT_WINDOW_MOVED #x205)
-(define SDL_EVENT_WINDOW_RESIZED #x206)
-(define SDL_EVENT_WINDOW_FOCUS_GAINED #x209)
-(define SDL_EVENT_WINDOW_FOCUS_LOST #x20A)
-(define SDL_EVENT_WINDOW_CLOSE_REQUESTED #x212)
-;; Keyboard events
-(define SDL_EVENT_KEY_DOWN #x300)
-(define SDL_EVENT_KEY_UP #x301)
-;; Text input
-(define SDL_EVENT_TEXT_INPUT #x303)
-;; Mouse events
-(define SDL_EVENT_MOUSE_MOTION #x400)
-(define SDL_EVENT_MOUSE_BUTTON_DOWN #x401)
-(define SDL_EVENT_MOUSE_BUTTON_UP #x402)
-(define SDL_EVENT_MOUSE_WHEEL #x403)
-
-;; ============================================================================
-;; Mouse Wheel Direction
-;; ============================================================================
-(define SDL_MOUSEWHEEL_NORMAL 0)
-(define SDL_MOUSEWHEEL_FLIPPED 1)
-
-;; ============================================================================
-;; Mouse Button Constants
-;; ============================================================================
-;; Mouse button indices
-(define SDL_BUTTON_LEFT 1)
-(define SDL_BUTTON_MIDDLE 2)
-(define SDL_BUTTON_RIGHT 3)
-(define SDL_BUTTON_X1 4)
-(define SDL_BUTTON_X2 5)
-
-;; Mouse button masks for SDL_GetMouseState return value
-(define (SDL_BUTTON_MASK x) (arithmetic-shift 1 (- x 1)))
-(define SDL_BUTTON_LMASK (SDL_BUTTON_MASK SDL_BUTTON_LEFT))    ; 1
-(define SDL_BUTTON_MMASK (SDL_BUTTON_MASK SDL_BUTTON_MIDDLE))  ; 2
-(define SDL_BUTTON_RMASK (SDL_BUTTON_MASK SDL_BUTTON_RIGHT))   ; 4
-(define SDL_BUTTON_X1MASK (SDL_BUTTON_MASK SDL_BUTTON_X1))     ; 8
-(define SDL_BUTTON_X2MASK (SDL_BUTTON_MASK SDL_BUTTON_X2))     ; 16
-
-;; ============================================================================
-;; Key Constants (SDL_Keycode values)
-;; ============================================================================
-;; SDL3 keycodes: letters are lowercase ASCII, special keys use scancode mask
-
-;; Special keys
-(define SDLK_UNKNOWN   #x00000000)
-(define SDLK_RETURN    #x0000000D)  ; '\r'
-(define SDLK_ESCAPE    #x0000001B)
-(define SDLK_BACKSPACE #x00000008)  ; '\b'
-(define SDLK_TAB       #x00000009)  ; '\t'
-(define SDLK_SPACE     #x00000020)  ; ' '
-
-;; Punctuation and symbols (ASCII order)
-(define SDLK_EXCLAIM      #x00000021)  ; '!'
-(define SDLK_DBLAPOSTROPHE #x00000022) ; '"'
-(define SDLK_HASH         #x00000023)  ; '#'
-(define SDLK_DOLLAR       #x00000024)  ; '$'
-(define SDLK_PERCENT      #x00000025)  ; '%'
-(define SDLK_AMPERSAND    #x00000026)  ; '&'
-(define SDLK_APOSTROPHE   #x00000027)  ; '\''
-(define SDLK_LEFTPAREN    #x00000028)  ; '('
-(define SDLK_RIGHTPAREN   #x00000029)  ; ')'
-(define SDLK_ASTERISK     #x0000002A)  ; '*'
-(define SDLK_PLUS         #x0000002B)  ; '+'
-(define SDLK_COMMA        #x0000002C)  ; ','
-(define SDLK_MINUS        #x0000002D)  ; '-'
-(define SDLK_PERIOD       #x0000002E)  ; '.'
-(define SDLK_SLASH        #x0000002F)  ; '/'
-
-;; Number keys (ASCII '0'-'9')
-(define SDLK_0 #x00000030)
-(define SDLK_1 #x00000031)
-(define SDLK_2 #x00000032)
-(define SDLK_3 #x00000033)
-(define SDLK_4 #x00000034)
-(define SDLK_5 #x00000035)
-(define SDLK_6 #x00000036)
-(define SDLK_7 #x00000037)
-(define SDLK_8 #x00000038)
-(define SDLK_9 #x00000039)
-
-;; More punctuation
-(define SDLK_COLON        #x0000003A)  ; ':'
-(define SDLK_SEMICOLON    #x0000003B)  ; ';'
-(define SDLK_LESS         #x0000003C)  ; '<'
-(define SDLK_EQUALS       #x0000003D)  ; '='
-(define SDLK_GREATER      #x0000003E)  ; '>'
-(define SDLK_QUESTION     #x0000003F)  ; '?'
-(define SDLK_AT           #x00000040)  ; '@'
-(define SDLK_LEFTBRACKET  #x0000005B)  ; '['
-(define SDLK_BACKSLASH    #x0000005C)  ; '\\'
-(define SDLK_RIGHTBRACKET #x0000005D)  ; ']'
-(define SDLK_CARET        #x0000005E)  ; '^'
-(define SDLK_UNDERSCORE   #x0000005F)  ; '_'
-(define SDLK_GRAVE        #x00000060)  ; '`'
-
-;; Letter keys (SDL3: uppercase names, lowercase ASCII values 'a'-'z')
-(define SDLK_A #x00000061)
-(define SDLK_B #x00000062)
-(define SDLK_C #x00000063)
-(define SDLK_D #x00000064)
-(define SDLK_E #x00000065)
-(define SDLK_F #x00000066)
-(define SDLK_G #x00000067)
-(define SDLK_H #x00000068)
-(define SDLK_I #x00000069)
-(define SDLK_J #x0000006A)
-(define SDLK_K #x0000006B)
-(define SDLK_L #x0000006C)
-(define SDLK_M #x0000006D)
-(define SDLK_N #x0000006E)
-(define SDLK_O #x0000006F)
-(define SDLK_P #x00000070)
-(define SDLK_Q #x00000071)
-(define SDLK_R #x00000072)
-(define SDLK_S #x00000073)
-(define SDLK_T #x00000074)
-(define SDLK_U #x00000075)
-(define SDLK_V #x00000076)
-(define SDLK_W #x00000077)
-(define SDLK_X #x00000078)
-(define SDLK_Y #x00000079)
-(define SDLK_Z #x0000007A)
-
-;; More punctuation (after letters in ASCII)
-(define SDLK_LEFTBRACE  #x0000007B)  ; '{'
-(define SDLK_PIPE       #x0000007C)  ; '|'
-(define SDLK_RIGHTBRACE #x0000007D)  ; '}'
-(define SDLK_TILDE      #x0000007E)  ; '~'
-(define SDLK_DELETE     #x0000007F)
-
-;; Lock keys
-(define SDLK_CAPSLOCK   #x40000039)
-(define SDLK_SCROLLLOCK #x40000047)
-(define SDLK_NUMLOCKCLEAR #x40000053)
-
-;; Function keys F1-F12
-(define SDLK_F1  #x4000003A)
-(define SDLK_F2  #x4000003B)
-(define SDLK_F3  #x4000003C)
-(define SDLK_F4  #x4000003D)
-(define SDLK_F5  #x4000003E)
-(define SDLK_F6  #x4000003F)
-(define SDLK_F7  #x40000040)
-(define SDLK_F8  #x40000041)
-(define SDLK_F9  #x40000042)
-(define SDLK_F10 #x40000043)
-(define SDLK_F11 #x40000044)
-(define SDLK_F12 #x40000045)
-
-;; Function keys F13-F24
-(define SDLK_F13 #x40000068)
-(define SDLK_F14 #x40000069)
-(define SDLK_F15 #x4000006A)
-(define SDLK_F16 #x4000006B)
-(define SDLK_F17 #x4000006C)
-(define SDLK_F18 #x4000006D)
-(define SDLK_F19 #x4000006E)
-(define SDLK_F20 #x4000006F)
-(define SDLK_F21 #x40000070)
-(define SDLK_F22 #x40000071)
-(define SDLK_F23 #x40000072)
-(define SDLK_F24 #x40000073)
-
-;; Print/Pause
-(define SDLK_PRINTSCREEN #x40000046)
-(define SDLK_PAUSE       #x40000048)
-
-;; Navigation keys
-(define SDLK_INSERT   #x40000049)
-(define SDLK_HOME     #x4000004A)
-(define SDLK_PAGEUP   #x4000004B)
-(define SDLK_END      #x4000004D)
-(define SDLK_PAGEDOWN #x4000004E)
-
-;; Arrow keys
-(define SDLK_RIGHT #x4000004F)
-(define SDLK_LEFT  #x40000050)
-(define SDLK_DOWN  #x40000051)
-(define SDLK_UP    #x40000052)
-
-;; Keypad numbers
-(define SDLK_KP_0 #x40000062)
-(define SDLK_KP_1 #x40000059)
-(define SDLK_KP_2 #x4000005A)
-(define SDLK_KP_3 #x4000005B)
-(define SDLK_KP_4 #x4000005C)
-(define SDLK_KP_5 #x4000005D)
-(define SDLK_KP_6 #x4000005E)
-(define SDLK_KP_7 #x4000005F)
-(define SDLK_KP_8 #x40000060)
-(define SDLK_KP_9 #x40000061)
-
-;; Keypad operators
-(define SDLK_KP_DIVIDE   #x40000054)
-(define SDLK_KP_MULTIPLY #x40000055)
-(define SDLK_KP_MINUS    #x40000056)
-(define SDLK_KP_PLUS     #x40000057)
-(define SDLK_KP_ENTER    #x40000058)
-(define SDLK_KP_PERIOD   #x40000063)
-(define SDLK_KP_EQUALS   #x40000067)
-
-;; Application/Menu key
-(define SDLK_APPLICATION #x40000065)
-(define SDLK_MENU        #x40000076)
-
-;; Editing keys
-(define SDLK_UNDO  #x4000007A)
-(define SDLK_CUT   #x4000007B)
-(define SDLK_COPY  #x4000007C)
-(define SDLK_PASTE #x4000007D)
-(define SDLK_FIND  #x4000007E)
-
-;; Media keys
-(define SDLK_MUTE       #x4000007F)
-(define SDLK_VOLUMEUP   #x40000080)
-(define SDLK_VOLUMEDOWN #x40000081)
-
-;; Modifier keys (as keycodes, not mod flags)
-(define SDLK_LCTRL  #x400000E0)
-(define SDLK_LSHIFT #x400000E1)
-(define SDLK_LALT   #x400000E2)
-(define SDLK_LGUI   #x400000E3)
-(define SDLK_RCTRL  #x400000E4)
-(define SDLK_RSHIFT #x400000E5)
-(define SDLK_RALT   #x400000E6)
-(define SDLK_RGUI   #x400000E7)
-
-;; SDL_Keycode type (32-bit)
-(define _SDL_Keycode _uint32)
-
-;; ============================================================================
-;; Modifier Key Masks (SDL_Keymod - uint16)
-;; ============================================================================
-(define _SDL_Keymod _uint16)
-
-(define SDL_KMOD_NONE   #x0000)
-(define SDL_KMOD_LSHIFT #x0001)
-(define SDL_KMOD_RSHIFT #x0002)
-(define SDL_KMOD_LCTRL  #x0040)
-(define SDL_KMOD_RCTRL  #x0080)
-(define SDL_KMOD_LALT   #x0100)
-(define SDL_KMOD_RALT   #x0200)
-(define SDL_KMOD_LGUI   #x0400)
-(define SDL_KMOD_RGUI   #x0800)
-(define SDL_KMOD_NUM    #x1000)
-(define SDL_KMOD_CAPS   #x2000)
-(define SDL_KMOD_MODE   #x4000)
-(define SDL_KMOD_SCROLL #x8000)
-;; Combined masks
-(define SDL_KMOD_CTRL  (bitwise-ior SDL_KMOD_LCTRL SDL_KMOD_RCTRL))
-(define SDL_KMOD_SHIFT (bitwise-ior SDL_KMOD_LSHIFT SDL_KMOD_RSHIFT))
-(define SDL_KMOD_ALT   (bitwise-ior SDL_KMOD_LALT SDL_KMOD_RALT))
-(define SDL_KMOD_GUI   (bitwise-ior SDL_KMOD_LGUI SDL_KMOD_RGUI))
-
-;; ============================================================================
-;; Scancode Constants (SDL_Scancode - physical key positions)
-;; ============================================================================
-(define _SDL_Scancode _int)
-
-(define SDL_SCANCODE_UNKNOWN 0)
-
-;; Letters A-Z
-(define SDL_SCANCODE_A 4)
-(define SDL_SCANCODE_B 5)
-(define SDL_SCANCODE_C 6)
-(define SDL_SCANCODE_D 7)
-(define SDL_SCANCODE_E 8)
-(define SDL_SCANCODE_F 9)
-(define SDL_SCANCODE_G 10)
-(define SDL_SCANCODE_H 11)
-(define SDL_SCANCODE_I 12)
-(define SDL_SCANCODE_J 13)
-(define SDL_SCANCODE_K 14)
-(define SDL_SCANCODE_L 15)
-(define SDL_SCANCODE_M 16)
-(define SDL_SCANCODE_N 17)
-(define SDL_SCANCODE_O 18)
-(define SDL_SCANCODE_P 19)
-(define SDL_SCANCODE_Q 20)
-(define SDL_SCANCODE_R 21)
-(define SDL_SCANCODE_S 22)
-(define SDL_SCANCODE_T 23)
-(define SDL_SCANCODE_U 24)
-(define SDL_SCANCODE_V 25)
-(define SDL_SCANCODE_W 26)
-(define SDL_SCANCODE_X 27)
-(define SDL_SCANCODE_Y 28)
-(define SDL_SCANCODE_Z 29)
-
-;; Numbers 1-0
-(define SDL_SCANCODE_1 30)
-(define SDL_SCANCODE_2 31)
-(define SDL_SCANCODE_3 32)
-(define SDL_SCANCODE_4 33)
-(define SDL_SCANCODE_5 34)
-(define SDL_SCANCODE_6 35)
-(define SDL_SCANCODE_7 36)
-(define SDL_SCANCODE_8 37)
-(define SDL_SCANCODE_9 38)
-(define SDL_SCANCODE_0 39)
-
-;; Common keys
-(define SDL_SCANCODE_RETURN 40)
-(define SDL_SCANCODE_ESCAPE 41)
-(define SDL_SCANCODE_BACKSPACE 42)
-(define SDL_SCANCODE_TAB 43)
-(define SDL_SCANCODE_SPACE 44)
-
-;; Punctuation
-(define SDL_SCANCODE_MINUS 45)
-(define SDL_SCANCODE_EQUALS 46)
-(define SDL_SCANCODE_LEFTBRACKET 47)
-(define SDL_SCANCODE_RIGHTBRACKET 48)
-(define SDL_SCANCODE_BACKSLASH 49)
-(define SDL_SCANCODE_SEMICOLON 51)
-(define SDL_SCANCODE_APOSTROPHE 52)
-(define SDL_SCANCODE_GRAVE 53)
-(define SDL_SCANCODE_COMMA 54)
-(define SDL_SCANCODE_PERIOD 55)
-(define SDL_SCANCODE_SLASH 56)
-
-(define SDL_SCANCODE_CAPSLOCK 57)
-
-;; Function keys F1-F12
-(define SDL_SCANCODE_F1 58)
-(define SDL_SCANCODE_F2 59)
-(define SDL_SCANCODE_F3 60)
-(define SDL_SCANCODE_F4 61)
-(define SDL_SCANCODE_F5 62)
-(define SDL_SCANCODE_F6 63)
-(define SDL_SCANCODE_F7 64)
-(define SDL_SCANCODE_F8 65)
-(define SDL_SCANCODE_F9 66)
-(define SDL_SCANCODE_F10 67)
-(define SDL_SCANCODE_F11 68)
-(define SDL_SCANCODE_F12 69)
-
-;; Print/Pause/Scroll
-(define SDL_SCANCODE_PRINTSCREEN 70)
-(define SDL_SCANCODE_SCROLLLOCK 71)
-(define SDL_SCANCODE_PAUSE 72)
-
-;; Navigation
-(define SDL_SCANCODE_INSERT 73)
-(define SDL_SCANCODE_HOME 74)
-(define SDL_SCANCODE_PAGEUP 75)
-(define SDL_SCANCODE_DELETE 76)
-(define SDL_SCANCODE_END 77)
-(define SDL_SCANCODE_PAGEDOWN 78)
-
-;; Arrow keys
-(define SDL_SCANCODE_RIGHT 79)
-(define SDL_SCANCODE_LEFT 80)
-(define SDL_SCANCODE_DOWN 81)
-(define SDL_SCANCODE_UP 82)
-
-;; Keypad
-(define SDL_SCANCODE_NUMLOCKCLEAR 83)
-(define SDL_SCANCODE_KP_DIVIDE 84)
-(define SDL_SCANCODE_KP_MULTIPLY 85)
-(define SDL_SCANCODE_KP_MINUS 86)
-(define SDL_SCANCODE_KP_PLUS 87)
-(define SDL_SCANCODE_KP_ENTER 88)
-(define SDL_SCANCODE_KP_1 89)
-(define SDL_SCANCODE_KP_2 90)
-(define SDL_SCANCODE_KP_3 91)
-(define SDL_SCANCODE_KP_4 92)
-(define SDL_SCANCODE_KP_5 93)
-(define SDL_SCANCODE_KP_6 94)
-(define SDL_SCANCODE_KP_7 95)
-(define SDL_SCANCODE_KP_8 96)
-(define SDL_SCANCODE_KP_9 97)
-(define SDL_SCANCODE_KP_0 98)
-(define SDL_SCANCODE_KP_PERIOD 99)
-
-;; Application/Menu
-(define SDL_SCANCODE_APPLICATION 101)
-(define SDL_SCANCODE_KP_EQUALS 103)
-
-;; Function keys F13-F24
-(define SDL_SCANCODE_F13 104)
-(define SDL_SCANCODE_F14 105)
-(define SDL_SCANCODE_F15 106)
-(define SDL_SCANCODE_F16 107)
-(define SDL_SCANCODE_F17 108)
-(define SDL_SCANCODE_F18 109)
-(define SDL_SCANCODE_F19 110)
-(define SDL_SCANCODE_F20 111)
-(define SDL_SCANCODE_F21 112)
-(define SDL_SCANCODE_F22 113)
-(define SDL_SCANCODE_F23 114)
-(define SDL_SCANCODE_F24 115)
-
-(define SDL_SCANCODE_MENU 118)
-
-;; Editing keys
-(define SDL_SCANCODE_UNDO 122)
-(define SDL_SCANCODE_CUT 123)
-(define SDL_SCANCODE_COPY 124)
-(define SDL_SCANCODE_PASTE 125)
-(define SDL_SCANCODE_FIND 126)
-
-;; Media keys
-(define SDL_SCANCODE_MUTE 127)
-(define SDL_SCANCODE_VOLUMEUP 128)
-(define SDL_SCANCODE_VOLUMEDOWN 129)
-
-;; Modifier keys (as scancodes)
-(define SDL_SCANCODE_LCTRL 224)
-(define SDL_SCANCODE_LSHIFT 225)
-(define SDL_SCANCODE_LALT 226)
-(define SDL_SCANCODE_LGUI 227)
-(define SDL_SCANCODE_RCTRL 228)
-(define SDL_SCANCODE_RSHIFT 229)
-(define SDL_SCANCODE_RALT 230)
-(define SDL_SCANCODE_RGUI 231)
-
-;; Total number of scancodes
-(define SDL_NUM_SCANCODES 512)
-
-;; ============================================================================
-;; Blend Modes
-;; ============================================================================
-
-;; SDL_BlendMode type (32-bit unsigned)
-(define _SDL_BlendMode _uint32)
-
-;; Blend mode constants
-(define SDL_BLENDMODE_NONE                #x00000000)  ; no blending
-(define SDL_BLENDMODE_BLEND               #x00000001)  ; alpha blending
-(define SDL_BLENDMODE_BLEND_PREMULTIPLIED #x00000010)  ; pre-multiplied alpha
-(define SDL_BLENDMODE_ADD                 #x00000002)  ; additive blending
-(define SDL_BLENDMODE_ADD_PREMULTIPLIED   #x00000020)  ; pre-multiplied additive
-(define SDL_BLENDMODE_MOD                 #x00000004)  ; color modulate
-(define SDL_BLENDMODE_MUL                 #x00000008)  ; color multiply
-(define SDL_BLENDMODE_INVALID             #x7FFFFFFF)
-
-;; ============================================================================
-;; Flip Modes
-;; ============================================================================
-
-;; SDL_FlipMode - for texture rendering with flipping
-(define _SDL_FlipMode _int)
-
-(define SDL_FLIP_NONE       0)  ; no flipping
-(define SDL_FLIP_HORIZONTAL 1)  ; flip horizontally
-(define SDL_FLIP_VERTICAL   2)  ; flip vertically
-
-;; ============================================================================
-;; System Cursor Types
-;; ============================================================================
-
-;; SDL_SystemCursor - predefined system cursor types
-(define _SDL_SystemCursor _int)
-
-(define SDL_SYSTEM_CURSOR_DEFAULT      0)   ; Default cursor (usually an arrow)
-(define SDL_SYSTEM_CURSOR_TEXT         1)   ; Text selection (usually an I-beam)
-(define SDL_SYSTEM_CURSOR_WAIT         2)   ; Wait (hourglass or spinning ball)
-(define SDL_SYSTEM_CURSOR_CROSSHAIR    3)   ; Crosshair
-(define SDL_SYSTEM_CURSOR_PROGRESS     4)   ; Program busy but interactive
-(define SDL_SYSTEM_CURSOR_NWSE_RESIZE  5)   ; Double arrow NW-SE
-(define SDL_SYSTEM_CURSOR_NESW_RESIZE  6)   ; Double arrow NE-SW
-(define SDL_SYSTEM_CURSOR_EW_RESIZE    7)   ; Double arrow E-W
-(define SDL_SYSTEM_CURSOR_NS_RESIZE    8)   ; Double arrow N-S
-(define SDL_SYSTEM_CURSOR_MOVE         9)   ; Four-pointed arrow (move)
-(define SDL_SYSTEM_CURSOR_NOT_ALLOWED  10)  ; Not permitted (slashed circle)
-(define SDL_SYSTEM_CURSOR_POINTER      11)  ; Pointer/link (pointing hand)
-(define SDL_SYSTEM_CURSOR_NW_RESIZE    12)  ; Window resize top-left
-(define SDL_SYSTEM_CURSOR_N_RESIZE     13)  ; Window resize top
-(define SDL_SYSTEM_CURSOR_NE_RESIZE    14)  ; Window resize top-right
-(define SDL_SYSTEM_CURSOR_E_RESIZE     15)  ; Window resize right
-(define SDL_SYSTEM_CURSOR_SE_RESIZE    16)  ; Window resize bottom-right
-(define SDL_SYSTEM_CURSOR_S_RESIZE     17)  ; Window resize bottom
-(define SDL_SYSTEM_CURSOR_SW_RESIZE    18)  ; Window resize bottom-left
-(define SDL_SYSTEM_CURSOR_W_RESIZE     19)  ; Window resize left
-(define SDL_SYSTEM_CURSOR_COUNT        20)  ; Number of system cursors
 
 ;; ============================================================================
 ;; Event Structs
@@ -1100,9 +393,6 @@
    [mouse_x _float]     ; mouse x position
    [mouse_y _float]))   ; mouse y position
 
-;; SDL_Event union size (128 bytes in SDL3)
-(define SDL_EVENT_SIZE 128)
-
 ;; Helper to get event type from any event pointer
 (define (sdl-event-type event-ptr)
   (ptr-ref event-ptr _uint32))
@@ -1124,39 +414,35 @@
   (cast event-ptr _pointer _SDL_MouseWheelEvent-pointer))
 
 ;; ============================================================================
-;; Texture Access Modes
+;; FFI Type Aliases for Enums
 ;; ============================================================================
+
+;; SDL_Keycode type (32-bit)
+(define _SDL_Keycode _uint32)
+
+;; SDL_Keymod type (16-bit)
+(define _SDL_Keymod _uint16)
+
+;; SDL_Scancode type
+(define _SDL_Scancode _int)
+
+;; SDL_BlendMode type (32-bit unsigned)
+(define _SDL_BlendMode _uint32)
+
+;; SDL_FlipMode - for texture rendering with flipping
+(define _SDL_FlipMode _int)
 
 ;; SDL_TextureAccess - how the texture data will be accessed
 (define _SDL_TextureAccess _int)
 
-(define SDL_TEXTUREACCESS_STATIC    0)  ; changes rarely, not lockable
-(define SDL_TEXTUREACCESS_STREAMING 1)  ; changes frequently, lockable
-(define SDL_TEXTUREACCESS_TARGET    2)  ; can be used as render target
-
-;; ============================================================================
-;; Scale Modes
-;; ============================================================================
-
 ;; SDL_ScaleMode - how texture scaling is performed
 (define _SDL_ScaleMode _int)
-
-(define SDL_SCALEMODE_INVALID -1)
-(define SDL_SCALEMODE_NEAREST  0)  ; nearest pixel sampling (pixelated)
-(define SDL_SCALEMODE_LINEAR   1)  ; linear filtering (smooth)
-
-;; ============================================================================
-;; Pixel Formats
-;; ============================================================================
 
 ;; SDL_PixelFormat - pixel format values
 (define _SDL_PixelFormat _uint32)
 
-(define SDL_PIXELFORMAT_UNKNOWN   #x00000000)
-(define SDL_PIXELFORMAT_RGBA8888  #x16462004)
-(define SDL_PIXELFORMAT_ARGB8888  #x16362004)
-(define SDL_PIXELFORMAT_ABGR8888  #x16762004)
-(define SDL_PIXELFORMAT_BGRA8888  #x16862004)
+;; SDL_SystemCursor - predefined system cursor types
+(define _SDL_SystemCursor _int)
 
 ;; ============================================================================
 ;; Audio Types
@@ -1166,28 +452,8 @@
 ;; Zero signifies an invalid/null device
 (define _SDL_AudioDeviceID _uint32)
 
-;; Default device constants
-(define SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK   #xFFFFFFFF)
-(define SDL_AUDIO_DEVICE_DEFAULT_RECORDING  #xFFFFFFFE)
-
 ;; SDL_AudioFormat - audio format specifier (uint16 enum)
 (define _SDL_AudioFormat _uint16)
-
-;; Audio format constants
-(define SDL_AUDIO_UNKNOWN  #x0000)  ; Unspecified audio format
-(define SDL_AUDIO_U8       #x0008)  ; Unsigned 8-bit samples
-(define SDL_AUDIO_S8       #x8008)  ; Signed 8-bit samples
-(define SDL_AUDIO_S16LE    #x8010)  ; Signed 16-bit samples (little-endian)
-(define SDL_AUDIO_S16BE    #x9010)  ; Signed 16-bit samples (big-endian)
-(define SDL_AUDIO_S32LE    #x8020)  ; 32-bit integer samples (little-endian)
-(define SDL_AUDIO_S32BE    #x9020)  ; 32-bit integer samples (big-endian)
-(define SDL_AUDIO_F32LE    #x8120)  ; 32-bit floating point samples (little-endian)
-(define SDL_AUDIO_F32BE    #x9120)  ; 32-bit floating point samples (big-endian)
-
-;; Native byte order aliases (little-endian on macOS/x86/ARM)
-(define SDL_AUDIO_S16 SDL_AUDIO_S16LE)
-(define SDL_AUDIO_S32 SDL_AUDIO_S32LE)
-(define SDL_AUDIO_F32 SDL_AUDIO_F32LE)
 
 ;; SDL_AudioSpec - audio format specification struct
 ;; Note: explicit padding added for C struct alignment (uint16 followed by int)
@@ -1208,15 +474,11 @@
 (define _SDL_WindowID _uint32)
 
 ;; ============================================================================
-;; Display ID
+;; Display Types
 ;; ============================================================================
 
 ;; SDL_DisplayID - unique identifier for a display (uint32)
 (define _SDL_DisplayID _uint32)
-
-;; ============================================================================
-;; Display Mode Struct
-;; ============================================================================
 
 ;; SDL_DisplayMode - describes a display mode
 ;; Note: The 'internal' pointer field is private/opaque, included for ABI compatibility
@@ -1238,28 +500,15 @@
 ;; SDL_FlashOperation - window flash behavior
 (define _SDL_FlashOperation _int)
 
-(define SDL_FLASH_CANCEL        0)  ; Cancel any window flash state
-(define SDL_FLASH_BRIEFLY       1)  ; Flash the window briefly to get attention
-(define SDL_FLASH_UNTIL_FOCUSED 2)  ; Flash the window until it gets focus
-
 ;; ============================================================================
 ;; Message Box Types
 ;; ============================================================================
 
-;; SDL_MessageBoxFlags - flags for message box display
+;; SDL_MessageBoxFlags type
 (define _SDL_MessageBoxFlags _uint32)
 
-(define SDL_MESSAGEBOX_ERROR                    #x00000010)  ; error dialog
-(define SDL_MESSAGEBOX_WARNING                  #x00000020)  ; warning dialog
-(define SDL_MESSAGEBOX_INFORMATION              #x00000040)  ; informational dialog
-(define SDL_MESSAGEBOX_BUTTONS_LEFT_TO_RIGHT    #x00000080)  ; buttons placed left to right
-(define SDL_MESSAGEBOX_BUTTONS_RIGHT_TO_LEFT    #x00000100)  ; buttons placed right to left
-
-;; SDL_MessageBoxButtonFlags - flags for individual buttons
+;; SDL_MessageBoxButtonFlags type
 (define _SDL_MessageBoxButtonFlags _uint32)
-
-(define SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT #x00000001)  ; default button when return is hit
-(define SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT #x00000002)  ; default button when escape is hit
 
 ;; SDL_MessageBoxButtonData - individual button data
 (define-cstruct _SDL_MessageBoxButtonData

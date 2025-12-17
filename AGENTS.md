@@ -9,21 +9,26 @@
 # Compile a module
 /opt/homebrew/bin/raco make <file.rkt>
 
-# Run examples
-/opt/homebrew/bin/racket examples/hello-window.rkt
-/opt/homebrew/bin/racket examples/hello-input.rkt
+# Run examples (in worktrees, use PLTCOLLECTS)
+PLTCOLLECTS="$PWD:" /opt/homebrew/bin/racket examples/01-window.rkt
+PLTCOLLECTS="$PWD:" /opt/homebrew/bin/racket examples/02-input.rkt
 
-# Clear compiled cache (needed after changing types.rkt or raw.rkt)
-rm -rf compiled private/compiled examples/compiled
+# Clear compiled cache (needed after changing types/structs)
+rm -rf compiled private/compiled safe/compiled raw/compiled examples/compiled
 ```
 
 ## Project Structure
 
-- `main.rkt` - Package entry point, re-exports raw.rkt
-- `raw.rkt` - FFI bindings to SDL3 C functions
-- `private/types.rkt` - Type definitions, structs, constants
+- `main.rkt` - Package entry point, re-exports safe.rkt
+- `safe.rkt` - Aggregates all safe/* modules (idiomatic Racket API)
+- `raw.rkt` - Aggregates all raw/* modules (C-style FFI)
+- `raw/*.rkt` - Low-level FFI bindings by subsystem
+- `safe/*.rkt` - Idiomatic wrappers with custodian cleanup
+- `private/types.rkt` - C struct types and FFI type aliases
+- `private/constants.rkt` - Flags and constant values
+- `private/enums.rkt` - Keycodes and scancodes
 - `private/lib.rkt` - Library loading (`define-sdl` macro)
-- `examples/` - Example programs
+- `examples/` - Example programs (01-window.rkt through 27-file-dialog.rkt)
 
 ## Naming Conventions
 
@@ -34,9 +39,10 @@ rm -rf compiled private/compiled examples/compiled
 
 ## Adding New Bindings
 
-1. Add types/constants to `private/types.rkt` with `provide`
-2. Add function binding to `raw.rkt` using `define-sdl`
-3. Clear compiled cache before testing
+1. Add types to `private/types.rkt`, constants to `private/constants.rkt`, or keycodes to `private/enums.rkt`
+2. Add function binding to appropriate `raw/*.rkt` using `define-sdl`
+3. Re-export from `raw.rkt` if needed
+4. Clear compiled cache before testing
 
 ## SDL3 Reference Headers
 

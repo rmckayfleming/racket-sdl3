@@ -11,6 +11,8 @@
 
 (require "private/lib.rkt"
          "private/types.rkt"
+         "private/constants.rkt"
+         "private/enums.rkt"
          "raw/init.rkt"
          "raw/window.rkt"
          "raw/render.rkt"
@@ -29,6 +31,8 @@
 
 (provide (all-from-out "private/lib.rkt")
          (all-from-out "private/types.rkt")
+         (all-from-out "private/constants.rkt")
+         (all-from-out "private/enums.rkt")
          (all-from-out "raw/init.rkt")
          (all-from-out "raw/window.rkt")
          (all-from-out "raw/render.rkt")

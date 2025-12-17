@@ -251,37 +251,37 @@ The actual "flip" - make safe the default interface.
 
 ---
 
-## Phase 6: Update Examples and Documentation
+## Phase 6: Update Examples and Documentation ✓ COMPLETED
 
 Ensure everything works with the new structure.
 
 ### Steps
 
-1. Run all examples, fix any broken imports
-2. Update CLAUDE.md with new structure documentation
-3. Update any doc comments referring to old structure
+1. ✓ Run all examples, fix any broken imports (all 27 examples work)
+2. ✓ Update CLAUDE.md with new structure documentation
+3. ✓ Update AGENTS.md with new structure documentation
 
 ---
 
-## Phase 7 (Optional): Split private/types.rkt
+## Phase 7: Split private/types.rkt ✓ COMPLETED
 
-If types.rkt continues to grow, split it for maintainability.
+Split the large types.rkt file into three modules for maintainability.
 
-### Proposed Split
+### Module Split
 
-| New Module | Contents |
-|------------|----------|
-| `private/types.rkt` | Struct definitions (_SDL_Point, _SDL_Rect, _SDL_Color, etc.) |
+| Module | Contents |
+|--------|----------|
+| `private/types.rkt` | Struct definitions, FFI type aliases |
 | `private/constants.rkt` | Init flags, window flags, event types, blend modes |
-| `private/enums.rkt` | Keycodes, scancodes, other large enumerations |
+| `private/enums.rkt` | Keycodes, scancodes, modifier key masks |
 
 ### Steps
 
-1. Create `private/constants.rkt` with flag definitions
-2. Create `private/enums.rkt` with keycode/scancode tables
-3. Update `private/types.rkt` to require and re-export (for backwards compat)
-4. Update raw/ modules to require specific files as needed
-5. Test everything
+1. ✓ Created `private/constants.rkt` with all flag/constant definitions
+2. ✓ Created `private/enums.rkt` with keycode/scancode tables
+3. ✓ Updated `private/types.rkt` to keep only struct definitions and FFI types
+4. ✓ Updated `raw.rkt` to re-export from constants.rkt and enums.rkt
+5. ✓ Tested compilation and examples
 
 ---
 
@@ -309,14 +309,23 @@ If issues arise:
 
 ---
 
-## Estimated Scope
+## Summary
 
-| Phase | Files Changed | Risk |
-|-------|---------------|------|
-| 1. Move safe/syntax.rkt | ~7 | Low |
-| 2. Split raw.rkt | ~20 | Medium (largest change) |
-| 3. Move image.rkt, ttf.rkt | ~5 | Low |
-| 4. Create safe/image.rkt | ~2 | Low |
-| 5. Flip main.rkt | ~3 | Low |
-| 6. Update docs/examples | ~5 | Low |
-| 7. Split types.rkt | ~10 | Low (optional) |
+All phases completed successfully:
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| 1 | Move safe/syntax.rkt to private/ | ✓ COMPLETED |
+| 2 | Split raw.rkt into raw/*.rkt | ✓ COMPLETED |
+| 3 | Move image.rkt, ttf.rkt to raw/ | ✓ COMPLETED |
+| 4 | Create safe/image.rkt | ✓ COMPLETED |
+| 5 | Make safe the default (flip main.rkt) | ✓ COMPLETED |
+| 6 | Update examples and documentation | ✓ COMPLETED |
+| 7 | Split types.rkt into constants/enums | ✓ COMPLETED |
+
+The repository restructuring is complete. Key outcomes:
+- `(require sdl3)` now gives the safe, idiomatic Racket API
+- `(require sdl3/raw)` provides low-level C-style bindings
+- Both raw/ and safe/ directories have parallel structure by SDL subsystem
+- All implementation details moved to private/
+- All 27 examples verified working

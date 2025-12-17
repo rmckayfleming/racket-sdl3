@@ -78,7 +78,9 @@ racket-sdl3/
 │   ├── lib.rkt       # Library loading, define-sdl macro
 │   ├── syntax.rkt    # Error handling helpers
 │   ├── safe-syntax.rkt # Resource wrapping macros
-│   └── types.rkt     # C struct types and constants
+│   ├── types.rkt     # C struct types and FFI type aliases
+│   ├── constants.rkt # Flags and constant values (init, window, event, etc.)
+│   └── enums.rkt     # Keycodes and scancodes
 │
 └── examples/         # Example programs (01-window.rkt through 27-file-dialog.rkt)
 ```
@@ -107,11 +109,15 @@ Safe wrappers use Racket's custodian system for automatic cleanup. When a custod
 - Predicates end with `?`: `window?`, `key-down?`
 - Destructors: `window-destroy!`, `texture-destroy!` (usually not needed due to custodians)
 
+## Backwards Compatibility
+
+This library has no external consumers beyond the examples directory. Don't worry about backwards compatibility when refactoring - just make sure the examples still work.
+
 ## Adding New Bindings
 
 ### Adding a raw binding
 
-1. Add types/constants to `private/types.rkt` with `provide`
+1. Add types to `private/types.rkt`, constants to `private/constants.rkt`, or keycodes/scancodes to `private/enums.rkt`
 2. Add function binding to appropriate `raw/*.rkt` using `define-sdl`
 3. Re-export from `raw.rkt` if needed
 
