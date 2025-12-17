@@ -10,7 +10,15 @@
  ;; Mouse state
  get-mouse-state
  get-relative-mouse-state
+ get-global-mouse-state
  mouse-button-pressed?
+
+ ;; Mouse warping
+ warp-mouse!
+ warp-mouse-global!
+
+ ;; Mouse capture
+ capture-mouse!
 
  ;; Relative mouse mode (FPS-style)
  set-relative-mouse-mode!
@@ -48,6 +56,42 @@
 
 (define (mouse-button-pressed? mask button)
   (not (zero? (bitwise-and mask button))))
+
+;; Get the mouse state in global screen coordinates
+;; Returns: (values x y buttons)
+(define (get-global-mouse-state)
+  (define-values (buttons x y) (SDL-GetGlobalMouseState))
+  (values x y buttons))
+
+;; =========================================================================
+;; Mouse Warping
+;; =========================================================================
+
+;; Move the mouse cursor to a position within a window
+;; win: window struct, or #f to use the currently focused window
+;; x, y: coordinates within the window
+(define (warp-mouse! win x y)
+  (SDL-WarpMouseInWindow (if win (window-ptr win) #f)
+                         (exact->inexact x)
+                         (exact->inexact y)))
+
+;; Move the mouse cursor to a position in global screen space
+;; x, y: screen coordinates
+;; Note: May not be supported on all platforms
+(define (warp-mouse-global! x y)
+  (unless (SDL-WarpMouseGlobal (exact->inexact x) (exact->inexact y))
+    (error 'warp-mouse-global! "Failed to warp mouse: ~a" (SDL-GetError))))
+
+;; =========================================================================
+;; Mouse Capture
+;; =========================================================================
+
+;; Enable or disable mouse capture
+;; When enabled, the window receives mouse events even when the cursor
+;; is outside the window (useful for drag operations)
+(define (capture-mouse! enabled?)
+  (unless (SDL-CaptureMouse enabled?)
+    (error 'capture-mouse! "Failed to capture mouse: ~a" (SDL-GetError))))
 
 ;; =========================================================================
 ;; Relative Mouse Mode (FPS-style input)

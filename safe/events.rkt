@@ -145,7 +145,7 @@
 ;; Mouse button press/release
 (struct mouse-button-event sdl-event (type button x y clicks) #:transparent)
 ;; type is 'down or 'up
-;; button is SDL_BUTTON_LEFT, SDL_BUTTON_RIGHT, etc.
+;; button is 'left, 'middle, 'right, 'x1, 'x2, or integer
 ;; x, y are position (floats)
 ;; clicks is click count (1 for single, 2 for double, etc.)
 
@@ -184,6 +184,19 @@
     [(= raw-type SDL_EVENT_WINDOW_FOCUS_LOST) 'focus-lost]
     [(= raw-type SDL_EVENT_WINDOW_CLOSE_REQUESTED) 'close-requested]
     [else 'unknown]))
+
+;; ============================================================================
+;; Mouse Button Symbol Mapping
+;; ============================================================================
+
+(define (button-id->symbol button-id)
+  (cond
+    [(= button-id SDL_BUTTON_LEFT) 'left]
+    [(= button-id SDL_BUTTON_MIDDLE) 'middle]
+    [(= button-id SDL_BUTTON_RIGHT) 'right]
+    [(= button-id SDL_BUTTON_X1) 'x1]
+    [(= button-id SDL_BUTTON_X2) 'x2]
+    [else button-id]))
 
 ;; ============================================================================
 ;; Event Parsing
@@ -229,7 +242,7 @@
     [(or (= type SDL_EVENT_MOUSE_BUTTON_DOWN) (= type SDL_EVENT_MOUSE_BUTTON_UP))
      (define mb (event->mouse-button buf))
      (mouse-button-event (if (= type SDL_EVENT_MOUSE_BUTTON_DOWN) 'down 'up)
-                         (SDL_MouseButtonEvent-button mb)
+                         (button-id->symbol (SDL_MouseButtonEvent-button mb))
                          (SDL_MouseButtonEvent-x mb)
                          (SDL_MouseButtonEvent-y mb)
                          (SDL_MouseButtonEvent-clicks mb))]

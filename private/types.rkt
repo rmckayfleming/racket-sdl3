@@ -397,8 +397,9 @@
 ;; SDL3 types, enums, and structs
 ;; This file will be expanded with SDL3 type definitions as bindings are added.
 
-;; SDL3 boolean type - SDL3 uses C99 bool (not int like SDL2)
-(define _sdl-bool _bool)
+;; SDL3 boolean type - SDL3 uses C99 bool (1 byte, not int like SDL2)
+;; Racket's _bool is 4 bytes, but _stdbool is 1 byte like C99 bool
+(define _sdl-bool _stdbool)
 
 ;; ============================================================================
 ;; Init Flags (SDL_InitFlags) - used with SDL_Init

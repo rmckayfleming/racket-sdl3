@@ -149,8 +149,12 @@
          ;; Mouse
          SDL-GetMouseState
          SDL-GetRelativeMouseState
+         SDL-GetGlobalMouseState
          SDL-SetWindowRelativeMouseMode
          SDL-GetWindowRelativeMouseMode
+         SDL-WarpMouseInWindow
+         SDL-WarpMouseGlobal
+         SDL-CaptureMouse
          ;; Cursor
          SDL-CreateSystemCursor
          SDL-SetCursor
@@ -318,7 +322,7 @@
 ;; fullscreen: true for fullscreen, false for windowed
 ;; Returns: true on success, false on failure
 (define-sdl SDL-SetWindowFullscreen
-  (_fun _SDL_Window-pointer _bool -> _sdl-bool)
+  (_fun _SDL_Window-pointer _stdbool -> _sdl-bool)
   #:c-id SDL_SetWindowFullscreen)
 
 ;; ============================================================================
@@ -505,7 +509,7 @@
 ;; renderer: the rendering context
 ;; Returns: true if clipping is enabled, false if not
 (define-sdl SDL-RenderClipEnabled
-  (_fun _SDL_Renderer-pointer -> _bool)
+  (_fun _SDL_Renderer-pointer -> _stdbool)
   #:c-id SDL_RenderClipEnabled)
 
 ;; SDL_SetRenderScale: Set the drawing scale for rendering on the current target
@@ -999,7 +1003,7 @@
 ;; key_event: true if the keycode will be used in key events
 ;; Returns: the corresponding SDL_Keycode
 (define-sdl SDL-GetKeyFromScancode
-  (_fun _SDL_Scancode _SDL_Keymod _bool -> _SDL_Keycode)
+  (_fun _SDL_Scancode _SDL_Keymod _stdbool -> _SDL_Keycode)
   #:c-id SDL_GetKeyFromScancode)
 
 ;; SDL_GetScancodeFromKey: Get the scancode for a key code
@@ -1164,14 +1168,14 @@
 ;; window: The window to modify
 ;; bordered: true to add a border, false to remove it
 ;; Returns: true on success, false on failure
-(define-sdl SDL-SetWindowBordered (_fun _SDL_Window-pointer _bool -> _sdl-bool)
+(define-sdl SDL-SetWindowBordered (_fun _SDL_Window-pointer _stdbool -> _sdl-bool)
   #:c-id SDL_SetWindowBordered)
 
 ;; SDL_SetWindowResizable: Set the resizable state of a window
 ;; window: The window to modify
 ;; resizable: true to allow resizing, false to disallow
 ;; Returns: true on success, false on failure
-(define-sdl SDL-SetWindowResizable (_fun _SDL_Window-pointer _bool -> _sdl-bool)
+(define-sdl SDL-SetWindowResizable (_fun _SDL_Window-pointer _stdbool -> _sdl-bool)
   #:c-id SDL_SetWindowResizable)
 
 ;; SDL_SetWindowOpacity: Set the opacity of a window
@@ -1233,15 +1237,49 @@
 ;; enabled: true to enable relative mode (hides cursor, captures mouse)
 ;; Returns: true on success, false on failure
 (define-sdl SDL-SetWindowRelativeMouseMode
-  (_fun _SDL_Window-pointer _bool -> _sdl-bool)
+  (_fun _SDL_Window-pointer _stdbool -> _sdl-bool)
   #:c-id SDL_SetWindowRelativeMouseMode)
 
 ;; SDL_GetWindowRelativeMouseMode: Get the relative mouse mode state for a window
 ;; window: the window to query
 ;; Returns: true if relative mode is enabled
 (define-sdl SDL-GetWindowRelativeMouseMode
-  (_fun _SDL_Window-pointer -> _bool)
+  (_fun _SDL_Window-pointer -> _stdbool)
   #:c-id SDL_GetWindowRelativeMouseMode)
+
+;; SDL_GetGlobalMouseState: Get the current state of the mouse in global screen coordinates
+;; Returns: (values buttons x y) - button flags and global position
+(define-sdl SDL-GetGlobalMouseState
+  (_fun (x : (_ptr o _float))
+        (y : (_ptr o _float))
+        -> (buttons : _uint32)
+        -> (values buttons x y))
+  #:c-id SDL_GetGlobalMouseState)
+
+;; SDL_WarpMouseInWindow: Move the mouse cursor to the given position within a window
+;; window: the window to warp mouse in (can be NULL for focused window)
+;; x: x coordinate within the window
+;; y: y coordinate within the window
+(define-sdl SDL-WarpMouseInWindow
+  (_fun _SDL_Window-pointer/null _float _float -> _void)
+  #:c-id SDL_WarpMouseInWindow)
+
+;; SDL_WarpMouseGlobal: Move the mouse cursor to the given position in global screen space
+;; x: x coordinate in global screen space
+;; y: y coordinate in global screen space
+;; Returns: true on success, false on failure (may not be supported on all platforms)
+(define-sdl SDL-WarpMouseGlobal
+  (_fun _float _float -> _sdl-bool)
+  #:c-id SDL_WarpMouseGlobal)
+
+;; SDL_CaptureMouse: Capture the mouse to track input outside a window
+;; enabled: true to enable capture, false to disable
+;; Returns: true on success, false on failure
+;; Note: While captured, mouse events are delivered to the focused window
+;; even when the cursor is outside the window
+(define-sdl SDL-CaptureMouse
+  (_fun _stdbool -> _sdl-bool)
+  #:c-id SDL_CaptureMouse)
 
 ;; ============================================================================
 ;; Cursor
@@ -1288,7 +1326,7 @@
 ;; SDL_CursorVisible: Check if the cursor is visible
 ;; Returns: true if the cursor is visible
 (define-sdl SDL-CursorVisible
-  (_fun -> _bool)
+  (_fun -> _stdbool)
   #:c-id SDL_CursorVisible)
 
 ;; ============================================================================
@@ -1354,7 +1392,7 @@
 ;; SDL_HasClipboardText: Query whether the clipboard has text
 ;; Returns: true if the clipboard has text, false otherwise
 (define-sdl SDL-HasClipboardText
-  (_fun -> _bool)
+  (_fun -> _stdbool)
   #:c-id SDL_HasClipboardText)
 
 ;; ============================================================================
@@ -1455,7 +1493,7 @@
 ;; devid: the device to query
 ;; Returns: true if the device is paused, false otherwise
 (define-sdl SDL-AudioDevicePaused
-  (_fun _SDL_AudioDeviceID -> _bool)
+  (_fun _SDL_AudioDeviceID -> _stdbool)
   #:c-id SDL_AudioDevicePaused)
 
 ;; ============================================================================
