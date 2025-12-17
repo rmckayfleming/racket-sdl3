@@ -18,13 +18,9 @@
          surface-ptr
          surface-destroy!
 
-         ;; Saving (new API)
+         ;; Saving
          save-png!
          save-jpg!
-
-         ;; Saving (backward-compatible aliases)
-         save-surface-png
-         save-surface-jpg
 
          ;; Screenshots
          render-read-pixels)
@@ -76,10 +72,6 @@
   (define ptr (if (surface? surf) (surface-ptr surf) surf))
   (unless (IMG-SaveJPG ptr path quality)
     (error 'save-jpg! "failed to save JPG: ~a (~a)" path (SDL-GetError))))
-
-;; Backward-compatible aliases
-(define save-surface-png save-png!)
-(define save-surface-jpg save-jpg!)
 
 ;; ============================================================================
 ;; Screenshots

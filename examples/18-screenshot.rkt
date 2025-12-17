@@ -114,7 +114,7 @@
         (when save-png?
           (define filename (make-filename "png"))
           (define surface (render-read-pixels renderer))
-          (save-surface-png surface filename)
+          (save-png! surface filename)
           (surface-destroy! surface)
           (set! screenshot-count (add1 screenshot-count))
           (printf "Saved PNG: ~a\n" filename))
@@ -122,7 +122,7 @@
         (when save-jpg?
           (define filename (make-filename "jpg"))
           (define surface (render-read-pixels renderer))
-          (save-surface-jpg surface filename 90)
+          (save-jpg! surface filename 90)
           (surface-destroy! surface)
           (set! screenshot-count (add1 screenshot-count))
           (printf "Saved JPG: ~a\n" filename))

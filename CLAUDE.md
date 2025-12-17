@@ -8,11 +8,17 @@
 
 ## Build & Run
 
+**IMPORTANT: You are working in a git worktree.** The `sdl3` package is installed pointing to the main repository, not this worktree. To test code in this worktree, you must use `PLTCOLLECTS` to override the collection path:
+
 ```bash
-# Run examples directly (Racket auto-compiles as needed)
-/opt/homebrew/bin/racket examples/01-window.rkt
-/opt/homebrew/bin/racket examples/02-input.rkt
+# Run examples against THIS worktree's code (not the installed package)
+PLTCOLLECTS="$PWD:" /opt/homebrew/bin/racket examples/01-window.rkt
+
+# Compile against this worktree
+PLTCOLLECTS="$PWD:" /opt/homebrew/bin/raco make safe.rkt
 ```
+
+Without `PLTCOLLECTS="$PWD:"`, Racket will load the main repo's code instead of the worktree's code, causing confusing "unbound identifier" errors for new functions.
 
 Racket automatically creates `compiled/` directories for bytecode caching. Usually this just works. If you hit strange errors after modifying types or structs (e.g., "identifier not found" for something you just added), clear the cache:
 
@@ -180,12 +186,13 @@ Key headers:
 
 ## Testing
 
-Run examples to verify bindings work:
+Run examples to verify bindings work. Remember to use `PLTCOLLECTS` in worktrees:
 
 ```bash
-racket examples/01-window.rkt   # Basic window
-racket examples/02-input.rkt    # Keyboard/mouse events
-racket examples/04-image.rkt    # Image loading
-racket examples/05-text.rkt     # TTF rendering
-racket examples/15-repl.rkt     # Raw bindings (uses sdl3/raw)
+# In a worktree, always prefix with PLTCOLLECTS="$PWD:"
+PLTCOLLECTS="$PWD:" /opt/homebrew/bin/racket examples/01-window.rkt   # Basic window
+PLTCOLLECTS="$PWD:" /opt/homebrew/bin/racket examples/02-input.rkt    # Keyboard/mouse events
+PLTCOLLECTS="$PWD:" /opt/homebrew/bin/racket examples/04-image.rkt    # Image loading
+PLTCOLLECTS="$PWD:" /opt/homebrew/bin/racket examples/05-text.rkt     # TTF rendering
+PLTCOLLECTS="$PWD:" /opt/homebrew/bin/racket examples/15-repl.rkt     # Raw bindings (uses sdl3/raw)
 ```

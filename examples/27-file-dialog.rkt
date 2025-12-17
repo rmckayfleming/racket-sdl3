@@ -268,7 +268,7 @@
                      (define path (if (regexp-match? #rx"\\.png$" file)
                                       file
                                       (~a file ".png")))
-                     (save-surface-png surface path)
+                     (save-png! surface path)
                      (surface-destroy! surface)
                      (values run? col size draw? lx ly
                              (~a "Saved: " path)))])]

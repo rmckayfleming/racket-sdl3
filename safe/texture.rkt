@@ -8,7 +8,6 @@
          "../raw/image.rkt"
          "window.rkt"
          "draw.rkt"
-         "image.rkt"
          "../private/safe-syntax.rkt")
 
 (provide
@@ -56,10 +55,7 @@
  render-texture!
  render-texture-affine!
  render-texture-tiled!
- render-texture-9grid!
-
- ;; Surface/Image I/O (re-exported from safe/image.rkt)
- (all-from-out "image.rkt"))
+ render-texture-9grid!)
 
 ;; ============================================================================
 ;; Texture wrapper struct
