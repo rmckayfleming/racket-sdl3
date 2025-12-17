@@ -199,7 +199,7 @@ Move the extension library bindings into the raw/ directory structure.
 
 ---
 
-## Phase 4: Create safe/image.rkt
+## Phase 4: Create safe/image.rkt ✓ COMPLETED
 
 Add a safe wrapper for image operations that aren't texture-related.
 
@@ -209,20 +209,31 @@ Add a safe wrapper for image operations that aren't texture-related.
 ;; Surface loading with custodian cleanup
 load-surface      ; path -> surface
 surface?
+surface-ptr
 surface-destroy!
 
-;; Saving
+;; Saving (new API)
 save-png!         ; surface path -> void
 save-jpg!         ; surface path quality -> void
+
+;; Saving (backward-compatible aliases)
+save-surface-png  ; alias for save-png!
+save-surface-jpg  ; alias for save-jpg!
+
+;; Screenshots
+render-read-pixels  ; renderer -> surface (with custodian cleanup)
 ```
 
 ### Steps
 
-1. Create `safe/image.rkt` with surface wrapper struct
-2. Implement `load-surface` using `IMG-Load` with custodian registration
-3. Implement `save-png!` and `save-jpg!` wrappers
-4. Update `safe.rkt` to require and re-export `safe/image.rkt`
-5. Test with a new example or manual REPL test
+1. ✓ Create `safe/image.rkt` with surface wrapper struct using `define-sdl-resource`
+2. ✓ Implement `load-surface` using `IMG-Load` with custodian registration
+3. ✓ Implement `save-png!` and `save-jpg!` wrappers (accept both surface objects and raw pointers)
+4. ✓ Move `render-read-pixels` from `safe/texture.rkt` to `safe/image.rkt`
+5. ✓ Update `safe.rkt` to require and re-export `safe/image.rkt`
+6. ✓ Update `safe/texture.rkt` to re-export from `safe/image.rkt` for backward compatibility
+7. ✓ Add backward-compatible aliases (`save-surface-png`, `save-surface-jpg`)
+8. ✓ Test with examples (04-image.rkt, 18-screenshot.rkt)
 
 ---
 

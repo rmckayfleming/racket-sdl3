@@ -14,6 +14,7 @@
          "safe/events.rkt"
          "safe/draw.rkt"
          "safe/texture.rkt"
+         "safe/image.rkt"
          "safe/ttf.rkt"
          "safe/mouse.rkt"
          "safe/keyboard.rkt"
@@ -27,6 +28,7 @@
          (all-from-out "safe/events.rkt")
          (all-from-out "safe/draw.rkt")
          (all-from-out "safe/texture.rkt")
+         (all-from-out "safe/image.rkt")
          (all-from-out "safe/ttf.rkt")
          (all-from-out "safe/mouse.rkt")
          (all-from-out "safe/keyboard.rkt")
