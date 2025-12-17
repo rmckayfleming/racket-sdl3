@@ -53,6 +53,9 @@
 
  ;; Rendering
  render-texture!
+ render-texture-affine!
+ render-texture-tiled!
+ render-texture-9grid!
 
  ;; Surface/Image I/O
  load-surface
@@ -348,6 +351,117 @@
                                   center-point
                                   flip-val))
       (SDL-RenderTexture (renderer-ptr rend) (texture-ptr tex) src-rect dst-rect)))
+
+;; Render a texture with affine transform
+;; This allows arbitrary 2D transformations including shearing/skewing
+;; origin: where the top-left of the texture appears (cons x y) or SDL_FPoint
+;; right: where the top-right of the texture appears (cons x y) or SDL_FPoint
+;; down: where the bottom-left of the texture appears (cons x y) or SDL_FPoint
+;; The bottom-right is inferred from these three points
+(define (render-texture-affine! rend tex origin right down
+                                 #:src-x [src-x #f]
+                                 #:src-y [src-y #f]
+                                 #:src-w [src-w #f]
+                                 #:src-h [src-h #f])
+  ;; Create source rect if specified
+  (define src-rect
+    (if (and src-x src-y src-w src-h)
+        (make-SDL_FRect (exact->inexact src-x)
+                        (exact->inexact src-y)
+                        (exact->inexact src-w)
+                        (exact->inexact src-h))
+        #f))
+
+  ;; Convert points from cons pairs if needed
+  (define (->fpoint p)
+    (cond
+      [(pair? p) (make-SDL_FPoint (exact->inexact (car p))
+                                   (exact->inexact (cdr p)))]
+      [else p]))  ; assume it's already an SDL_FPoint
+
+  (define origin-pt (and origin (->fpoint origin)))
+  (define right-pt (and right (->fpoint right)))
+  (define down-pt (and down (->fpoint down)))
+
+  (unless (SDL-RenderTextureAffine (renderer-ptr rend)
+                                    (texture-ptr tex)
+                                    src-rect
+                                    origin-pt
+                                    right-pt
+                                    down-pt)
+    (error 'render-texture-affine! "Failed to render affine: ~a" (SDL-GetError))))
+
+;; Render a texture tiled to fill a destination area
+;; scale: scale factor for the tile (1.0 = original size, 2.0 = double size)
+;; dst-x, dst-y, dst-w, dst-h: destination rectangle (required)
+(define (render-texture-tiled! rend tex dst-x dst-y dst-w dst-h
+                                #:scale [scale 1.0]
+                                #:src-x [src-x #f]
+                                #:src-y [src-y #f]
+                                #:src-w [src-w #f]
+                                #:src-h [src-h #f])
+  ;; Create source rect if specified
+  (define src-rect
+    (if (and src-x src-y src-w src-h)
+        (make-SDL_FRect (exact->inexact src-x)
+                        (exact->inexact src-y)
+                        (exact->inexact src-w)
+                        (exact->inexact src-h))
+        #f))
+
+  (define dst-rect (make-SDL_FRect (exact->inexact dst-x)
+                                   (exact->inexact dst-y)
+                                   (exact->inexact dst-w)
+                                   (exact->inexact dst-h)))
+
+  (unless (SDL-RenderTextureTiled (renderer-ptr rend)
+                                   (texture-ptr tex)
+                                   src-rect
+                                   (exact->inexact scale)
+                                   dst-rect)
+    (error 'render-texture-tiled! "Failed to render tiled: ~a" (SDL-GetError))))
+
+;; Render a texture using 9-grid (9-slice) scaling
+;; This is ideal for UI elements like buttons and panels that need to scale
+;; without distorting corners
+;; left-width, right-width: width of corner regions in source pixels
+;; top-height, bottom-height: height of corner regions in source pixels
+;; scale: scale factor for the corners
+;; dst-x, dst-y, dst-w, dst-h: destination rectangle
+(define (render-texture-9grid! rend tex dst-x dst-y dst-w dst-h
+                                #:left-width left-width
+                                #:right-width right-width
+                                #:top-height top-height
+                                #:bottom-height bottom-height
+                                #:scale [scale 1.0]
+                                #:src-x [src-x #f]
+                                #:src-y [src-y #f]
+                                #:src-w [src-w #f]
+                                #:src-h [src-h #f])
+  ;; Create source rect if specified
+  (define src-rect
+    (if (and src-x src-y src-w src-h)
+        (make-SDL_FRect (exact->inexact src-x)
+                        (exact->inexact src-y)
+                        (exact->inexact src-w)
+                        (exact->inexact src-h))
+        #f))
+
+  (define dst-rect (make-SDL_FRect (exact->inexact dst-x)
+                                   (exact->inexact dst-y)
+                                   (exact->inexact dst-w)
+                                   (exact->inexact dst-h)))
+
+  (unless (SDL-RenderTexture9Grid (renderer-ptr rend)
+                                   (texture-ptr tex)
+                                   src-rect
+                                   (exact->inexact left-width)
+                                   (exact->inexact right-width)
+                                   (exact->inexact top-height)
+                                   (exact->inexact bottom-height)
+                                   (exact->inexact scale)
+                                   dst-rect)
+    (error 'render-texture-9grid! "Failed to render 9-grid: ~a" (SDL-GetError))))
 
 ;; ============================================================================
 ;; Surface/Image I/O

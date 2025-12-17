@@ -76,6 +76,21 @@
          SDL_Color-g
          SDL_Color-b
          SDL_Color-a
+         ;; Float color struct (for geometry rendering)
+         _SDL_FColor
+         _SDL_FColor-pointer
+         make-SDL_FColor
+         SDL_FColor-r
+         SDL_FColor-g
+         SDL_FColor-b
+         SDL_FColor-a
+         ;; Vertex struct (for geometry rendering)
+         _SDL_Vertex
+         _SDL_Vertex-pointer
+         make-SDL_Vertex
+         SDL_Vertex-position
+         SDL_Vertex-color
+         SDL_Vertex-tex_coord
          ;; Event constants
          SDL_EVENT_QUIT
          ;; Window events
@@ -406,6 +421,20 @@
    [g _uint8]
    [b _uint8]
    [a _uint8]))
+
+;; SDL_FColor - floating point RGBA color (for HDR and geometry rendering)
+(define-cstruct _SDL_FColor
+  ([r _float]
+   [g _float]
+   [b _float]
+   [a _float]))
+
+;; SDL_Vertex - vertex for geometry rendering
+;; Contains position, color (as float), and texture coordinates
+(define-cstruct _SDL_Vertex
+  ([position _SDL_FPoint]
+   [color _SDL_FColor]
+   [tex_coord _SDL_FPoint]))
 
 ;; ============================================================================
 ;; Event Constants

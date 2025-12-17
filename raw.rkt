@@ -59,11 +59,35 @@
          SDL-SetRenderDrawColor
          SDL-RenderClear
          SDL-RenderPresent
+         ;; Renderer Query Functions
+         SDL-GetNumRenderDrivers
+         SDL-GetRenderDriver
+         SDL-GetRenderer
+         SDL-GetRenderWindow
+         SDL-GetRendererName
+         SDL-GetRenderOutputSize
+         SDL-GetCurrentRenderOutputSize
+         SDL-GetRenderDrawColor
+         SDL-SetRenderDrawColorFloat
+         SDL-GetRenderDrawColorFloat
+         SDL-SetRenderVSync
+         SDL-GetRenderVSync
+         ;; Viewport and Clipping
+         SDL-SetRenderViewport
+         SDL-GetRenderViewport
+         SDL-SetRenderClipRect
+         SDL-GetRenderClipRect
+         SDL-RenderClipEnabled
+         SDL-SetRenderScale
+         SDL-GetRenderScale
          ;; Texture
          SDL-CreateTexture
          SDL-DestroyTexture
          SDL-RenderTexture
          SDL-RenderTextureRotated
+         SDL-RenderTextureAffine
+         SDL-RenderTextureTiled
+         SDL-RenderTexture9Grid
          SDL-GetTextureSize
          SDL-CreateTextureFromSurface
          ;; Render targets
@@ -81,6 +105,11 @@
          SDL-RenderRects
          SDL-RenderFillRect
          SDL-RenderFillRects
+         ;; Geometry rendering
+         SDL-RenderGeometry
+         ;; Debug text
+         SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE
+         SDL-RenderDebugText
          ;; Blend modes
          SDL-SetRenderDrawBlendMode
          SDL-GetRenderDrawBlendMode
@@ -318,6 +347,180 @@
   #:c-id SDL_RenderPresent)
 
 ;; ============================================================================
+;; Renderer Query Functions
+;; ============================================================================
+
+;; SDL_GetNumRenderDrivers: Get the number of 2D rendering drivers available
+;; Returns: the number of built-in render drivers
+(define-sdl SDL-GetNumRenderDrivers (_fun -> _int)
+  #:c-id SDL_GetNumRenderDrivers)
+
+;; SDL_GetRenderDriver: Get the name of a built-in 2D rendering driver
+;; index: the index of the rendering driver (0 to SDL_GetNumRenderDrivers()-1)
+;; Returns: the name of the rendering driver, or NULL if invalid index
+(define-sdl SDL-GetRenderDriver (_fun _int -> _string/utf-8)
+  #:c-id SDL_GetRenderDriver)
+
+;; SDL_GetRenderer: Get the renderer associated with a window
+;; window: the window to query
+;; Returns: the rendering context, or NULL on failure
+(define-sdl SDL-GetRenderer
+  (_fun _SDL_Window-pointer -> _SDL_Renderer-pointer/null)
+  #:c-id SDL_GetRenderer)
+
+;; SDL_GetRenderWindow: Get the window associated with a renderer
+;; renderer: the renderer to query
+;; Returns: the window, or NULL on failure
+(define-sdl SDL-GetRenderWindow
+  (_fun _SDL_Renderer-pointer -> _SDL_Window-pointer/null)
+  #:c-id SDL_GetRenderWindow)
+
+;; SDL_GetRendererName: Get the name of a renderer
+;; renderer: the rendering context
+;; Returns: the name of the selected renderer, or NULL on failure
+(define-sdl SDL-GetRendererName (_fun _SDL_Renderer-pointer -> _string/utf-8)
+  #:c-id SDL_GetRendererName)
+
+;; SDL_GetRenderOutputSize: Get the output size in pixels of a rendering context
+;; renderer: the rendering context
+;; Returns: (values success? width height)
+(define-sdl SDL-GetRenderOutputSize
+  (_fun _SDL_Renderer-pointer
+        (w : (_ptr o _int))
+        (h : (_ptr o _int))
+        -> (result : _sdl-bool)
+        -> (values result w h))
+  #:c-id SDL_GetRenderOutputSize)
+
+;; SDL_GetCurrentRenderOutputSize: Get the current output size in pixels
+;; This returns the size considering the current render target and logical size.
+;; renderer: the rendering context
+;; Returns: (values success? width height)
+(define-sdl SDL-GetCurrentRenderOutputSize
+  (_fun _SDL_Renderer-pointer
+        (w : (_ptr o _int))
+        (h : (_ptr o _int))
+        -> (result : _sdl-bool)
+        -> (values result w h))
+  #:c-id SDL_GetCurrentRenderOutputSize)
+
+;; SDL_GetRenderDrawColor: Get the color used for drawing operations
+;; renderer: the rendering context
+;; Returns: (values success? r g b a)
+(define-sdl SDL-GetRenderDrawColor
+  (_fun _SDL_Renderer-pointer
+        (r : (_ptr o _uint8))
+        (g : (_ptr o _uint8))
+        (b : (_ptr o _uint8))
+        (a : (_ptr o _uint8))
+        -> (result : _sdl-bool)
+        -> (values result r g b a))
+  #:c-id SDL_GetRenderDrawColor)
+
+;; SDL_SetRenderDrawColorFloat: Set the color for drawing operations (float version)
+;; renderer: the rendering context
+;; r, g, b, a: Color components (0.0 to 1.0, can exceed for HDR)
+;; Returns: true on success, false on failure
+(define-sdl SDL-SetRenderDrawColorFloat
+  (_fun _SDL_Renderer-pointer _float _float _float _float -> _sdl-bool)
+  #:c-id SDL_SetRenderDrawColorFloat)
+
+;; SDL_GetRenderDrawColorFloat: Get the color used for drawing operations (float version)
+;; renderer: the rendering context
+;; Returns: (values success? r g b a)
+(define-sdl SDL-GetRenderDrawColorFloat
+  (_fun _SDL_Renderer-pointer
+        (r : (_ptr o _float))
+        (g : (_ptr o _float))
+        (b : (_ptr o _float))
+        (a : (_ptr o _float))
+        -> (result : _sdl-bool)
+        -> (values result r g b a))
+  #:c-id SDL_GetRenderDrawColorFloat)
+
+;; SDL_SetRenderVSync: Toggle VSync for a renderer
+;; renderer: the rendering context
+;; vsync: the vertical refresh sync interval (1 for on, 0 for off, -1 for adaptive)
+;; Returns: true on success, false on failure
+(define-sdl SDL-SetRenderVSync
+  (_fun _SDL_Renderer-pointer _int -> _sdl-bool)
+  #:c-id SDL_SetRenderVSync)
+
+;; SDL_GetRenderVSync: Get the VSync setting for a renderer
+;; renderer: the rendering context
+;; Returns: (values success? vsync)
+(define-sdl SDL-GetRenderVSync
+  (_fun _SDL_Renderer-pointer
+        (vsync : (_ptr o _int))
+        -> (result : _sdl-bool)
+        -> (values result vsync))
+  #:c-id SDL_GetRenderVSync)
+
+;; ============================================================================
+;; Viewport and Clipping
+;; ============================================================================
+
+;; SDL_SetRenderViewport: Set the drawing area for rendering on the current target
+;; renderer: the rendering context
+;; rect: the SDL_Rect representing the drawing area, or NULL to set the viewport
+;;       to the entire target
+;; Returns: true on success, false on failure
+(define-sdl SDL-SetRenderViewport
+  (_fun _SDL_Renderer-pointer _SDL_Rect-pointer/null -> _sdl-bool)
+  #:c-id SDL_SetRenderViewport)
+
+;; SDL_GetRenderViewport: Get the drawing area for the current target
+;; renderer: the rendering context
+;; rect: an SDL_Rect structure to be filled with the current drawing area
+;; Returns: true on success, false on failure
+(define-sdl SDL-GetRenderViewport
+  (_fun _SDL_Renderer-pointer _SDL_Rect-pointer -> _sdl-bool)
+  #:c-id SDL_GetRenderViewport)
+
+;; SDL_SetRenderClipRect: Set the clip rectangle for rendering on the current target
+;; renderer: the rendering context
+;; rect: an SDL_Rect representing the clip area, or NULL to disable clipping
+;; Returns: true on success, false on failure
+(define-sdl SDL-SetRenderClipRect
+  (_fun _SDL_Renderer-pointer _SDL_Rect-pointer/null -> _sdl-bool)
+  #:c-id SDL_SetRenderClipRect)
+
+;; SDL_GetRenderClipRect: Get the clip rectangle for the current target
+;; renderer: the rendering context
+;; rect: an SDL_Rect structure to be filled with the current clip rectangle
+;; Returns: true on success, false on failure
+(define-sdl SDL-GetRenderClipRect
+  (_fun _SDL_Renderer-pointer _SDL_Rect-pointer -> _sdl-bool)
+  #:c-id SDL_GetRenderClipRect)
+
+;; SDL_RenderClipEnabled: Get whether clipping is enabled on the given render target
+;; renderer: the rendering context
+;; Returns: true if clipping is enabled, false if not
+(define-sdl SDL-RenderClipEnabled
+  (_fun _SDL_Renderer-pointer -> _bool)
+  #:c-id SDL_RenderClipEnabled)
+
+;; SDL_SetRenderScale: Set the drawing scale for rendering on the current target
+;; renderer: the rendering context
+;; scaleX: the horizontal scaling factor
+;; scaleY: the vertical scaling factor
+;; Returns: true on success, false on failure
+(define-sdl SDL-SetRenderScale
+  (_fun _SDL_Renderer-pointer _float _float -> _sdl-bool)
+  #:c-id SDL_SetRenderScale)
+
+;; SDL_GetRenderScale: Get the drawing scale for the current target
+;; renderer: the rendering context
+;; Returns: (values success? scaleX scaleY)
+(define-sdl SDL-GetRenderScale
+  (_fun _SDL_Renderer-pointer
+        (scaleX : (_ptr o _float))
+        (scaleY : (_ptr o _float))
+        -> (result : _sdl-bool)
+        -> (values result scaleX scaleY))
+  #:c-id SDL_GetRenderScale)
+
+;; ============================================================================
 ;; Texture
 ;; ============================================================================
 
@@ -356,6 +559,61 @@
         _SDL_FlipMode
         -> _sdl-bool)
   #:c-id SDL_RenderTextureRotated)
+
+;; SDL_RenderTextureAffine: Copy texture with affine transform
+;; renderer: the renderer
+;; texture: the source texture
+;; srcrect: portion of texture (NULL for whole texture)
+;; origin: the point in the destination where the top-left corner of srcrect appears
+;; right: the point in the destination where the top-right corner of srcrect appears
+;; down: the point in the destination where the bottom-left corner of srcrect appears
+;; Returns: true on success, false on failure
+(define-sdl SDL-RenderTextureAffine
+  (_fun _SDL_Renderer-pointer
+        _SDL_Texture-pointer
+        _SDL_FRect-pointer/null
+        _SDL_FPoint-pointer/null
+        _SDL_FPoint-pointer/null
+        _SDL_FPoint-pointer/null
+        -> _sdl-bool)
+  #:c-id SDL_RenderTextureAffine)
+
+;; SDL_RenderTextureTiled: Tile a texture to fill a destination rectangle
+;; renderer: the renderer
+;; texture: the source texture
+;; srcrect: portion of texture to tile (NULL for whole texture)
+;; scale: scale factor for the source rectangle (e.g., 2 makes 32x32 tile fill 64x64)
+;; dstrect: destination rectangle to fill (NULL for whole renderer)
+;; Returns: true on success, false on failure
+(define-sdl SDL-RenderTextureTiled
+  (_fun _SDL_Renderer-pointer
+        _SDL_Texture-pointer
+        _SDL_FRect-pointer/null
+        _float
+        _SDL_FRect-pointer/null
+        -> _sdl-bool)
+  #:c-id SDL_RenderTextureTiled)
+
+;; SDL_RenderTexture9Grid: Render texture using 9-grid (9-slice) algorithm
+;; renderer: the renderer
+;; texture: the source texture
+;; srcrect: source rectangle for the 9-grid (NULL for whole texture)
+;; left_width: width of left corners in source pixels
+;; right_width: width of right corners in source pixels
+;; top_height: height of top corners in source pixels
+;; bottom_height: height of bottom corners in source pixels
+;; scale: scale factor for corners
+;; dstrect: destination rectangle (NULL for whole renderer)
+;; Returns: true on success, false on failure
+(define-sdl SDL-RenderTexture9Grid
+  (_fun _SDL_Renderer-pointer
+        _SDL_Texture-pointer
+        _SDL_FRect-pointer/null
+        _float _float _float _float  ; left_width, right_width, top_height, bottom_height
+        _float                        ; scale
+        _SDL_FRect-pointer/null
+        -> _sdl-bool)
+  #:c-id SDL_RenderTexture9Grid)
 
 ;; SDL_GetTextureSize: Query texture dimensions
 ;; texture: the texture to query
@@ -496,6 +754,45 @@
 (define-sdl SDL-RenderFillRects
   (_fun _SDL_Renderer-pointer _pointer _int -> _sdl-bool)
   #:c-id SDL_RenderFillRects)
+
+;; ============================================================================
+;; Geometry Rendering
+;; ============================================================================
+
+;; SDL_RenderGeometry: Render a list of triangles
+;; renderer: the rendering context
+;; texture: optional texture for textured triangles (NULL for solid colors)
+;; vertices: pointer to array of SDL_Vertex structs
+;; num_vertices: number of vertices
+;; indices: optional array of indices into vertices (NULL for sequential)
+;; num_indices: number of indices (0 if indices is NULL)
+;; Returns: true on success, false on failure
+(define-sdl SDL-RenderGeometry
+  (_fun _SDL_Renderer-pointer
+        _SDL_Texture-pointer/null
+        _pointer          ; vertices array
+        _int              ; num_vertices
+        _pointer          ; indices array (can be NULL)
+        _int              ; num_indices
+        -> _sdl-bool)
+  #:c-id SDL_RenderGeometry)
+
+;; ============================================================================
+;; Debug Text
+;; ============================================================================
+
+;; SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE: Size of debug text characters (8x8 pixels)
+(define SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE 8)
+
+;; SDL_RenderDebugText: Draw debug text to a renderer
+;; This is a simple 8x8 bitmap font for debugging purposes.
+;; renderer: the renderer to draw on
+;; x, y: position of top-left corner
+;; str: the string to render (UTF-8, but only ASCII is rendered)
+;; Returns: true on success, false on failure
+(define-sdl SDL-RenderDebugText
+  (_fun _SDL_Renderer-pointer _float _float _string/utf-8 -> _sdl-bool)
+  #:c-id SDL_RenderDebugText)
 
 ;; ============================================================================
 ;; Blend Modes
