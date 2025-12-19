@@ -3,7 +3,8 @@
 ;; Idiomatic keyboard state helpers
 
 (require ffi/unsafe
-         "../raw.rkt")
+         "../raw.rkt"
+         "../private/enums.rkt")
 
 (provide
  ;; Keyboard state
@@ -22,7 +23,10 @@
  scancode-from-key
 
  ;; Reset keyboard
- reset-keyboard!)
+ reset-keyboard!
+
+ ;; Re-export keycodes, scancodes, and modifiers from enums
+ (all-from-out "../private/enums.rkt"))
 
 ;; =========================================================================
 ;; Keyboard State

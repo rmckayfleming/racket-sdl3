@@ -11,6 +11,7 @@
  ;; Init flags
  SDL_INIT_AUDIO
  SDL_INIT_VIDEO
+ SDL_INIT_EVENTS
  ;; Window flags
  SDL_WINDOW_FULLSCREEN
  SDL_WINDOW_RESIZABLE
@@ -134,6 +135,7 @@
 ;; ============================================================================
 (define SDL_INIT_AUDIO #x00000010)
 (define SDL_INIT_VIDEO #x00000020)
+(define SDL_INIT_EVENTS #x00004000)
 
 ;; ============================================================================
 ;; Window Flags (SDL_WindowFlags) - 64-bit in SDL3

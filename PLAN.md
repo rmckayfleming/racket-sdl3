@@ -4,7 +4,7 @@
 
 Reorganize and consolidate the examples directory to reduce redundancy, fill coverage gaps, and improve the learning progression.
 
-## Phase 1: Merges
+## Phase 1: Merges ✓ DONE
 
 ### 1.1 Merge keyboard-events.rkt + keyboard-state.rkt → keyboard.rkt
 - Combine into single example showing both approaches
@@ -29,6 +29,14 @@ Reorganize and consolidate the examples directory to reduce redundancy, fill cov
 - Section 1: Built-in primitives (rects, lines, points)
 - Section 2: Hardware-accelerated geometry with vertex colors
 - Delete: `shapes.rkt`, `geometry.rkt`
+
+**Outcome:** Completed successfully. Created 4 merged example files combining related functionality:
+- `examples/input/keyboard.rkt` - combines event-driven and state polling approaches
+- `examples/textures/texture-transforms.rkt` - combines color modulation with rotation/flipping
+- `examples/input/mouse.rkt` - combines tracking, trail, warp, and capture features
+- `examples/drawing/drawing.rkt` - combines primitives with hardware-accelerated geometry
+
+Deleted 8 old files. Also fixed a pre-existing bug in `safe/window.rkt` where `(all-from-out "../raw.rkt")` caused duplicate identifier exports when combined with `safe/events.rkt`.
 
 ## Phase 2: Removals
 

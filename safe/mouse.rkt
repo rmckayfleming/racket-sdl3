@@ -4,6 +4,7 @@
 
 (require ffi/unsafe
          "../raw.rkt"
+         "../private/constants.rkt"
          "window.rkt")
 
 (provide
@@ -37,7 +38,19 @@
 
  ;; Cursor type symbols
  symbol->system-cursor
- system-cursor->symbol)
+ system-cursor->symbol
+
+ ;; Re-export mouse button constants
+ SDL_BUTTON_LEFT
+ SDL_BUTTON_MIDDLE
+ SDL_BUTTON_RIGHT
+ SDL_BUTTON_X1
+ SDL_BUTTON_X2
+ SDL_BUTTON_LMASK
+ SDL_BUTTON_MMASK
+ SDL_BUTTON_RMASK
+ SDL_BUTTON_X1MASK
+ SDL_BUTTON_X2MASK)
 
 ;; =========================================================================
 ;; Mouse State

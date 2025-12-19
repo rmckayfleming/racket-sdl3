@@ -66,8 +66,20 @@
  ;; Convenience
  make-window+renderer
 
- ;; Re-export common flags
- (all-from-out "../raw.rkt"))
+ ;; Re-export window flags
+ SDL_WINDOW_FULLSCREEN
+ SDL_WINDOW_RESIZABLE
+ SDL_WINDOW_HIGH_PIXEL_DENSITY
+
+ ;; Re-export flash operations
+ SDL_FLASH_CANCEL
+ SDL_FLASH_BRIEFLY
+ SDL_FLASH_UNTIL_FOCUSED
+
+ ;; Re-export init flags
+ SDL_INIT_VIDEO
+ SDL_INIT_AUDIO
+ SDL_INIT_EVENTS)
 
 ;; ============================================================================
 ;; Resource wrapper structs

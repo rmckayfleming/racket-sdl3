@@ -1,18 +1,28 @@
 #lang racket/base
 
-;; Keyboard State Demo
+;; Keyboard Input Demo
 ;;
-;; Demonstrates polling-based keyboard input using SDL_GetKeyboardState.
-;; This is useful for smooth, continuous input (like game movement) as
-;; opposed to event-based input which is better for discrete actions.
+;; Demonstrates two approaches to keyboard input in SDL3:
 ;;
-;; Features:
-;; - Smooth character movement with WASD/arrow keys
-;; - Shows all currently pressed keys
-;; - Modifier state display
-;; - FPS counter showing polling frequency
+;; Section 1: EVENT-DRIVEN INPUT
+;; - Best for discrete actions (menus, typing, one-shot actions)
+;; - Responds to key-down and key-up events
+;; - Can detect key repeats
 ;;
-;; Press Escape to quit.
+;; Section 2: STATE POLLING
+;; - Best for smooth, continuous input (game movement)
+;; - Query keyboard state each frame
+;; - No missed inputs between frames
+;;
+;; This demo shows both approaches working together:
+;; - Event-driven: Press R/G/B to change background color (discrete action)
+;; - State polling: WASD/Arrows for smooth character movement (continuous)
+;;
+;; Controls:
+;;   R/G/B - Change background color (event-driven)
+;;   WASD or Arrows - Move the square (state polling)
+;;   Shift - Move faster
+;;   Escape - Quit
 
 (require racket/match
          racket/format
@@ -21,16 +31,20 @@
 (define window-width 800)
 (define window-height 600)
 
-;; Player state
+;; Player state (controlled by state polling)
 (define player-x 400.0)
 (define player-y 300.0)
 (define player-size 40.0)
 (define move-speed 5.0)
 
-;; Timing for FPS counter
-(define last-fps-time 0)
-(define frame-count 0)
-(define current-fps 0)
+;; Background color state (controlled by events)
+(define bg-r 30)
+(define bg-g 30)
+(define bg-b 35)
+
+;; Key press tracking for visual feedback
+(define last-key-pressed "")
+(define last-key-time 0)
 
 ;; Draw the player (a simple square)
 (define (draw-player! renderer)
@@ -62,7 +76,7 @@
   (define label-y (+ y (/ (- h 8) 2)))
   (render-debug-text! renderer label-x label-y label))
 
-;; Draw a panel showing pressed keys
+;; Draw a panel showing pressed keys (state polling)
 (define (draw-pressed-keys! renderer kbd)
   ;; Background panel
   (set-draw-color! renderer 35 35 45)
@@ -72,8 +86,7 @@
 
   ;; Title
   (set-draw-color! renderer 150 150 150)
-  (render-debug-text! renderer 20 18 "WASD")
-  (render-debug-text! renderer 160 18 "ARROWS")
+  (render-debug-text! renderer 20 18 "STATE POLLING (continuous)")
 
   ;; Draw indicator boxes for WASD
   (define wasd-y 40)
@@ -144,82 +157,111 @@
                  (not (zero? (bitwise-and mods SDL_KMOD_GUI)))
                  '(255 150 200)))
 
-;; Draw FPS indicator
-(define (draw-fps! renderer)
+;; Draw event-driven panel (shows last key press)
+(define (draw-event-panel! renderer current-time)
   (set-draw-color! renderer 35 35 45)
-  (fill-rect! renderer (- window-width 90) 10 80 30)
+  (fill-rect! renderer (- window-width 290) 10 280 80)
   (set-draw-color! renderer 60 60 70)
-  (draw-rect! renderer (- window-width 90) 10 80 30)
+  (draw-rect! renderer (- window-width 290) 10 280 80)
 
-  ;; FPS text
-  (if (> current-fps 55)
-      (set-draw-color! renderer 100 200 100)
-      (set-draw-color! renderer 200 200 100))
-  (render-debug-text! renderer (- window-width 82) 18
-                      (~a "FPS: " current-fps)))
+  ;; Title
+  (set-draw-color! renderer 150 150 150)
+  (render-debug-text! renderer (- window-width 280) 18 "EVENT-DRIVEN (discrete)")
+
+  ;; Last key
+  (define age (- current-time last-key-time))
+  (define alpha (max 0 (- 255 (quotient age 10))))
+  (if (> alpha 50)
+      (set-draw-color! renderer 255 200 100)
+      (set-draw-color! renderer 100 100 100))
+  (render-debug-text! renderer (- window-width 280) 40
+                      (~a "Last key: " last-key-pressed))
+
+  ;; Color instruction
+  (set-draw-color! renderer 200 200 200)
+  (render-debug-text! renderer (- window-width 280) 60
+                      "Press R/G/B to change color"))
 
 ;; Draw instructions
 (define (draw-instructions! renderer)
   (set-draw-color! renderer 35 35 45)
-  (fill-rect! renderer 10 (- window-height 90) 350 80)
+  (fill-rect! renderer 10 (- window-height 110) 380 100)
   (set-draw-color! renderer 60 60 70)
-  (draw-rect! renderer 10 (- window-height 90) 350 80)
+  (draw-rect! renderer 10 (- window-height 110) 380 100)
 
   (set-draw-color! renderer 150 150 150)
-  (render-debug-text! renderer 20 (- window-height 82) "KEYBOARD STATE DEMO")
+  (render-debug-text! renderer 20 (- window-height 102) "KEYBOARD INPUT DEMO")
   (set-draw-color! renderer 120 120 120)
-  (render-debug-text! renderer 20 (- window-height 65) "WASD/Arrows: Move the square")
-  (render-debug-text! renderer 20 (- window-height 50) "Shift: Move faster")
-  (render-debug-text! renderer 20 (- window-height 35) "Escape: Quit"))
-
-;; Update FPS counter
-(define (update-fps! current-time)
-  (set! frame-count (add1 frame-count))
-  (when (> (- current-time last-fps-time) 1000)
-    (set! current-fps frame-count)
-    (set! frame-count 0)
-    (set! last-fps-time current-time)))
+  (render-debug-text! renderer 20 (- window-height 85) "WASD/Arrows: Move square (STATE POLLING)")
+  (render-debug-text! renderer 20 (- window-height 70) "R/G/B: Change background (EVENT-DRIVEN)")
+  (render-debug-text! renderer 20 (- window-height 55) "Shift: Move faster")
+  (render-debug-text! renderer 20 (- window-height 40) "Escape: Quit")
+  (set-draw-color! renderer 100 150 200)
+  (render-debug-text! renderer 20 (- window-height 22) "State=continuous | Events=discrete actions"))
 
 (define (main)
   (sdl-init!)
 
   (define-values (window renderer)
-    (make-window+renderer "SDL3 Keyboard State Demo" window-width window-height))
+    (make-window+renderer "SDL3 Keyboard Input Demo" window-width window-height))
 
-  (printf "Keyboard State Demo~n")
+  (printf "Keyboard Input Demo~n")
   (printf "===================~n")
-  (printf "This demo uses keyboard state polling (SDL_GetKeyboardState).~n")
+  (printf "This demo shows two approaches to keyboard input:~n")
   (printf "~n")
-  (printf "Controls:~n")
+  (printf "STATE POLLING (continuous input):~n")
   (printf "  WASD or Arrow keys: Move the square~n")
   (printf "  Shift: Move faster~n")
-  (printf "  Escape: Quit~n~n")
-
-  (set! last-fps-time (current-ticks))
+  (printf "~n")
+  (printf "EVENT-DRIVEN (discrete actions):~n")
+  (printf "  R/G/B: Change background color~n")
+  (printf "~n")
+  (printf "Escape: Quit~n~n")
 
   (let loop ([running? #t])
     (when running?
-      ;; Get keyboard state once per frame
+      ;; Get keyboard state once per frame (for polling-based input)
       (define kbd (get-keyboard-state))
+      (define current-time (current-ticks))
 
-      ;; Check for quit via event (ESC also checked below via state)
-      (define quit?
-        (for/or ([ev (in-events)])
+      ;; Process events (for event-driven input)
+      (define still-running?
+        (for/fold ([run? #t])
+                  ([ev (in-events)]
+                   #:break (not run?))
           (match ev
-            [(or (quit-event) (window-event 'close-requested)) #t]
-            [_ #f])))
+            [(or (quit-event) (window-event 'close-requested))
+             #f]
 
-      ;; Also check escape via keyboard state
-      (define should-quit? (or quit? (kbd SDL_SCANCODE_ESCAPE)))
+            ;; Event-driven key handling
+            [(key-event 'down key _ _ _)
+             ;; Track last key for display
+             (set! last-key-pressed (key-name key))
+             (set! last-key-time current-time)
 
-      (unless should-quit?
-        ;; Calculate speed (shift = faster)
+             (cond
+               [(= key SDLK_ESCAPE) #f]
+               ;; Event-driven color changes
+               [(= key SDLK_R)
+                (set! bg-r 80) (set! bg-g 30) (set! bg-b 30)
+                run?]
+               [(= key SDLK_G)
+                (set! bg-r 30) (set! bg-g 80) (set! bg-b 30)
+                run?]
+               [(= key SDLK_B)
+                (set! bg-r 30) (set! bg-g 30) (set! bg-b 80)
+                run?]
+               [else run?])]
+
+            [_ run?])))
+
+      (when still-running?
+        ;; State polling-based movement (smooth, continuous)
         (define speed
           (if (mod-state-has? SDL_KMOD_SHIFT)
               (* move-speed 2)
               move-speed))
 
-        ;; Handle movement with keyboard state (both WASD and arrows)
         (when (or (kbd SDL_SCANCODE_W) (kbd SDL_SCANCODE_UP))
           (set! player-y (max (/ player-size 2) (- player-y speed))))
         (when (or (kbd SDL_SCANCODE_S) (kbd SDL_SCANCODE_DOWN))
@@ -229,23 +271,20 @@
         (when (or (kbd SDL_SCANCODE_D) (kbd SDL_SCANCODE_RIGHT))
           (set! player-x (min (- window-width (/ player-size 2)) (+ player-x speed))))
 
-        ;; Update FPS
-        (update-fps! (current-ticks))
-
-        ;; Clear background
-        (set-draw-color! renderer 30 30 35)
+        ;; Clear background (color set by events)
+        (set-draw-color! renderer bg-r bg-g bg-b)
         (render-clear! renderer)
 
         ;; Draw everything
         (draw-player! renderer)
         (draw-pressed-keys! renderer kbd)
         (draw-mod-state! renderer)
-        (draw-fps! renderer)
+        (draw-event-panel! renderer current-time)
         (draw-instructions! renderer)
 
         (render-present! renderer)
         (delay! 16)
-        (loop (not should-quit?)))))
+        (loop still-running?))))
 
   (printf "~nDone.~n")
 
