@@ -29,7 +29,17 @@
  SDL-WriteSurfacePixelFloat
  ;; Color mapping
  SDL-MapSurfaceRGB
- SDL-MapSurfaceRGBA)
+ SDL-MapSurfaceRGBA
+ ;; Blitting
+ SDL-BlitSurface
+ SDL-BlitSurfaceScaled
+ ;; Filling
+ SDL-FillSurfaceRect
+ SDL-FillSurfaceRects
+ SDL-ClearSurface
+ ;; Transformations
+ SDL-FlipSurface
+ SDL-ScaleSurface)
 
 ;; ============================================================================
 ;; Surface Creation/Destruction
@@ -180,3 +190,86 @@
 (define-sdl SDL-MapSurfaceRGBA
   (_fun _SDL_Surface-pointer _uint8 _uint8 _uint8 _uint8 -> _uint32)
   #:c-id SDL_MapSurfaceRGBA)
+
+;; ============================================================================
+;; Blitting
+;; ============================================================================
+
+;; SDL_BlitSurface: Perform a fast blit from source to destination surface
+;; src: source surface
+;; srcrect: source rectangle (or NULL for entire surface)
+;; dst: destination surface
+;; dstrect: destination rectangle (or NULL to use src dimensions at 0,0)
+;; Returns: true on success, false on failure
+(define-sdl SDL-BlitSurface
+  (_fun _SDL_Surface-pointer _SDL_Rect-pointer/null
+        _SDL_Surface-pointer _SDL_Rect-pointer/null
+        -> _sdl-bool)
+  #:c-id SDL_BlitSurface)
+
+;; SDL_BlitSurfaceScaled: Perform a scaled blit from source to destination
+;; src: source surface
+;; srcrect: source rectangle (or NULL for entire surface)
+;; dst: destination surface
+;; dstrect: destination rectangle (or NULL for entire surface)
+;; scaleMode: scaling algorithm (SDL_SCALEMODE_NEAREST or SDL_SCALEMODE_LINEAR)
+;; Returns: true on success, false on failure
+(define-sdl SDL-BlitSurfaceScaled
+  (_fun _SDL_Surface-pointer _SDL_Rect-pointer/null
+        _SDL_Surface-pointer _SDL_Rect-pointer/null
+        _SDL_ScaleMode
+        -> _sdl-bool)
+  #:c-id SDL_BlitSurfaceScaled)
+
+;; ============================================================================
+;; Filling
+;; ============================================================================
+
+;; SDL_FillSurfaceRect: Fill a rectangle with a specific color
+;; dst: destination surface
+;; rect: rectangle to fill (or NULL for entire surface)
+;; color: pixel value (use SDL_MapSurfaceRGBA to get this)
+;; Returns: true on success, false on failure
+(define-sdl SDL-FillSurfaceRect
+  (_fun _SDL_Surface-pointer _SDL_Rect-pointer/null _uint32 -> _sdl-bool)
+  #:c-id SDL_FillSurfaceRect)
+
+;; SDL_FillSurfaceRects: Fill multiple rectangles with a specific color
+;; dst: destination surface
+;; rects: array of rectangles to fill
+;; count: number of rectangles
+;; color: pixel value (use SDL_MapSurfaceRGBA to get this)
+;; Returns: true on success, false on failure
+(define-sdl SDL-FillSurfaceRects
+  (_fun _SDL_Surface-pointer _SDL_Rect-pointer _int _uint32 -> _sdl-bool)
+  #:c-id SDL_FillSurfaceRects)
+
+;; SDL_ClearSurface: Clear a surface to a specific color (using float values)
+;; surface: the surface to clear
+;; r, g, b, a: color components (0.0-1.0)
+;; Returns: true on success, false on failure
+(define-sdl SDL-ClearSurface
+  (_fun _SDL_Surface-pointer _float _float _float _float -> _sdl-bool)
+  #:c-id SDL_ClearSurface)
+
+;; ============================================================================
+;; Transformations
+;; ============================================================================
+
+;; SDL_FlipSurface: Flip a surface in place
+;; surface: the surface to flip
+;; flip: flip mode (SDL_FLIP_HORIZONTAL, SDL_FLIP_VERTICAL, or both OR'd together)
+;; Returns: true on success, false on failure
+(define-sdl SDL-FlipSurface
+  (_fun _SDL_Surface-pointer _SDL_FlipMode -> _sdl-bool)
+  #:c-id SDL_FlipSurface)
+
+;; SDL_ScaleSurface: Create a new surface with the contents scaled
+;; surface: the surface to scale
+;; width: new width
+;; height: new height
+;; scaleMode: scaling algorithm (SDL_SCALEMODE_NEAREST or SDL_SCALEMODE_LINEAR)
+;; Returns: a new surface or NULL on failure
+(define-sdl SDL-ScaleSurface
+  (_fun _SDL_Surface-pointer _int _int _SDL_ScaleMode -> _SDL_Surface-pointer/null)
+  #:c-id SDL_ScaleSurface)

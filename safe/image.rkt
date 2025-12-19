@@ -8,10 +8,13 @@
 
 (require ffi/unsafe
          ffi/unsafe/custodian
+         racket/list
          "../raw.rkt"
          "../raw/image.rkt"
          "../raw/surface.rkt"
          "../raw/texture.rkt"
+         "../private/constants.rkt"
+         "../private/types.rkt"
          "window.rkt"
          "texture.rkt"
          "../private/safe-syntax.rkt")
@@ -56,6 +59,18 @@
          ;; Bulk pixel access
          surface-fill-pixels!
          call-with-surface-pixels
+
+         ;; Blitting
+         blit-surface!
+         blit-surface-scaled!
+
+         ;; Filling
+         fill-surface!
+         clear-surface!
+
+         ;; Transformations
+         flip-surface!
+         scale-surface
 
          ;; Saving
          save-png!
@@ -358,3 +373,112 @@
             bytes-per-pixel))
     (lambda ()
       (surface-unlock! surf))))
+
+;; ============================================================================
+;; Blitting
+;; ============================================================================
+
+;; Helper to convert a list (x y w h) to an SDL_Rect pointer
+(define (list->rect lst)
+  (if lst
+      (let ([r (make-SDL_Rect (first lst) (second lst) (third lst) (fourth lst))])
+        r)
+      #f))
+
+;; blit-surface!: Copy pixels from source to destination surface
+;; src: source surface
+;; dst: destination surface
+;; #:src-rect: source rectangle as (list x y w h), or #f for entire surface
+;; #:dst-rect: destination rectangle as (list x y w h), or #f for (0,0)
+;; Note: Only position of dst-rect is used; size comes from src-rect
+(define (blit-surface! src dst
+                       #:src-rect [src-rect #f]
+                       #:dst-rect [dst-rect #f])
+  (define src-r (list->rect src-rect))
+  (define dst-r (list->rect dst-rect))
+  (unless (SDL-BlitSurface (surface-ptr src) src-r
+                           (surface-ptr dst) dst-r)
+    (error 'blit-surface! "failed to blit surface: ~a" (SDL-GetError))))
+
+;; blit-surface-scaled!: Copy and scale pixels from source to destination
+;; src: source surface
+;; dst: destination surface
+;; #:src-rect: source rectangle as (list x y w h), or #f for entire surface
+;; #:dst-rect: destination rectangle as (list x y w h), or #f for entire surface
+;; #:scale-mode: 'nearest or 'linear (default 'nearest)
+(define (blit-surface-scaled! src dst
+                              #:src-rect [src-rect #f]
+                              #:dst-rect [dst-rect #f]
+                              #:scale-mode [scale-mode 'nearest])
+  (define src-r (list->rect src-rect))
+  (define dst-r (list->rect dst-rect))
+  (define mode (case scale-mode
+                 [(nearest) SDL_SCALEMODE_NEAREST]
+                 [(linear) SDL_SCALEMODE_LINEAR]
+                 [else (error 'blit-surface-scaled! "invalid scale mode: ~a" scale-mode)]))
+  (unless (SDL-BlitSurfaceScaled (surface-ptr src) src-r
+                                 (surface-ptr dst) dst-r
+                                 mode)
+    (error 'blit-surface-scaled! "failed to blit surface: ~a" (SDL-GetError))))
+
+;; ============================================================================
+;; Filling
+;; ============================================================================
+
+;; fill-surface!: Fill a surface or rectangle with a color
+;; surf: the surface to fill
+;; color: color as (list r g b) or (list r g b a), values 0-255
+;; #:rect: rectangle as (list x y w h), or #f for entire surface
+(define (fill-surface! surf color #:rect [rect #f])
+  (define r (first color))
+  (define g (second color))
+  (define b (third color))
+  (define a (if (> (length color) 3) (fourth color) 255))
+  (define pixel (SDL-MapSurfaceRGBA (surface-ptr surf) r g b a))
+  (define rect-ptr (list->rect rect))
+  (unless (SDL-FillSurfaceRect (surface-ptr surf) rect-ptr pixel)
+    (error 'fill-surface! "failed to fill surface: ~a" (SDL-GetError))))
+
+;; clear-surface!: Clear a surface to a color (using float values)
+;; surf: the surface to clear
+;; r, g, b: color components (0.0-1.0)
+;; a: alpha component (0.0-1.0, default 1.0)
+(define (clear-surface! surf r g b [a 1.0])
+  (unless (SDL-ClearSurface (surface-ptr surf) r g b a)
+    (error 'clear-surface! "failed to clear surface: ~a" (SDL-GetError))))
+
+;; ============================================================================
+;; Transformations
+;; ============================================================================
+
+;; flip-surface!: Flip a surface in place
+;; surf: the surface to flip
+;; mode: 'horizontal or 'vertical
+;; Note: To flip both horizontally and vertically, call flip-surface! twice
+(define (flip-surface! surf mode)
+  (define flip-mode
+    (case mode
+      [(horizontal) SDL_FLIP_HORIZONTAL]
+      [(vertical) SDL_FLIP_VERTICAL]
+      [else (error 'flip-surface! "invalid flip mode: ~a (use 'horizontal or 'vertical)" mode)]))
+  (unless (SDL-FlipSurface (surface-ptr surf) flip-mode)
+    (error 'flip-surface! "failed to flip surface: ~a" (SDL-GetError))))
+
+;; scale-surface: Create a new surface with scaled contents
+;; surf: the source surface
+;; width: new width
+;; height: new height
+;; #:mode: 'nearest or 'linear (default 'nearest)
+;; Returns: a new surface with custodian-managed cleanup
+(define (scale-surface surf width height
+                       #:mode [mode 'nearest]
+                       #:custodian [cust (current-custodian)])
+  (define scale-mode
+    (case mode
+      [(nearest) SDL_SCALEMODE_NEAREST]
+      [(linear) SDL_SCALEMODE_LINEAR]
+      [else (error 'scale-surface "invalid scale mode: ~a (use 'nearest or 'linear)" mode)]))
+  (define ptr (SDL-ScaleSurface (surface-ptr surf) width height scale-mode))
+  (unless ptr
+    (error 'scale-surface "failed to scale surface: ~a" (SDL-GetError)))
+  (wrap-surface ptr #:custodian cust))

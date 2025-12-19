@@ -2,7 +2,7 @@
 
 This document outlines the plan for implementing surface operations (CPU-side pixel manipulation) and the SDL hints API.
 
-**Status:** Phase 3 (Mandelbrot Renderer) is complete. See `TODO.md` for full implementation status.
+**Status:** Phase 4 (Surface Blitting) is complete. See `TODO.md` for full implementation status.
 
 ## Goals
 
@@ -209,7 +209,7 @@ Implementation approach:
 
 ---
 
-## Phase 4: Surface Blitting
+## Phase 4: Surface Blitting ✓ COMPLETE
 
 Copy regions between surfaces. Useful for compositing and sprite sheets.
 

@@ -350,19 +350,20 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_LoadBMP_IO`
 - [ ] `SDL_SaveBMP`
 - [ ] `SDL_SaveBMP_IO`
-- [ ] `SDL_BlitSurface`
-- [ ] `SDL_BlitSurfaceScaled`
+- [x] `SDL_BlitSurface`
+- [x] `SDL_BlitSurfaceScaled`
 - [ ] `SDL_BlitSurfaceUnchecked`
 - [ ] `SDL_BlitSurfaceUncheckedScaled`
 - [ ] `SDL_BlitSurfaceTiled`
 - [ ] `SDL_BlitSurface9Grid`
-- [ ] `SDL_FillSurfaceRect`
-- [ ] `SDL_FillSurfaceRects`
+- [x] `SDL_FillSurfaceRect`
+- [x] `SDL_FillSurfaceRects`
 - [x] `SDL_ConvertSurface`
 - [ ] `SDL_ConvertSurfaceAndColorspace`
 - [x] `SDL_DuplicateSurface`
-- [ ] `SDL_ScaleSurface`
-- [ ] `SDL_FlipSurface`
+- [x] `SDL_ScaleSurface`
+- [x] `SDL_FlipSurface`
+- [x] `SDL_ClearSurface`
 - [ ] `SDL_SetSurfaceColorKey`
 - [ ] `SDL_GetSurfaceColorKey`
 - [ ] `SDL_SurfaceHasColorKey`
