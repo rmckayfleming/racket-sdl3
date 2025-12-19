@@ -790,7 +790,7 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_INIT_JOYSTICK`
 - [ ] `SDL_INIT_HAPTIC`
 - [ ] `SDL_INIT_GAMEPAD`
-- [ ] `SDL_INIT_EVENTS`
+- [x] `SDL_INIT_EVENTS`
 - [ ] `SDL_INIT_SENSOR`
 - [ ] `SDL_INIT_CAMERA`
 
@@ -885,8 +885,11 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 
 ### Pixel Formats (P2)
 - [ ] `SDL_PixelFormat` enum with common formats
-- [ ] `SDL_PIXELFORMAT_RGBA8888`
-- [ ] `SDL_PIXELFORMAT_ARGB8888`
+- [x] `SDL_PIXELFORMAT_UNKNOWN`
+- [x] `SDL_PIXELFORMAT_RGBA8888`
+- [x] `SDL_PIXELFORMAT_ARGB8888`
+- [x] `SDL_PIXELFORMAT_ABGR8888`
+- [x] `SDL_PIXELFORMAT_BGRA8888`
 - [ ] `SDL_PIXELFORMAT_RGB24`
 - [ ] `SDL_PIXELFORMAT_BGR24`
 - [ ] ... (many more)
