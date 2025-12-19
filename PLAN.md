@@ -1,197 +1,487 @@
-# Examples Cleanup Plan
+# Implementation Plan: Surface Operations & Hints
 
-## Overview
+This document outlines the plan for implementing surface operations (CPU-side pixel manipulation) and the SDL hints API.
 
-Reorganize and consolidate the examples directory to reduce redundancy, fill coverage gaps, and improve the learning progression.
+**Status:** This is the next major feature. Previous phases (keyboard state, mouse enhancements, display management, message boxes, file dialogs) have been completed. See `TODO.md` for full implementation status.
 
-## Phase 1: Merges ✓ DONE
+## Goals
 
-### 1.1 Merge keyboard-events.rkt + keyboard-state.rkt → keyboard.rkt
-- Combine into single example showing both approaches
-- Section 1: Event-driven input (for menus, typing, one-shot actions)
-- Section 2: State polling (for smooth continuous movement)
-- Show when to use each approach
-- Delete: `keyboard-events.rkt`, `keyboard-state.rkt`
+- Create and manipulate surfaces (CPU-side pixel buffers)
+- Direct pixel read/write for procedural texture generation
+- Blit surfaces together for software compositing
+- Convert surfaces to textures for GPU rendering
+- Configure SDL behavior via hints
 
-### 1.2 Merge tint.rkt + rotate.rkt → texture-transforms.rkt
-- Combine color modulation and geometric transforms
-- Demo: tinting, alpha fade, rotation, flipping, custom pivot
-- Delete: `tint.rkt`, `rotate.rkt`
+**Showcase Example:** Interactive Mandelbrot set renderer with zoom/pan
 
-### 1.3 Merge mouse-events.rkt + mouse-warp.rkt → mouse.rkt
-- Combine basic tracking with warping
-- Section 1: Following cursor, button states, trail effect
-- Section 2: Warping, capturing, drawing lines
-- Delete: `mouse-events.rkt`, `mouse-warp.rkt`
+---
 
-### 1.4 Merge shapes.rkt + geometry.rkt → drawing.rkt
-- Combine basic primitives with advanced geometry
-- Section 1: Built-in primitives (rects, lines, points)
-- Section 2: Hardware-accelerated geometry with vertex colors
-- Delete: `shapes.rkt`, `geometry.rkt`
-
-**Outcome:** Completed successfully. Created 4 merged example files combining related functionality:
-- `examples/input/keyboard.rkt` - combines event-driven and state polling approaches
-- `examples/textures/texture-transforms.rkt` - combines color modulation with rotation/flipping
-- `examples/input/mouse.rkt` - combines tracking, trail, warp, and capture features
-- `examples/drawing/drawing.rkt` - combines primitives with hardware-accelerated geometry
-
-Deleted 8 old files. Also fixed a pre-existing bug in `safe/window.rkt` where `(all-from-out "../raw.rkt")` caused duplicate identifier exports when combined with `safe/events.rkt`.
-
-## Phase 2: Removals ✓ DONE
-
-### 2.1 Remove image.rkt ✓
-- Functionality covered by texture-transforms.rkt and other texture examples
-- Basic image loading is shown in multiple places
-
-## Phase 3: Additions ✓ DONE
-
-### 3.1 Add sprite-animation.rkt (textures/) ✓
-- Programmatically generated sprite sheet (no external asset needed)
-- Animate through frames based on time
-- Variable animation speed control
-- Frame timing independent of FPS
-- Controls: Left/Right move, Up/Down speed, Space pause, R reverse
-
-### 3.2 Add camera.rkt (advanced/) ✓
-- World 3x larger than window (2400x1800)
-- Smooth camera follow with lerp
-- World coordinates vs screen coordinates
-- Parallax background layers (toggleable)
-- Mini-map showing viewport position
-- Controls: WASD/Arrows, Space toggle smooth, P toggle parallax
-
-### 3.3 Add error-handling.rkt (window/) ✓
-- Graceful handling of missing image files
-- Graceful handling of missing font files
-- Interactive demo with keyboard triggers
-- Shows caught exception messages
-- Also fixed `raw/ttf.rkt` to properly return null on font load failure
-
-### 3.4 Add buttons.rkt (input/) ✓
-- Clickable rectangular buttons with 3D effect
-- Hover, pressed, and disabled states
-- Click detection with proper press/release handling
-- Counter demo with increment, decrement, reset, double, random buttons
-
-### 3.5 Add custom-cursor.rkt (input/) ✓
-- Hide system cursor and draw custom cursor at mouse position
-- 5 cursor styles: crosshair, circle, arrow, target, hand
-- Click effect animation
-- Toggle system cursor visibility for comparison
-- Cycle through system cursor types
-
-## Phase 4: Structural Reorganization ✓ DONE
-
-### 4.1 Create basics/ directory ✓
-Created 4 simple introductory examples:
-- `basics/window.rkt` - Simplest SDL3 program, just a window with colored background
-- `basics/drawing.rkt` - Basic shapes: filled/outline rectangles, lines
-- `basics/input.rkt` - Minimal keyboard (WASD) + mouse (click to change color)
-- `basics/image.rkt` - Load and display one image centered
-
-Deleted `window/basic.rkt` (replaced by `basics/window.rkt`).
-
-### 4.2 Simplify complex examples ✓
-
-**display-info.rkt**: Simplified from 277 to 123 lines. Removed panel backgrounds, borders, side-by-side layout. Now uses simple line-by-line text output with a clean helper function.
-
-**keyboard-visual.rkt**: Moved to `demos/keyboard-visual.rkt` since it's a more complete visualization/demo rather than a learning example.
-
-**viewport-clip.rkt**: Split into three focused examples:
-- `advanced/viewport.rkt` - Split-screen viewports with colored quadrants
-- `advanced/clipping.rkt` - Animated clipping rectangle with grid content
-- `advanced/scaling.rkt` - Interactive render scale (+/- to change)
-
-Deleted `viewport-clip.rkt`.
-
-### 4.3 Rebalance directories ✓
-Final structure achieved:
+## Current Repository Structure
 
 ```
-examples/
-├── basics/           # Start here (4 examples)
-│   ├── window.rkt
-│   ├── drawing.rkt
-│   ├── input.rkt
-│   └── image.rkt
+racket-sdl3/
+├── main.rkt          # Package entry point, re-exports safe.rkt
+├── safe.rkt          # Aggregates all safe/* modules
+├── raw.rkt           # Aggregates all raw/* modules
 │
-├── window/           # Window management (3 examples)
-│   ├── controls.rkt
-│   ├── display-info.rkt
-│   └── error-handling.rkt
+├── raw/              # Low-level FFI bindings by subsystem
+│   ├── init.rkt, window.rkt, render.rkt, texture.rkt, surface.rkt
+│   ├── events.rkt, keyboard.rkt, mouse.rkt, audio.rkt
+│   ├── display.rkt, clipboard.rkt, dialog.rkt, timer.rkt
+│   ├── image.rkt, ttf.rkt
 │
-├── drawing/          # Drawing & rendering (2 examples)
-│   ├── drawing.rkt
-│   └── blend-modes.rkt
+├── safe/             # Idiomatic wrappers with custodian cleanup
+│   ├── window.rkt, draw.rkt, texture.rkt, events.rkt
+│   ├── keyboard.rkt, mouse.rkt, audio.rkt, display.rkt
+│   ├── clipboard.rkt, dialog.rkt, timer.rkt
+│   ├── image.rkt, ttf.rkt, collision.rkt
 │
-├── textures/         # Texture operations (4 examples)
-│   ├── texture-transforms.rkt
-│   ├── render-target.rkt
-│   ├── screenshot.rkt
-│   └── sprite-animation.rkt
+├── private/          # Implementation details
+│   ├── lib.rkt, syntax.rkt, safe-syntax.rkt
+│   ├── types.rkt, constants.rkt, enums.rkt
 │
-├── text/             # Text rendering (1 example)
-│   └── text.rkt
+├── examples/         # Examples organized by concept
+│   ├── basics/       # window.rkt, drawing.rkt, input.rkt, image.rkt
+│   ├── window/       # controls.rkt, display-info.rkt, error-handling.rkt
+│   ├── drawing/      # drawing.rkt, blend-modes.rkt
+│   ├── textures/     # texture-transforms.rkt, render-target.rkt, screenshot.rkt, sprite-animation.rkt
+│   ├── text/         # text.rkt
+│   ├── input/        # keyboard.rkt, mouse.rkt, mouse-relative.rkt, mouse-scroll.rkt, buttons.rkt, custom-cursor.rkt
+│   ├── animation/    # animation.rkt
+│   ├── audio/        # audio.rkt
+│   ├── advanced/     # collision.rkt, viewport.rkt, clipping.rkt, scaling.rkt, camera.rkt, wait-events.rkt
+│   ├── dialogs/      # message-box.rkt
+│   └── assets/       # Images for examples
 │
-├── input/            # Input handling (6 examples)
-│   ├── keyboard.rkt
-│   ├── mouse.rkt
-│   ├── mouse-relative.rkt
-│   ├── mouse-scroll.rkt
-│   ├── buttons.rkt
-│   └── custom-cursor.rkt
-│
-├── animation/        # Animation (1 example)
-│   └── animation.rkt
-│
-├── audio/            # Audio (1 example)
-│   └── audio.rkt
-│
-├── advanced/         # Advanced topics (6 examples)
-│   ├── collision.rkt
-│   ├── viewport.rkt
-│   ├── clipping.rkt
-│   ├── scaling.rkt
-│   ├── camera.rkt
-│   └── wait-events.rkt
-│
-├── dialogs/          # System dialogs (1 example)
-│   └── message-box.rkt
-│
-└── assets/           # Shared assets
-
-demos/
-├── mini-paint.rkt
-└── keyboard-visual.rkt
+└── demos/            # Complete demo applications
+    ├── mini-paint.rkt
+    └── keyboard-visual.rkt
 ```
 
-## Phase 5: Documentation ✓ DONE
+---
 
-### 5.1 Add examples/README.md ✓
-- Learning path: basics → specific topics → advanced
-- Brief description of each example
-- Which concepts each example demonstrates
-- Common code patterns with examples
+## Phase 1: Surface Creation & Basics
 
-Created comprehensive README with:
-- Learning path progression
-- Directory guide with tables showing each example and its concepts
-- Running instructions
-- Common patterns section with code snippets
+Create, destroy, and query surfaces. These are the foundation for all surface operations.
 
-## Execution Order
+### Raw Bindings (`raw/surface.rkt`)
 
-1. Phase 1 (Merges) - reduces file count, no new features needed
-2. Phase 2 (Removals) - quick cleanup
-3. Phase 4.2 (Split viewport-clip.rkt) - reduces complexity
-4. Phase 4.1 (Create basics/) - improves onboarding
-5. Phase 3 (Additions) - new examples
-6. Phase 5 (Documentation) - final polish
+```racket
+;; Surface creation/destruction
+SDL-CreateSurface          ; width height format -> surface
+SDL-CreateSurfaceFrom      ; width height format pixels pitch -> surface
+SDL-DuplicateSurface       ; surface -> surface
+SDL-ConvertSurface         ; surface format -> surface
 
-## Notes
+;; Surface utilities
+SDL-LockSurface            ; surface -> bool
+SDL-UnlockSurface          ; surface -> void
+SDL-SetSurfaceRLE          ; surface enabled -> bool
+SDL-SurfaceHasRLE          ; surface -> bool
+```
 
-- Each merge should preserve all demonstrated functionality
-- Test each example after changes: `PLTCOLLECTS="$PWD:" racket examples/path/to/example.rkt`
-- Keep individual examples under ~200 lines where possible
-- New examples need assets added to examples/assets/
+### Types (`private/types.rkt` / `private/constants.rkt`)
+
+```racket
+;; Surface flags
+SDL_SURFACE_PREALLOCATED   ; 0x00000001
+SDL_SURFACE_LOCK_NEEDED    ; 0x00000002
+SDL_SURFACE_LOCKED         ; 0x00000004
+SDL_SURFACE_SIMD_ALIGNED   ; 0x00000008
+
+;; Scale mode enum (for blitting)
+_SDL_ScaleMode             ; already exists
+SDL_SCALEMODE_NEAREST      ; already exists
+SDL_SCALEMODE_LINEAR       ; already exists
+
+;; Flip mode enum (already exists)
+_SDL_FlipMode
+SDL_FLIP_NONE, SDL_FLIP_HORIZONTAL, SDL_FLIP_VERTICAL
+
+;; Additional pixel formats for surface creation
+SDL_PIXELFORMAT_RGBA32     ; platform-specific RGBA
+SDL_PIXELFORMAT_RGB24      ; 0x17101803
+```
+
+### Safe Wrappers (`safe/surface.rkt` - new file)
+
+```racket
+;; Surface creation
+(make-surface width height [format])  ; -> surface, default RGBA32
+(duplicate-surface surface)           ; -> new surface copy
+(convert-surface surface format)      ; -> new surface in new format
+
+;; Surface queries
+(surface-width surface)               ; -> int
+(surface-height surface)              ; -> int
+(surface-pitch surface)               ; -> int (bytes per row)
+(surface-format surface)              ; -> pixel-format
+(surface-pixels surface)              ; -> pointer (for direct access)
+
+;; Resource management
+(call-with-surface surface proc)      ; ensures cleanup
+```
+
+### Example: `examples/advanced/surface-basics.rkt`
+
+Demonstrate surface creation:
+- Create a surface programmatically
+- Query its properties
+- Convert to texture and display
+- Show surface dimensions and format info
+
+---
+
+## Phase 2: Pixel Access
+
+Read and write individual pixels. Essential for procedural generation.
+
+### Raw Bindings (`raw/surface.rkt`)
+
+```racket
+;; Single pixel access
+SDL-ReadSurfacePixel       ; surface x y r-ptr g-ptr b-ptr a-ptr -> bool
+SDL-WriteSurfacePixel      ; surface x y r g b a -> bool
+SDL-ReadSurfacePixelFloat  ; surface x y r-ptr g-ptr b-ptr a-ptr -> bool
+SDL-WriteSurfacePixelFloat ; surface x y r g b a -> bool
+
+;; Color mapping
+SDL-MapSurfaceRGB          ; surface r g b -> uint32
+SDL-MapSurfaceRGBA         ; surface r g b a -> uint32
+```
+
+### Safe Wrappers (`safe/surface.rkt`)
+
+```racket
+;; Pixel access (for small operations / correctness)
+(surface-get-pixel surface x y)       ; -> (values r g b a)
+(surface-set-pixel! surface x y r g b [a 255])
+
+;; Color mapping for direct buffer access
+(surface-map-rgb surface r g b)       ; -> uint32
+(surface-map-rgba surface r g b a)    ; -> uint32
+
+;; Bulk pixel access (for procedural generation)
+(make-pixel-writer surface)           ; -> (lambda (x y r g b a) ...)
+(make-pixel-reader surface)           ; -> (lambda (x y) (values r g b a))
+
+;; Direct buffer access for maximum performance
+(call-with-surface-pixels surface proc)
+;; proc receives: pixels-pointer, width, height, pitch, bytes-per-pixel
+;; Handles locking/unlocking automatically
+```
+
+### Example: `examples/advanced/pixel-access.rkt`
+
+Demonstrate pixel manipulation:
+- Draw a gradient by setting individual pixels
+- Read pixels back and verify
+- Show performance difference between single-pixel and bulk access
+- Create a simple noise texture procedurally
+
+---
+
+## Phase 3: Mandelbrot Renderer
+
+Build an interactive Mandelbrot set explorer as the showcase example.
+
+### Demo: `demos/mandelbrot.rkt`
+
+Full-featured Mandelbrot renderer:
+- Generate fractal directly to surface pixels
+- Convert surface to texture for display
+- Interactive controls:
+  - Arrow keys or click to pan
+  - +/- or scroll wheel to zoom
+  - R to reset view
+  - C to cycle color palettes
+  - S to save screenshot as PNG
+- Display current coordinates and zoom level
+- Smooth color gradients based on iteration count
+
+Implementation approach:
+1. Create surface at window resolution
+2. Compute Mandelbrot iterations for each pixel
+3. Map iteration counts to colors
+4. Upload surface to texture
+5. Render texture to screen
+6. Re-render on pan/zoom
+
+---
+
+## Phase 4: Surface Blitting
+
+Copy regions between surfaces. Useful for compositing and sprite sheets.
+
+### Raw Bindings (`raw/surface.rkt`)
+
+```racket
+;; Basic blitting
+SDL-BlitSurface            ; src srcrect dst dstrect -> bool
+SDL-BlitSurfaceScaled      ; src srcrect dst dstrect scalemode -> bool
+
+;; Filling
+SDL-FillSurfaceRect        ; dst rect color -> bool
+SDL-FillSurfaceRects       ; dst rects count color -> bool
+SDL-ClearSurface           ; surface r g b a -> bool (float colors)
+
+;; Transformations
+SDL-FlipSurface            ; surface flip-mode -> bool
+SDL-ScaleSurface           ; surface width height scalemode -> surface
+```
+
+### Safe Wrappers (`safe/surface.rkt`)
+
+```racket
+;; Blitting
+(blit-surface! src dst [src-rect #f] [dst-rect #f])
+(blit-surface-scaled! src dst [src-rect #f] [dst-rect #f]
+                      [scale-mode 'nearest])
+
+;; Filling
+(fill-surface! surface color [rect #f])     ; color as (list r g b) or (list r g b a)
+(clear-surface! surface r g b [a 1.0])      ; float colors
+
+;; Transformations
+(flip-surface! surface mode)                ; 'horizontal, 'vertical, or 'both
+(scale-surface surface width height [mode 'nearest])  ; -> new surface
+```
+
+### Example: `examples/advanced/surface-blit.rkt`
+
+Demonstrate blitting operations:
+- Load/create multiple surfaces
+- Blit sprites onto a background
+- Scale surfaces up/down
+- Flip surfaces horizontally/vertically
+- Composite multiple layers
+
+---
+
+## Phase 5: Surface I/O
+
+Load and save surfaces from/to files.
+
+### Raw Bindings (`raw/surface.rkt`)
+
+```racket
+;; BMP file I/O (built into SDL3)
+SDL-LoadBMP                ; filename -> surface
+SDL-SaveBMP                ; surface filename -> bool
+```
+
+### Safe Wrappers (`safe/surface.rkt`)
+
+```racket
+;; File I/O
+(load-bmp path)            ; -> surface (error on failure)
+(save-bmp surface path)    ; -> bool
+
+;; Note: PNG/JPG loading via SDL_image already exists in safe/image.rkt
+;; load-surface uses IMG_Load under the hood
+```
+
+### Example: `examples/advanced/surface-io.rkt`
+
+Demonstrate surface I/O:
+- Load a BMP file
+- Manipulate it (flip, scale, modify pixels)
+- Save the result
+- Display before/after comparison
+
+---
+
+## Phase 6: Advanced Surface Operations
+
+Additional surface features for complete coverage.
+
+### Raw Bindings (`raw/surface.rkt`)
+
+```racket
+;; Color key (transparency)
+SDL-SetSurfaceColorKey     ; surface enabled key -> bool
+SDL-GetSurfaceColorKey     ; surface key-ptr -> bool
+SDL-SurfaceHasColorKey     ; surface -> bool
+
+;; Color/alpha modulation
+SDL-SetSurfaceColorMod     ; surface r g b -> bool
+SDL-GetSurfaceColorMod     ; surface r-ptr g-ptr b-ptr -> bool
+SDL-SetSurfaceAlphaMod     ; surface alpha -> bool
+SDL-GetSurfaceAlphaMod     ; surface alpha-ptr -> bool
+
+;; Blend mode
+SDL-SetSurfaceBlendMode    ; surface blendmode -> bool
+SDL-GetSurfaceBlendMode    ; surface blendmode-ptr -> bool
+
+;; Clipping
+SDL-SetSurfaceClipRect     ; surface rect -> bool
+SDL-GetSurfaceClipRect     ; surface rect -> bool
+```
+
+### Safe Wrappers (`safe/surface.rkt`)
+
+```racket
+;; Color key
+(set-surface-color-key! surface color)      ; color as (list r g b) or #f to disable
+(surface-color-key surface)                 ; -> (list r g b) or #f
+(surface-has-color-key? surface)            ; -> bool
+
+;; Modulation
+(set-surface-color-mod! surface r g b)
+(surface-color-mod surface)                 ; -> (values r g b)
+(set-surface-alpha-mod! surface alpha)
+(surface-alpha-mod surface)                 ; -> alpha
+
+;; Blend mode
+(set-surface-blend-mode! surface mode)      ; 'none, 'blend, 'add, 'mod
+(surface-blend-mode surface)                ; -> symbol
+
+;; Clipping
+(set-surface-clip-rect! surface rect)       ; rect as (list x y w h) or #f
+(surface-clip-rect surface)                 ; -> (list x y w h)
+```
+
+### Example: `examples/advanced/surface-advanced.rkt`
+
+Demonstrate advanced features:
+- Color key for sprite transparency
+- Alpha blending between surfaces
+- Color modulation effects
+- Clipping regions
+
+---
+
+## Phase 7: Hints API
+
+SDL hints for runtime configuration.
+
+### Raw Bindings (`raw/hints.rkt` - new file)
+
+```racket
+;; Hint management
+SDL-SetHint                ; name value -> bool
+SDL-SetHintWithPriority    ; name value priority -> bool
+SDL-GetHint                ; name -> string/null
+SDL-GetHintBoolean         ; name default -> bool
+SDL-ResetHint              ; name -> bool
+SDL-ResetHints             ; -> void
+```
+
+### Types (`private/constants.rkt`)
+
+```racket
+;; Hint priority
+_SDL_HintPriority
+SDL_HINT_DEFAULT           ; 0
+SDL_HINT_NORMAL            ; 1
+SDL_HINT_OVERRIDE          ; 2
+
+;; Common hint names (as strings)
+SDL_HINT_RENDER_VSYNC              ; "SDL_RENDER_VSYNC"
+SDL_HINT_RENDER_DRIVER             ; "SDL_RENDER_DRIVER"
+SDL_HINT_VIDEO_ALLOW_SCREENSAVER   ; "SDL_VIDEO_ALLOW_SCREENSAVER"
+SDL_HINT_APP_NAME                  ; "SDL_APP_NAME"
+SDL_HINT_APP_ID                    ; "SDL_APP_ID"
+```
+
+### Safe Wrappers (`safe/hints.rkt` - new file)
+
+```racket
+;; Hint access
+(set-hint! name value)              ; -> bool
+(set-hint! name value priority)     ; with priority: 'default, 'normal, 'override
+(get-hint name)                     ; -> string or #f
+(get-hint-boolean name default)     ; -> bool
+(reset-hint! name)                  ; -> bool
+(reset-all-hints!)                  ; -> void
+
+;; Convenience for common hints
+(set-render-driver! driver)         ; "opengl", "metal", "vulkan", etc.
+(set-app-name! name)
+(allow-screensaver! enabled?)
+```
+
+### Example: `examples/window/hints.rkt`
+
+Demonstrate hints API:
+- Set app name hint before init
+- Query available render drivers
+- Toggle vsync via hint
+- Show effect of various hints
+
+---
+
+## Implementation Order
+
+| Step | Phase | Files to Create/Modify | Deliverable |
+|------|-------|------------------------|-------------|
+| 1 | Phase 1 | `private/constants.rkt`, `raw/surface.rkt`, `safe/surface.rkt` | Surface creation |
+| 2 | Phase 2 | `raw/surface.rkt`, `safe/surface.rkt` | Pixel access |
+| 3 | Phase 3 | `demos/mandelbrot.rkt` | Mandelbrot renderer |
+| 4 | Phase 4 | `raw/surface.rkt`, `safe/surface.rkt` | Blitting |
+| 5 | Phase 5 | `raw/surface.rkt`, `safe/surface.rkt` | BMP I/O |
+| 6 | Phase 6 | `raw/surface.rkt`, `safe/surface.rkt` | Advanced features |
+| 7 | Phase 7 | `raw/hints.rkt`, `safe/hints.rkt` | Hints API |
+
+---
+
+## Dependencies Between Phases
+
+```
+Phase 1 (Creation) ──┬──► Phase 2 (Pixels) ──► Phase 3 (Mandelbrot)
+                     │
+                     ├──► Phase 4 (Blitting)
+                     │
+                     ├──► Phase 5 (I/O)
+                     │
+                     └──► Phase 6 (Advanced)
+
+Phase 7 (Hints) ─────► Independent
+```
+
+Phases 1-2 must come first. Phase 3 (Mandelbrot) requires pixel access.
+Phases 4-6 can be done in any order after Phase 1.
+Phase 7 (Hints) is completely independent.
+
+---
+
+## Function Counts
+
+| Phase | Raw Functions | Safe Wrappers | Types/Constants |
+|-------|---------------|---------------|-----------------|
+| Phase 1 | 6 | 8 | ~10 |
+| Phase 2 | 6 | 6 | 0 |
+| Phase 3 | 0 | 0 | 0 (example only) |
+| Phase 4 | 6 | 6 | 0 |
+| Phase 5 | 2 | 2 | 0 |
+| Phase 6 | 10 | 10 | 0 |
+| Phase 7 | 6 | 8 | ~5 |
+| **Total** | **36** | **40** | **~15** |
+
+---
+
+## Testing Strategy
+
+After each phase:
+1. Clear compiled cache: `make clean`
+2. Compile: `PLTCOLLECTS="$PWD:" raco make safe/surface.rkt`
+3. Run the phase's example program
+4. Verify existing examples still work
+
+---
+
+## Performance Considerations
+
+For the Mandelbrot renderer and other pixel-intensive operations:
+- Use `call-with-surface-pixels` for direct buffer access
+- Avoid per-pixel function calls in tight loops
+- Consider using Racket's `unsafe` operations for inner loops
+- Surface-to-texture upload is the main bottleneck; minimize texture recreation
+
+## Pixel Format Selection
+
+- Use `SDL_PIXELFORMAT_RGBA32` for cross-platform compatibility
+- This maps to `RGBA8888` on little-endian (most systems)
+- For direct pixel manipulation, know your byte order:
+  - RGBA8888: R at lowest address
+  - ARGB8888: A at lowest address (sometimes faster on some GPUs)
