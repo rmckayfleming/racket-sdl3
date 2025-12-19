@@ -114,6 +114,7 @@ Complex topics for experienced users.
 | `scaling.rkt` | Render scale for resolution independence |
 | `camera.rkt` | World coordinates, camera follow, parallax, mini-map |
 | `wait-events.rkt` | Efficient event-driven rendering (no polling) |
+| `surface-basics.rkt` | Surface creation, pixel access, surface-to-texture conversion |
 
 ### dialogs/
 

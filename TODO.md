@@ -341,11 +341,11 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_UnlockTexture`
 
 ### Surface Operations (P1)
-- [ ] `SDL_CreateSurface`
-- [ ] `SDL_CreateSurfaceFrom`
+- [x] `SDL_CreateSurface`
+- [x] `SDL_CreateSurfaceFrom`
 - [ ] `SDL_GetSurfaceProperties`
-- [ ] `SDL_LockSurface`
-- [ ] `SDL_UnlockSurface`
+- [x] `SDL_LockSurface`
+- [x] `SDL_UnlockSurface`
 - [ ] `SDL_LoadBMP`
 - [ ] `SDL_LoadBMP_IO`
 - [ ] `SDL_SaveBMP`
@@ -358,9 +358,9 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_BlitSurface9Grid`
 - [ ] `SDL_FillSurfaceRect`
 - [ ] `SDL_FillSurfaceRects`
-- [ ] `SDL_ConvertSurface`
+- [x] `SDL_ConvertSurface`
 - [ ] `SDL_ConvertSurfaceAndColorspace`
-- [ ] `SDL_DuplicateSurface`
+- [x] `SDL_DuplicateSurface`
 - [ ] `SDL_ScaleSurface`
 - [ ] `SDL_FlipSurface`
 - [ ] `SDL_SetSurfaceColorKey`
@@ -374,8 +374,8 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_GetSurfaceBlendMode`
 - [ ] `SDL_SetSurfaceClipRect`
 - [ ] `SDL_GetSurfaceClipRect`
-- [ ] `SDL_SetSurfaceRLE`
-- [ ] `SDL_SurfaceHasRLE`
+- [x] `SDL_SetSurfaceRLE`
+- [x] `SDL_SurfaceHasRLE`
 - [ ] `SDL_MapSurfaceRGB`
 - [ ] `SDL_MapSurfaceRGBA`
 - [ ] `SDL_ReadSurfacePixel`

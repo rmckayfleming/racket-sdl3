@@ -2,7 +2,7 @@
 
 This document outlines the plan for implementing surface operations (CPU-side pixel manipulation) and the SDL hints API.
 
-**Status:** This is the next major feature. Previous phases (keyboard state, mouse enhancements, display management, message boxes, file dialogs) have been completed. See `TODO.md` for full implementation status.
+**Status:** Phase 1 (Surface Creation & Basics) is complete. See `TODO.md` for full implementation status.
 
 ## Goals
 
@@ -60,7 +60,7 @@ racket-sdl3/
 
 ---
 
-## Phase 1: Surface Creation & Basics
+## Phase 1: Surface Creation & Basics ✓ COMPLETE
 
 Create, destroy, and query surfaces. These are the foundation for all surface operations.
 

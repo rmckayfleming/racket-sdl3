@@ -80,6 +80,8 @@
  SDL_PIXELFORMAT_ARGB8888
  SDL_PIXELFORMAT_ABGR8888
  SDL_PIXELFORMAT_BGRA8888
+ SDL_PIXELFORMAT_RGB24
+ SDL_PIXELFORMAT_RGBA32
  ;; System cursor constants
  SDL_SYSTEM_CURSOR_DEFAULT
  SDL_SYSTEM_CURSOR_TEXT
@@ -236,6 +238,13 @@
 (define SDL_PIXELFORMAT_ARGB8888  #x16362004)
 (define SDL_PIXELFORMAT_ABGR8888  #x16762004)
 (define SDL_PIXELFORMAT_BGRA8888  #x16862004)
+(define SDL_PIXELFORMAT_RGB24     #x17101803)
+
+;; SDL_PIXELFORMAT_RGBA32 is an alias that depends on system endianness
+;; On little-endian (macOS ARM/x86, Windows, Linux x86): ABGR8888
+;; On big-endian: RGBA8888
+;; Most modern systems are little-endian
+(define SDL_PIXELFORMAT_RGBA32    SDL_PIXELFORMAT_ABGR8888)
 
 ;; ============================================================================
 ;; System Cursor Types

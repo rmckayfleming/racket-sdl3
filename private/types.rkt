@@ -25,8 +25,12 @@
          _SDL_Surface
          _SDL_Surface-pointer
          _SDL_Surface-pointer/null
+         SDL_Surface-flags
+         SDL_Surface-format
          SDL_Surface-w
          SDL_Surface-h
+         SDL_Surface-pitch
+         SDL_Surface-pixels
          ;; Integer point struct
          _SDL_Point
          _SDL_Point-pointer
@@ -276,13 +280,15 @@
 ;; ============================================================================
 
 ;; SDL_Surface - image data in CPU memory
-;; We only define the read-only fields we need; the rest is opaque
+;; We define the publicly accessible fields from the SDL3 header
 (define-cstruct _SDL_Surface
   ([flags _uint32]        ; SDL_SurfaceFlags
    [format _uint32]       ; SDL_PixelFormat
    [w _int]               ; width
-   [h _int]))             ; height
-  ;; Additional fields (pitch, pixels, etc.) exist but are omitted
+   [h _int]               ; height
+   [pitch _int]           ; bytes per row
+   [pixels _pointer]      ; pointer to pixel data (void*)
+   [refcount _int]))
 
 ;; ============================================================================
 ;; Point and Rectangle Structs
