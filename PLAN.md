@@ -2,7 +2,7 @@
 
 This document outlines the plan for implementing surface operations (CPU-side pixel manipulation) and the SDL hints API.
 
-**Status:** Phase 2 (Pixel Access) is complete. See `TODO.md` for full implementation status.
+**Status:** Phase 3 (Mandelbrot Renderer) is complete. See `TODO.md` for full implementation status.
 
 ## Goals
 
@@ -181,7 +181,7 @@ Demonstrate pixel manipulation:
 
 ---
 
-## Phase 3: Mandelbrot Renderer
+## Phase 3: Mandelbrot Renderer ✓ COMPLETE
 
 Build an interactive Mandelbrot set explorer as the showcase example.
 
