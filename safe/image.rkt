@@ -72,7 +72,11 @@
          flip-surface!
          scale-surface
 
-         ;; Saving
+         ;; BMP file I/O
+         load-bmp
+         save-bmp!
+
+         ;; Saving (PNG/JPG via SDL_image)
          save-png!
          save-jpg!
 
@@ -482,3 +486,27 @@
   (unless ptr
     (error 'scale-surface "failed to scale surface: ~a" (SDL-GetError)))
   (wrap-surface ptr #:custodian cust))
+
+;; ============================================================================
+;; BMP File I/O
+;; ============================================================================
+
+;; load-bmp: Load a BMP image from a file
+;; path: path to the BMP file
+;; Returns: a surface object with custodian-managed cleanup
+;; Note: For loading PNG/JPG/WebP files, use load-surface instead
+(define (load-bmp path #:custodian [cust (current-custodian)])
+  (define ptr (SDL-LoadBMP path))
+  (unless ptr
+    (error 'load-bmp "failed to load BMP: ~a (~a)" path (SDL-GetError)))
+  (wrap-surface ptr #:custodian cust))
+
+;; save-bmp!: Save a surface to a BMP file
+;; surf: the surface to save (surface object or raw pointer)
+;; path: destination file path
+;; Note: 24-bit, 32-bit, and paletted 8-bit formats are saved directly.
+;;       Other formats are converted before saving.
+(define (save-bmp! surf path)
+  (define ptr (if (surface? surf) (surface-ptr surf) surf))
+  (unless (SDL-SaveBMP ptr path)
+    (error 'save-bmp! "failed to save BMP: ~a (~a)" path (SDL-GetError))))

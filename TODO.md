@@ -346,9 +346,9 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_GetSurfaceProperties`
 - [x] `SDL_LockSurface`
 - [x] `SDL_UnlockSurface`
-- [ ] `SDL_LoadBMP`
+- [x] `SDL_LoadBMP`
 - [ ] `SDL_LoadBMP_IO`
-- [ ] `SDL_SaveBMP`
+- [x] `SDL_SaveBMP`
 - [ ] `SDL_SaveBMP_IO`
 - [x] `SDL_BlitSurface`
 - [x] `SDL_BlitSurfaceScaled`

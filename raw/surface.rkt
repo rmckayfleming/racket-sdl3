@@ -39,7 +39,10 @@
  SDL-ClearSurface
  ;; Transformations
  SDL-FlipSurface
- SDL-ScaleSurface)
+ SDL-ScaleSurface
+ ;; File I/O
+ SDL-LoadBMP
+ SDL-SaveBMP)
 
 ;; ============================================================================
 ;; Surface Creation/Destruction
@@ -273,3 +276,25 @@
 (define-sdl SDL-ScaleSurface
   (_fun _SDL_Surface-pointer _int _int _SDL_ScaleMode -> _SDL_Surface-pointer/null)
   #:c-id SDL_ScaleSurface)
+
+;; ============================================================================
+;; File I/O
+;; ============================================================================
+
+;; SDL_LoadBMP: Load a BMP image from a file
+;; file: path to the BMP file
+;; Returns: a new surface or NULL on failure
+;; Note: The surface should be freed with SDL_DestroySurface
+(define-sdl SDL-LoadBMP
+  (_fun _string -> _SDL_Surface-pointer/null)
+  #:c-id SDL_LoadBMP)
+
+;; SDL_SaveBMP: Save a surface to a BMP file
+;; surface: the surface to save
+;; file: path to save to
+;; Returns: true on success, false on failure
+;; Note: 24-bit, 32-bit, and paletted 8-bit formats are saved directly.
+;;       Other formats are converted to 24-bit or 32-bit before saving.
+(define-sdl SDL-SaveBMP
+  (_fun _SDL_Surface-pointer _string -> _sdl-bool)
+  #:c-id SDL_SaveBMP)

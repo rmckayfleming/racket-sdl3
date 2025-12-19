@@ -2,7 +2,7 @@
 
 This document outlines the plan for implementing surface operations (CPU-side pixel manipulation) and the SDL hints API.
 
-**Status:** Phase 4 (Surface Blitting) is complete. See `TODO.md` for full implementation status.
+**Status:** Phase 5 (Surface I/O) is complete. See `TODO.md` for full implementation status.
 
 ## Goals
 
@@ -258,7 +258,7 @@ Demonstrate blitting operations:
 
 ---
 
-## Phase 5: Surface I/O
+## Phase 5: Surface I/O ✓ COMPLETE
 
 Load and save surfaces from/to files.
 
