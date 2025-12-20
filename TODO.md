@@ -315,10 +315,10 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 
 #### Texture (Advanced)
 - [ ] `SDL_CreateTextureWithProperties`, `SDL_GetTextureProperties`
-- [ ] `SDL_SetTextureColorModFloat`, `SDL_GetTextureColorModFloat`
-- [ ] `SDL_SetTextureAlphaModFloat`, `SDL_GetTextureAlphaModFloat`
-- [ ] `SDL_UpdateTexture`, `SDL_UpdateYUVTexture`, `SDL_UpdateNVTexture`
-- [ ] `SDL_LockTexture`, `SDL_LockTextureToSurface`, `SDL_UnlockTexture`
+- [x] `SDL_SetTextureColorModFloat`, `SDL_GetTextureColorModFloat`
+- [x] `SDL_SetTextureAlphaModFloat`, `SDL_GetTextureAlphaModFloat`
+- [x] `SDL_UpdateTexture`, `SDL_UpdateYUVTexture`, `SDL_UpdateNVTexture`
+- [x] `SDL_LockTexture`, `SDL_LockTextureToSurface`, `SDL_UnlockTexture`
 
 #### Surface (Advanced)
 - [ ] `SDL_GetSurfaceProperties`

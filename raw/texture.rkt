@@ -30,7 +30,18 @@
          SDL-SetTextureColorMod
          SDL-GetTextureColorMod
          SDL-SetTextureAlphaMod
-         SDL-GetTextureAlphaMod)
+         SDL-GetTextureAlphaMod
+         SDL-SetTextureColorModFloat
+         SDL-GetTextureColorModFloat
+         SDL-SetTextureAlphaModFloat
+         SDL-GetTextureAlphaModFloat
+         ;; Texture updates and locking
+         SDL-UpdateTexture
+         SDL-UpdateYUVTexture
+         SDL-UpdateNVTexture
+         SDL-LockTexture
+         SDL-LockTextureToSurface
+         SDL-UnlockTexture)
 
 ;; ============================================================================
 ;; Texture Creation/Destruction
@@ -261,3 +272,106 @@
         -> (result : _sdl-bool)
         -> (values result alpha))
   #:c-id SDL_GetTextureAlphaMod)
+
+;; ============================================================================
+;; Texture Color/Alpha Modulation (Float)
+;; ============================================================================
+
+;; SDL_SetTextureColorModFloat: Set color modulation using float values
+;; r, g, b: modulation values (usually 0.0-1.0)
+;; Returns: true on success, false on failure
+(define-sdl SDL-SetTextureColorModFloat
+  (_fun _SDL_Texture-pointer _float _float _float -> _sdl-bool)
+  #:c-id SDL_SetTextureColorModFloat)
+
+;; SDL_GetTextureColorModFloat: Get color modulation as float values
+;; Returns: (values success? r g b)
+(define-sdl SDL-GetTextureColorModFloat
+  (_fun _SDL_Texture-pointer
+        (r : (_ptr o _float))
+        (g : (_ptr o _float))
+        (b : (_ptr o _float))
+        -> (result : _sdl-bool)
+        -> (values result r g b))
+  #:c-id SDL_GetTextureColorModFloat)
+
+;; SDL_SetTextureAlphaModFloat: Set alpha modulation using float value
+;; alpha: modulation value (usually 0.0-1.0)
+;; Returns: true on success, false on failure
+(define-sdl SDL-SetTextureAlphaModFloat
+  (_fun _SDL_Texture-pointer _float -> _sdl-bool)
+  #:c-id SDL_SetTextureAlphaModFloat)
+
+;; SDL_GetTextureAlphaModFloat: Get alpha modulation as float value
+;; Returns: (values success? alpha)
+(define-sdl SDL-GetTextureAlphaModFloat
+  (_fun _SDL_Texture-pointer
+        (alpha : (_ptr o _float))
+        -> (result : _sdl-bool)
+        -> (values result alpha))
+  #:c-id SDL_GetTextureAlphaModFloat)
+
+;; ============================================================================
+;; Texture Updates and Locking
+;; ============================================================================
+
+;; SDL_UpdateTexture: Update a texture with new pixel data
+;; rect: SDL_Rect pointer or NULL to update entire texture
+;; pixels: pointer to pixel data
+;; pitch: bytes per row
+;; Returns: true on success, false on failure
+(define-sdl SDL-UpdateTexture
+  (_fun _SDL_Texture-pointer _SDL_Rect-pointer/null _pointer _int -> _sdl-bool)
+  #:c-id SDL_UpdateTexture)
+
+;; SDL_UpdateYUVTexture: Update a planar YUV texture
+;; rect: SDL_Rect pointer or NULL to update entire texture
+;; planes: pointers to Y, U, V planes and pitches
+;; Returns: true on success, false on failure
+(define-sdl SDL-UpdateYUVTexture
+  (_fun _SDL_Texture-pointer
+        _SDL_Rect-pointer/null
+        _pointer _int
+        _pointer _int
+        _pointer _int
+        -> _sdl-bool)
+  #:c-id SDL_UpdateYUVTexture)
+
+;; SDL_UpdateNVTexture: Update a planar NV12/NV21 texture
+;; rect: SDL_Rect pointer or NULL to update entire texture
+;; planes: pointers to Y and UV planes and pitches
+;; Returns: true on success, false on failure
+(define-sdl SDL-UpdateNVTexture
+  (_fun _SDL_Texture-pointer
+        _SDL_Rect-pointer/null
+        _pointer _int
+        _pointer _int
+        -> _sdl-bool)
+  #:c-id SDL_UpdateNVTexture)
+
+;; SDL_LockTexture: Lock a streaming texture for write access
+;; rect: SDL_Rect pointer or NULL to lock entire texture
+;; Returns: (values success? pixels pitch)
+(define-sdl SDL-LockTexture
+  (_fun _SDL_Texture-pointer
+        _SDL_Rect-pointer/null
+        (pixels : (_ptr o _pointer))
+        (pitch : (_ptr o _int))
+        -> (result : _sdl-bool)
+        -> (values result pixels pitch))
+  #:c-id SDL_LockTexture)
+
+;; SDL_LockTextureToSurface: Lock a streaming texture and expose as surface
+;; Returns: (values success? surface)
+(define-sdl SDL-LockTextureToSurface
+  (_fun _SDL_Texture-pointer
+        _SDL_Rect-pointer/null
+        (surface : (_ptr o _SDL_Surface-pointer))
+        -> (result : _sdl-bool)
+        -> (values result surface))
+  #:c-id SDL_LockTextureToSurface)
+
+;; SDL_UnlockTexture: Unlock a streaming texture
+(define-sdl SDL-UnlockTexture
+  (_fun _SDL_Texture-pointer -> _void)
+  #:c-id SDL_UnlockTexture)

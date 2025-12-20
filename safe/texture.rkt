@@ -4,6 +4,7 @@
 
 (require ffi/unsafe
          ffi/unsafe/custodian
+         racket/list
          "../raw.rkt"
          "../raw/image.rkt"
          "window.rkt"
@@ -38,6 +39,18 @@
  texture-get-color-mod
  texture-set-alpha-mod!
  texture-get-alpha-mod
+ texture-set-color-mod-float!
+ texture-get-color-mod-float
+ texture-set-alpha-mod-float!
+ texture-get-alpha-mod-float
+
+ ;; Texture updates and locking
+ texture-update!
+ texture-update-yuv!
+ texture-update-nv!
+ texture-lock!
+ texture-unlock!
+ call-with-locked-texture
 
  ;; Flip mode conversion
  symbol->flip-mode
@@ -257,6 +270,150 @@
   alpha)
 
 ;; ============================================================================
+;; Color/Alpha Modulation (Float)
+;; ============================================================================
+
+;; Set the color modulation for a texture using float values
+;; r, g, b: usually in 0.0-1.0 range
+(define (texture-set-color-mod-float! tex r g b)
+  (unless (SDL-SetTextureColorModFloat (texture-ptr tex) r g b)
+    (error 'texture-set-color-mod-float! "Failed to set float color mod: ~a" (SDL-GetError))))
+
+;; Get the current float color modulation for a texture
+;; Returns: (values r g b)
+(define (texture-get-color-mod-float tex)
+  (define-values (success r g b) (SDL-GetTextureColorModFloat (texture-ptr tex)))
+  (unless success
+    (error 'texture-get-color-mod-float "Failed to get float color mod: ~a" (SDL-GetError)))
+  (values r g b))
+
+;; Set the alpha modulation for a texture using a float value
+;; alpha: usually in 0.0-1.0 range
+(define (texture-set-alpha-mod-float! tex alpha)
+  (unless (SDL-SetTextureAlphaModFloat (texture-ptr tex) alpha)
+    (error 'texture-set-alpha-mod-float! "Failed to set float alpha mod: ~a" (SDL-GetError))))
+
+;; Get the current float alpha modulation for a texture
+;; Returns: alpha
+(define (texture-get-alpha-mod-float tex)
+  (define-values (success alpha) (SDL-GetTextureAlphaModFloat (texture-ptr tex)))
+  (unless success
+    (error 'texture-get-alpha-mod-float "Failed to get float alpha mod: ~a" (SDL-GetError)))
+  alpha)
+
+;; ============================================================================
+;; Texture Updates and Locking
+;; ============================================================================
+
+;; Helper to convert a list (x y w h) to an SDL_Rect pointer
+(define (list->rect lst)
+  (if lst
+      (make-SDL_Rect (inexact->exact (truncate (first lst)))
+                     (inexact->exact (truncate (second lst)))
+                     (inexact->exact (truncate (third lst)))
+                     (inexact->exact (truncate (fourth lst))))
+      #f))
+
+;; Helper to accept bytes or pointers for pixel data
+(define (call-with-pixels-pointer pixels proc)
+  (cond
+    [(bytes? pixels)
+     (define len (bytes-length pixels))
+     (define ptr (malloc len 'atomic))
+     (for ([i (in-range len)])
+       (ptr-set! ptr _uint8 i (bytes-ref pixels i)))
+     (dynamic-wind
+       void
+       (lambda () (proc ptr))
+       (lambda () (free ptr)))]
+    [(cpointer? pixels)
+     (proc pixels)]
+    [else
+     (error 'call-with-pixels-pointer "expected bytes or pointer, got ~e" pixels)]))
+
+;; Update a texture with new pixel data
+;; pixels: bytes or pointer to pixel data
+;; pitch: bytes per row
+;; #:rect: (list x y w h) or #f to update entire texture
+(define (texture-update! tex pixels pitch #:rect [rect #f])
+  (define rect-ptr (list->rect rect))
+  (call-with-pixels-pointer
+   pixels
+   (lambda (pixel-ptr)
+     (unless (SDL-UpdateTexture (texture-ptr tex) rect-ptr pixel-ptr pitch)
+       (error 'texture-update! "Failed to update texture: ~a" (SDL-GetError))))))
+
+;; Update a planar YUV texture
+(define (texture-update-yuv! tex y-plane y-pitch u-plane u-pitch v-plane v-pitch
+                             #:rect [rect #f])
+  (define rect-ptr (list->rect rect))
+  (call-with-pixels-pointer
+   y-plane
+   (lambda (y-ptr)
+     (call-with-pixels-pointer
+      u-plane
+      (lambda (u-ptr)
+        (call-with-pixels-pointer
+         v-plane
+         (lambda (v-ptr)
+           (unless (SDL-UpdateYUVTexture (texture-ptr tex) rect-ptr
+                                         y-ptr y-pitch
+                                         u-ptr u-pitch
+                                         v-ptr v-pitch)
+             (error 'texture-update-yuv! "Failed to update YUV texture: ~a" (SDL-GetError))))))))))
+
+;; Update a planar NV12/NV21 texture
+(define (texture-update-nv! tex y-plane y-pitch uv-plane uv-pitch
+                            #:rect [rect #f])
+  (define rect-ptr (list->rect rect))
+  (call-with-pixels-pointer
+   y-plane
+   (lambda (y-ptr)
+     (call-with-pixels-pointer
+      uv-plane
+      (lambda (uv-ptr)
+        (unless (SDL-UpdateNVTexture (texture-ptr tex) rect-ptr
+                                     y-ptr y-pitch
+                                     uv-ptr uv-pitch)
+          (error 'texture-update-nv! "Failed to update NV texture: ~a" (SDL-GetError))))))))
+
+;; Lock a streaming texture for write access
+;; #:rect: (list x y w h) or #f to lock entire texture
+;; Returns: (values pixels pitch)
+(define (texture-lock! tex #:rect [rect #f])
+  (define rect-ptr (list->rect rect))
+  (define-values (success pixels pitch)
+    (SDL-LockTexture (texture-ptr tex) rect-ptr))
+  (unless success
+    (error 'texture-lock! "Failed to lock texture: ~a" (SDL-GetError)))
+  (values pixels pitch))
+
+;; Unlock a streaming texture after writing
+(define (texture-unlock! tex)
+  (SDL-UnlockTexture (texture-ptr tex)))
+
+;; Execute a procedure with a locked texture
+;; proc receives: pixels-pointer, width, height, pitch
+(define (call-with-locked-texture tex proc #:rect [rect #f])
+  (define rect-ptr (list->rect rect))
+  (define-values (w h)
+    (if rect
+        (values (third rect) (fourth rect))
+        (let-values ([(tw th) (texture-size tex)])
+          (values (inexact->exact (round tw))
+                  (inexact->exact (round th))))))
+  (define-values (success pixels pitch)
+    (SDL-LockTexture (texture-ptr tex) rect-ptr))
+  (unless success
+    (error 'call-with-locked-texture "Failed to lock texture: ~a" (SDL-GetError)))
+  (dynamic-wind
+    void
+    (lambda ()
+      (proc pixels w h pitch))
+    (lambda ()
+      (SDL-UnlockTexture (texture-ptr tex)))))
+
+;; ============================================================================
 ;; Flip Mode Conversion
 ;; ============================================================================
 
@@ -455,4 +612,3 @@
                                    (exact->inexact scale)
                                    dst-rect)
     (error 'render-texture-9grid! "Failed to render 9-grid: ~a" (SDL-GetError))))
-
