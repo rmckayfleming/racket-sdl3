@@ -10,6 +10,7 @@
 ;; 5. SDL automatically mixes and plays
 
 (require ffi/unsafe
+         racket/port
          "../raw.rkt")
 
 (provide
@@ -19,6 +20,9 @@
  pause-audio-device!     ; pause playback
  resume-audio-device!    ; resume playback
  audio-device-paused?    ; check if paused
+ audio-device-format     ; query device format
+ audio-device-gain       ; get device gain
+ set-audio-device-gain!  ; set device gain
 
  ;; Device enumeration
  audio-playback-devices  ; list available playback devices
@@ -27,7 +31,12 @@
 
  ;; Stream management
  make-audio-stream       ; create a stream
+ open-audio-device-stream ; open device and stream in one call
  destroy-audio-stream!   ; destroy a stream
+ audio-stream-device     ; get device associated with stream
+ pause-audio-stream-device!
+ resume-audio-stream-device!
+ audio-stream-device-paused?
  bind-audio-stream!      ; bind stream to device
  unbind-audio-stream!    ; unbind stream from device
 
@@ -41,6 +50,11 @@
  load-wav                ; load WAV file, returns (values spec data length)
  free-audio-data!        ; free loaded audio data
 
+ ;; Mixing/Conversion
+ mix-audio!              ; mix src into dst buffer
+ convert-audio-samples   ; convert samples between formats
+ audio-format-name       ; format name string
+
  ;; Audio spec helpers
  make-audio-spec         ; create spec (format channels freq)
  audio-spec-format       ; get format
@@ -51,6 +65,8 @@
  play-audio!             ; one-shot: put data into stream
 
  ;; Constants re-exported for convenience
+ SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK
+ SDL_AUDIO_DEVICE_DEFAULT_RECORDING
  SDL_AUDIO_S16
  SDL_AUDIO_S32
  SDL_AUDIO_F32
@@ -145,9 +161,51 @@
 (define (audio-device-paused? device)
   (SDL-AudioDevicePaused device))
 
+;; Get the audio format and buffer size for a device
+;; Returns: (values spec sample-frames)
+(define (audio-device-format [device-id SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK])
+  (define spec (make-SDL_AudioSpec 0 0 0 0))
+  (define-values (success frames) (SDL-GetAudioDeviceFormat device-id spec))
+  (unless success
+    (error 'audio-device-format "Failed to get device format: ~a" (SDL-GetError)))
+  (values spec frames))
+
+;; Get the current device gain
+(define (audio-device-gain device-id)
+  (SDL-GetAudioDeviceGain device-id))
+
+;; Set the current device gain
+(define (set-audio-device-gain! device-id gain)
+  (unless (SDL-SetAudioDeviceGain device-id (exact->inexact gain))
+    (error 'set-audio-device-gain! "Failed to set device gain: ~a" (SDL-GetError))))
+
 ;; =========================================================================
 ;; Stream Management
 ;; =========================================================================
+
+;; Keep audio stream callbacks reachable to avoid GC while active.
+(define active-audio-stream-callbacks (make-hasheq))
+
+(define (register-audio-stream-callback! stream cb)
+  (hash-set! active-audio-stream-callbacks stream cb))
+
+(define (unregister-audio-stream-callback! stream)
+  (hash-remove! active-audio-stream-callbacks stream))
+
+(define (make-audio-stream-callback who proc userdata)
+  (cond
+    [(procedure-arity-includes? proc 4)
+     (lambda (_userdata stream additional total)
+       (proc userdata stream additional total))]
+    [(procedure-arity-includes? proc 3)
+     (lambda (_userdata stream additional total)
+       (proc stream additional total))]
+    [(procedure-arity-includes? proc 2)
+     (lambda (_userdata _stream additional total)
+       (proc additional total))]
+    [else
+     (error who "callback must accept 2, 3, or 4 arguments, got: ~a"
+            (procedure-arity proc))]))
 
 ;; Create an audio stream
 ;; src-spec: source audio format
@@ -159,9 +217,48 @@
     (error 'make-audio-stream "Failed to create audio stream: ~a" (SDL-GetError)))
   stream)
 
+;; Open a device and create/bind a stream in one call
+;; callback can accept (userdata stream additional total), (stream additional total),
+;; or (additional total). The device starts paused; call resume-audio-stream-device!
+(define (open-audio-device-stream [device-id SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK]
+                                  [spec #f]
+                                  #:callback [callback #f]
+                                  #:userdata [userdata #f])
+  (define cb (and callback (make-audio-stream-callback 'open-audio-device-stream
+                                                      callback
+                                                      userdata)))
+  (define stream (SDL-OpenAudioDeviceStream device-id spec cb #f))
+  (unless stream
+    (error 'open-audio-device-stream "Failed to open audio device stream: ~a"
+           (SDL-GetError)))
+  (when cb
+    (register-audio-stream-callback! stream cb))
+  stream)
+
 ;; Destroy an audio stream
 (define (destroy-audio-stream! stream)
+  (unregister-audio-stream-callback! stream)
   (SDL-DestroyAudioStream stream))
+
+;; Get the device associated with a stream
+(define (audio-stream-device stream)
+  (SDL-GetAudioStreamDevice stream))
+
+;; Pause the device associated with a stream
+(define (pause-audio-stream-device! stream)
+  (unless (SDL-PauseAudioStreamDevice stream)
+    (error 'pause-audio-stream-device! "Failed to pause stream device: ~a"
+           (SDL-GetError))))
+
+;; Resume the device associated with a stream
+(define (resume-audio-stream-device! stream)
+  (unless (SDL-ResumeAudioStreamDevice stream)
+    (error 'resume-audio-stream-device! "Failed to resume stream device: ~a"
+           (SDL-GetError))))
+
+;; Check if a stream's device is paused
+(define (audio-stream-device-paused? stream)
+  (SDL-AudioStreamDevicePaused stream))
 
 ;; Bind an audio stream to a device
 (define (bind-audio-stream! device stream)
@@ -202,20 +299,88 @@
 ;; WAV Loading
 ;; =========================================================================
 
-;; Load a WAV file
-;; path: file path to WAV file
+;; Load a WAV file from a path, bytes, or input port
 ;; Returns: (values audio-spec audio-data audio-length)
 ;; Note: audio-data must be freed with free-audio-data!
-(define (load-wav path)
-  (define spec (make-SDL_AudioSpec 0 0 0 0))
-  (define-values (success data length) (SDL-LoadWAV path spec))
-  (unless success
-    (error 'load-wav "Failed to load WAV file '~a': ~a" path (SDL-GetError)))
-  (values spec data length))
+(define (load-wav source)
+  (define (path->wav path)
+    (define spec (make-SDL_AudioSpec 0 0 0 0))
+    (define-values (success data length) (SDL-LoadWAV path spec))
+    (unless success
+      (error 'load-wav "Failed to load WAV file '~a': ~a" path (SDL-GetError)))
+    (values spec data length))
+
+  (define (source->bytes who v)
+    (cond
+      [(bytes? v) v]
+      [(input-port? v) (port->bytes v)]
+      [else (error who "expected path, bytes, or input port, got: ~a" v)]))
+
+  (define (call-with-const-mem who bytes proc)
+    (define len (bytes-length bytes))
+    (define mem (malloc (max len 1) 'raw))
+    (memcpy mem bytes len)
+    (dynamic-wind
+      void
+      (lambda () (proc mem len))
+      (lambda () (free mem))))
+
+  (define (call-with-iostream who bytes proc)
+    (call-with-const-mem
+     who
+     bytes
+     (lambda (mem len)
+       (define stream (SDL-IOFromConstMem mem len))
+       (unless stream
+         (error who "failed to create IOStream: ~a" (SDL-GetError)))
+       (dynamic-wind
+         void
+         (lambda () (proc stream))
+         (lambda () (SDL-CloseIO stream))))))
+
+  (cond
+    [(or (string? source) (path? source))
+     (define path (if (path? source) (path->string source) source))
+     (path->wav path)]
+    [else
+     (define bytes (source->bytes 'load-wav source))
+     (define spec (make-SDL_AudioSpec 0 0 0 0))
+     (define-values (success data length)
+       (call-with-iostream
+        'load-wav
+        bytes
+        (lambda (stream)
+          (SDL-LoadWAV_IO stream #f spec))))
+     (unless success
+       (error 'load-wav "Failed to load WAV data: ~a" (SDL-GetError)))
+     (values spec data length)]))
 
 ;; Free audio data returned by load-wav
 (define (free-audio-data! data)
   (SDL-free data))
+
+;; =========================================================================
+;; Mixing and Conversion
+;; =========================================================================
+
+;; Mix audio data from src into dst with volume adjustment
+(define (mix-audio! dst src format length [volume 1.0])
+  (unless (SDL-MixAudio dst src format length (exact->inexact volume))
+    (error 'mix-audio! "Failed to mix audio: ~a" (SDL-GetError))))
+
+;; Convert audio samples between formats
+;; Returns: (values dst-data dst-length)
+;; Note: dst-data must be freed with free-audio-data!
+(define (convert-audio-samples src-spec src-data src-length dst-spec)
+  (define-values (success dst-data dst-length)
+    (SDL-ConvertAudioSamples src-spec src-data src-length dst-spec))
+  (unless success
+    (error 'convert-audio-samples "Failed to convert audio: ~a" (SDL-GetError)))
+  (values dst-data dst-length))
+
+;; Get a human-readable name for an audio format
+(define (audio-format-name format)
+  (SDL-GetAudioFormatName format))
 
 ;; =========================================================================
 ;; Convenience Functions

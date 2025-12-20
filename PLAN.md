@@ -56,7 +56,7 @@ bindings, safe wrappers, constants/types, and example coverage.
     - Add rectangle union/intersection helpers.
     - Add `examples/input/device-enumeration.rkt` and `examples/advanced/rect-utils.rkt`.
 
-[ ] Phase 7: Audio advanced
+[x] Phase 7: Audio advanced
     - Add device format/gain, stream open, mix/convert, format name.
     - Add `examples/audio/advanced-audio.rkt`.
 

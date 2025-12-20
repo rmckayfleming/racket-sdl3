@@ -22,8 +22,16 @@
          SDL-PauseAudioDevice
          SDL-ResumeAudioDevice
          SDL-AudioDevicePaused
+         SDL-GetAudioDeviceFormat
+         SDL-GetAudioDeviceGain
+         SDL-SetAudioDeviceGain
          ;; Audio - Streams
          SDL-CreateAudioStream
+         SDL-OpenAudioDeviceStream
+         SDL-GetAudioStreamDevice
+         SDL-PauseAudioStreamDevice
+         SDL-ResumeAudioStreamDevice
+         SDL-AudioStreamDevicePaused
          SDL-DestroyAudioStream
          SDL-GetAudioStreamFormat
          SDL-SetAudioStreamFormat
@@ -35,7 +43,12 @@
          SDL-BindAudioStream
          SDL-UnbindAudioStream
          ;; Audio - WAV Loading
-         SDL-LoadWAV)
+         SDL-LoadWAV
+         SDL-LoadWAV_IO
+         ;; Audio - Mixing/Conversion
+         SDL-MixAudio
+         SDL-ConvertAudioSamples
+         SDL-GetAudioFormatName)
 
 ;; ============================================================================
 ;; Audio - Drivers
@@ -128,6 +141,34 @@
   (_fun _SDL_AudioDeviceID -> _stdbool)
   #:c-id SDL_AudioDevicePaused)
 
+;; SDL_GetAudioDeviceFormat: Get the current audio format for a device
+;; devid: the device to query
+;; spec: pointer to receive the audio format
+;; sample_frames: pointer to receive buffer size in sample frames
+;; Returns: (values success? sample_frames)
+(define-sdl SDL-GetAudioDeviceFormat
+  (_fun _SDL_AudioDeviceID
+        _SDL_AudioSpec-pointer
+        (sample_frames : (_ptr o _int))
+        -> (result : _sdl-bool)
+        -> (values result sample_frames))
+  #:c-id SDL_GetAudioDeviceFormat)
+
+;; SDL_GetAudioDeviceGain: Get the current gain for a device
+;; devid: the device to query
+;; Returns: device gain (0.0 - 1.0+ depending on backend)
+(define-sdl SDL-GetAudioDeviceGain
+  (_fun _SDL_AudioDeviceID -> _float)
+  #:c-id SDL_GetAudioDeviceGain)
+
+;; SDL_SetAudioDeviceGain: Set the gain for a device
+;; devid: the device to set
+;; gain: new gain value
+;; Returns: true on success, false on failure
+(define-sdl SDL-SetAudioDeviceGain
+  (_fun _SDL_AudioDeviceID _float -> _sdl-bool)
+  #:c-id SDL_SetAudioDeviceGain)
+
 ;; ============================================================================
 ;; Audio - Streams
 ;; ============================================================================
@@ -139,6 +180,48 @@
 (define-sdl SDL-CreateAudioStream
   (_fun _SDL_AudioSpec-pointer _SDL_AudioSpec-pointer -> _SDL_AudioStream-pointer/null)
   #:c-id SDL_CreateAudioStream)
+
+;; SDL_OpenAudioDeviceStream: Open a device and create/bind a stream
+;; devid: device instance ID or SDL_AUDIO_DEVICE_DEFAULT_* constant
+;; spec: desired stream format (can be NULL)
+;; callback: optional stream callback (can be NULL)
+;; userdata: pointer passed to callback (can be NULL)
+;; Returns: audio stream pointer, or NULL on failure
+(define-sdl SDL-OpenAudioDeviceStream
+  (_fun _SDL_AudioDeviceID
+        _SDL_AudioSpec-pointer/null
+        (_or-null _SDL_AudioStreamCallback)
+        _pointer
+        -> _SDL_AudioStream-pointer/null)
+  #:c-id SDL_OpenAudioDeviceStream)
+
+;; SDL_GetAudioStreamDevice: Get the device associated with a stream
+;; stream: the audio stream to query
+;; Returns: device instance ID, or 0 on failure
+(define-sdl SDL-GetAudioStreamDevice
+  (_fun _SDL_AudioStream-pointer -> _SDL_AudioDeviceID)
+  #:c-id SDL_GetAudioStreamDevice)
+
+;; SDL_PauseAudioStreamDevice: Pause the device associated with a stream
+;; stream: the audio stream to pause
+;; Returns: true on success, false on failure
+(define-sdl SDL-PauseAudioStreamDevice
+  (_fun _SDL_AudioStream-pointer -> _sdl-bool)
+  #:c-id SDL_PauseAudioStreamDevice)
+
+;; SDL_ResumeAudioStreamDevice: Resume the device associated with a stream
+;; stream: the audio stream to resume
+;; Returns: true on success, false on failure
+(define-sdl SDL-ResumeAudioStreamDevice
+  (_fun _SDL_AudioStream-pointer -> _sdl-bool)
+  #:c-id SDL_ResumeAudioStreamDevice)
+
+;; SDL_AudioStreamDevicePaused: Check if a stream's device is paused
+;; stream: the audio stream to query
+;; Returns: true if paused, false otherwise
+(define-sdl SDL-AudioStreamDevicePaused
+  (_fun _SDL_AudioStream-pointer -> _stdbool)
+  #:c-id SDL_AudioStreamDevicePaused)
 
 ;; SDL_DestroyAudioStream: Destroy an audio stream
 ;; stream: the audio stream to destroy
@@ -242,3 +325,61 @@
         -> (result : _sdl-bool)
         -> (values result audio_buf audio_len))
   #:c-id SDL_LoadWAV)
+
+;; SDL_LoadWAV_IO: Load a WAV file from an IOStream
+;; src: SDL_IOStream to read from
+;; closeio: close the IOStream when done
+;; spec: pointer to SDL_AudioSpec to receive the audio format
+;; audio_buf: pointer to receive the audio data buffer (free with SDL_free)
+;; audio_len: pointer to receive the length in bytes
+;; Returns: true on success, false on failure
+(define-sdl SDL-LoadWAV_IO
+  (_fun _SDL_IOStream-pointer
+        _stdbool
+        _SDL_AudioSpec-pointer
+        (audio_buf : (_ptr o _pointer))
+        (audio_len : (_ptr o _uint32))
+        -> (result : _sdl-bool)
+        -> (values result audio_buf audio_len))
+  #:c-id SDL_LoadWAV_IO)
+
+;; ============================================================================
+;; Audio - Mixing and Conversion
+;; ============================================================================
+
+;; SDL_MixAudio: Mix audio data into a destination buffer
+;; dst: destination buffer
+;; src: source buffer
+;; format: SDL_AudioFormat of the buffers
+;; len: number of bytes to mix
+;; volume: mix volume (0.0 - 1.0)
+;; Returns: true on success, false on failure
+(define-sdl SDL-MixAudio
+  (_fun _pointer _pointer _SDL_AudioFormat _uint32 _float -> _sdl-bool)
+  #:c-id SDL_MixAudio)
+
+;; SDL_ConvertAudioSamples: Convert audio data between formats
+;; src_spec: source format
+;; src_data: pointer to source data
+;; src_len: length of source data
+;; dst_spec: destination format
+;; dst_data: receives newly allocated destination buffer (free with SDL_free)
+;; dst_len: receives length of destination data
+;; Returns: (values success? dst_data dst_len)
+(define-sdl SDL-ConvertAudioSamples
+  (_fun _SDL_AudioSpec-pointer
+        _pointer
+        _int
+        _SDL_AudioSpec-pointer
+        (dst_data : (_ptr o _pointer))
+        (dst_len : (_ptr o _int))
+        -> (result : _sdl-bool)
+        -> (values result dst_data dst_len))
+  #:c-id SDL_ConvertAudioSamples)
+
+;; SDL_GetAudioFormatName: Get a human-readable name for an audio format
+;; format: SDL_AudioFormat value
+;; Returns: format name string (or "SDL_AUDIO_UNKNOWN")
+(define-sdl SDL-GetAudioFormatName
+  (_fun _SDL_AudioFormat -> _string/utf-8)
+  #:c-id SDL_GetAudioFormatName)

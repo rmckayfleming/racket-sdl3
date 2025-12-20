@@ -217,6 +217,7 @@
          set-SDL_AudioSpec-freq!
          _SDL_AudioStream-pointer
          _SDL_AudioStream-pointer/null
+         _SDL_AudioStreamCallback
          ;; Timer types
          _SDL_TimerID
          _SDL_TimerCallback
@@ -656,6 +657,15 @@
 
 ;; SDL_AudioStream opaque pointer type
 (define-cpointer-type _SDL_AudioStream-pointer)
+
+;; SDL_AudioStreamCallback - called when audio stream needs data
+(define _SDL_AudioStreamCallback
+  (_fun #:async-apply (lambda (thunk) (thunk))
+        _pointer
+        _SDL_AudioStream-pointer
+        _int
+        _int
+        -> _void))
 
 ;; ============================================================================
 ;; Window ID

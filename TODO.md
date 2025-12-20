@@ -362,12 +362,13 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 - [x] `SDL_AddTimer`, `SDL_AddTimerNS`, `SDL_RemoveTimer`
 
 #### Audio (Advanced)
-- [ ] `SDL_GetAudioDeviceFormat`
-- [ ] `SDL_SetAudioDeviceGain`, `SDL_GetAudioDeviceGain`
-- [ ] `SDL_OpenAudioDeviceStream`
-- [ ] `SDL_LoadWAV_IO`
-- [ ] `SDL_MixAudio`, `SDL_ConvertAudioSamples`
-- [ ] `SDL_GetAudioFormatName`
+- [x] `SDL_GetAudioDeviceFormat`
+- [x] `SDL_SetAudioDeviceGain`, `SDL_GetAudioDeviceGain`
+- [x] `SDL_OpenAudioDeviceStream`
+- [x] `SDL_GetAudioStreamDevice`, `SDL_PauseAudioStreamDevice`, `SDL_ResumeAudioStreamDevice`, `SDL_AudioStreamDevicePaused`
+- [x] `SDL_LoadWAV_IO`
+- [x] `SDL_MixAudio`, `SDL_ConvertAudioSamples`
+- [x] `SDL_GetAudioFormatName`
 
 #### Clipboard (Advanced)
 - [ ] `SDL_SetPrimarySelectionText`, `SDL_GetPrimarySelectionText`, `SDL_HasPrimarySelectionText`
@@ -484,7 +485,7 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 
 ## Suggested Next Steps
 
-1. **Touch + Pen Events** - touch/pen event structs and parsing
-2. **Audio Advanced** - device format/gain, stream open, mix/convert
+1. **Joystick + Gamepad Advanced** - send effect + mapping APIs
+2. **Touch + Pen Events** - touch/pen event structs and parsing
 3. **SDL_ttf Advanced** - remaining TTF IO and text engine APIs
 4. **SDL_image Animation** - GIF/WebP animation loading and playback
