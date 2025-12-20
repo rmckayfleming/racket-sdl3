@@ -85,6 +85,7 @@ User input handling.
 | `mouse-scroll.rkt` | Scroll wheel handling |
 | `buttons.rkt` | Clickable UI buttons with hover/press states |
 | `custom-cursor.rkt` | Hide system cursor, draw custom cursors |
+| `gamepad.rkt` | Gamepad detection, buttons, axes, hot-plug events |
 
 ### animation/
 
