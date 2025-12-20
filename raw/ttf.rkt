@@ -111,6 +111,168 @@
   #:c-id TTF_GetFontDescent)
 
 ;; ============================================================================
+;; Font Style & Appearance
+;; ============================================================================
+
+;; TTF_SetFontStyle: Set the style of a font
+;; font: the font to modify
+;; style: OR'd combination of TTF_STYLE_* flags
+(define-ttf TTF-SetFontStyle (_fun _TTF_Font-pointer _TTF_FontStyleFlags -> _void)
+  #:c-id TTF_SetFontStyle)
+
+;; TTF_GetFontStyle: Get the current style of a font
+;; font: the font to query
+;; Returns: OR'd combination of TTF_STYLE_* flags
+(define-ttf TTF-GetFontStyle (_fun _TTF_Font-pointer -> _TTF_FontStyleFlags)
+  #:c-id TTF_GetFontStyle)
+
+;; TTF_SetFontOutline: Set the outline thickness of a font
+;; font: the font to modify
+;; outline: outline thickness in pixels (0 for no outline)
+;; Returns: true on success, false on failure
+(define-ttf TTF-SetFontOutline (_fun _TTF_Font-pointer _int -> _bool)
+  #:c-id TTF_SetFontOutline)
+
+;; TTF_GetFontOutline: Get the outline thickness of a font
+;; font: the font to query
+;; Returns: outline thickness in pixels
+(define-ttf TTF-GetFontOutline (_fun _TTF_Font-pointer -> _int)
+  #:c-id TTF_GetFontOutline)
+
+;; TTF_SetFontHinting: Set the hinting mode of a font
+;; font: the font to modify
+;; hinting: one of TTF_HINTING_* constants
+(define-ttf TTF-SetFontHinting (_fun _TTF_Font-pointer _TTF_HintingFlags -> _void)
+  #:c-id TTF_SetFontHinting)
+
+;; TTF_GetFontHinting: Get the hinting mode of a font
+;; font: the font to query
+;; Returns: one of TTF_HINTING_* constants
+(define-ttf TTF-GetFontHinting (_fun _TTF_Font-pointer -> _TTF_HintingFlags)
+  #:c-id TTF_GetFontHinting)
+
+;; TTF_SetFontSDF: Enable or disable Signed Distance Field rendering
+;; font: the font to modify
+;; enabled: true to enable SDF, false to disable
+;; Returns: true on success, false on failure
+(define-ttf TTF-SetFontSDF (_fun _TTF_Font-pointer _bool -> _bool)
+  #:c-id TTF_SetFontSDF)
+
+;; TTF_GetFontSDF: Check if SDF rendering is enabled
+;; font: the font to query
+;; Returns: true if SDF is enabled, false otherwise
+(define-ttf TTF-GetFontSDF (_fun _TTF_Font-pointer -> _bool)
+  #:c-id TTF_GetFontSDF)
+
+;; ============================================================================
+;; Font Size & Spacing
+;; ============================================================================
+
+;; TTF_SetFontSize: Set the size of a font
+;; font: the font to modify
+;; ptsize: point size as float
+;; Returns: true on success, false on failure
+(define-ttf TTF-SetFontSize (_fun _TTF_Font-pointer _float -> _bool)
+  #:c-id TTF_SetFontSize)
+
+;; TTF_SetFontSizeDPI: Set the size of a font with specific DPI
+;; font: the font to modify
+;; ptsize: point size as float
+;; hdpi: horizontal DPI
+;; vdpi: vertical DPI
+;; Returns: true on success, false on failure
+(define-ttf TTF-SetFontSizeDPI (_fun _TTF_Font-pointer _float _int _int -> _bool)
+  #:c-id TTF_SetFontSizeDPI)
+
+;; TTF_GetFontDPI: Get the DPI of a font
+;; font: the font to query
+;; hdpi: pointer to store horizontal DPI (can be NULL)
+;; vdpi: pointer to store vertical DPI (can be NULL)
+;; Returns: true on success, false on failure
+(define-ttf TTF-GetFontDPI (_fun _TTF_Font-pointer _pointer _pointer -> _bool)
+  #:c-id TTF_GetFontDPI)
+
+;; TTF_SetFontLineSkip: Set the line skip (line spacing) of a font
+;; font: the font to modify
+;; lineskip: line spacing in pixels
+(define-ttf TTF-SetFontLineSkip (_fun _TTF_Font-pointer _int -> _void)
+  #:c-id TTF_SetFontLineSkip)
+
+;; TTF_GetFontLineSkip: Get the line skip (line spacing) of a font
+;; font: the font to query
+;; Returns: line spacing in pixels
+(define-ttf TTF-GetFontLineSkip (_fun _TTF_Font-pointer -> _int)
+  #:c-id TTF_GetFontLineSkip)
+
+;; TTF_SetFontKerning: Enable or disable kerning for a font
+;; font: the font to modify
+;; enabled: true to enable kerning, false to disable
+(define-ttf TTF-SetFontKerning (_fun _TTF_Font-pointer _bool -> _void)
+  #:c-id TTF_SetFontKerning)
+
+;; TTF_GetFontKerning: Check if kerning is enabled for a font
+;; font: the font to query
+;; Returns: true if kerning is enabled, false otherwise
+(define-ttf TTF-GetFontKerning (_fun _TTF_Font-pointer -> _bool)
+  #:c-id TTF_GetFontKerning)
+
+;; ============================================================================
+;; Font Metadata
+;; ============================================================================
+
+;; TTF_GetFontWeight: Get the weight of a font
+;; font: the font to query
+;; Returns: weight value (100-950)
+(define-ttf TTF-GetFontWeight (_fun _TTF_Font-pointer -> _int)
+  #:c-id TTF_GetFontWeight)
+
+;; TTF_GetFontFamilyName: Get the family name of a font
+;; font: the font to query
+;; Returns: family name string (internal storage, do not free)
+(define-ttf TTF-GetFontFamilyName (_fun _TTF_Font-pointer -> _string/utf-8)
+  #:c-id TTF_GetFontFamilyName)
+
+;; TTF_GetFontStyleName: Get the style name of a font
+;; font: the font to query
+;; Returns: style name string (internal storage, do not free)
+(define-ttf TTF-GetFontStyleName (_fun _TTF_Font-pointer -> _string/utf-8)
+  #:c-id TTF_GetFontStyleName)
+
+;; TTF_GetNumFontFaces: Get the number of faces in a font file
+;; font: the font to query
+;; Returns: number of faces
+(define-ttf TTF-GetNumFontFaces (_fun _TTF_Font-pointer -> _int)
+  #:c-id TTF_GetNumFontFaces)
+
+;; TTF_FontIsFixedWidth: Check if a font is fixed-width (monospace)
+;; font: the font to query
+;; Returns: true if fixed-width, false otherwise
+(define-ttf TTF-FontIsFixedWidth (_fun _TTF_Font-pointer -> _bool)
+  #:c-id TTF_FontIsFixedWidth)
+
+;; TTF_FontIsScalable: Check if a font is scalable (TrueType/OpenType)
+;; font: the font to query
+;; Returns: true if scalable, false otherwise
+(define-ttf TTF-FontIsScalable (_fun _TTF_Font-pointer -> _bool)
+  #:c-id TTF_FontIsScalable)
+
+;; ============================================================================
+;; Wrap Alignment
+;; ============================================================================
+
+;; TTF_SetFontWrapAlignment: Set the alignment for wrapped text
+;; font: the font to modify
+;; align: one of TTF_HORIZONTAL_ALIGN_* constants
+(define-ttf TTF-SetFontWrapAlignment (_fun _TTF_Font-pointer _TTF_HorizontalAlignment -> _void)
+  #:c-id TTF_SetFontWrapAlignment)
+
+;; TTF_GetFontWrapAlignment: Get the alignment for wrapped text
+;; font: the font to query
+;; Returns: one of TTF_HORIZONTAL_ALIGN_* constants
+(define-ttf TTF-GetFontWrapAlignment (_fun _TTF_Font-pointer -> _TTF_HorizontalAlignment)
+  #:c-id TTF_GetFontWrapAlignment)
+
+;; ============================================================================
 ;; Text Rendering
 ;; ============================================================================
 
