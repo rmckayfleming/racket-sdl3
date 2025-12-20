@@ -5,6 +5,8 @@
 (require ffi/unsafe
          ffi/unsafe/custodian
          racket/list
+         racket/port
+         racket/string
          "../raw.rkt"
          "../raw/image.rkt"
          "window.rkt"
@@ -80,13 +82,70 @@
 ;; Texture Loading
 ;; ============================================================================
 
-(define (load-texture rend path
+(define (load-texture rend source
+                      #:type [type #f]
                       #:custodian [cust (current-custodian)])
-  (define ptr (IMG-LoadTexture (renderer-ptr rend) path))
-  (unless ptr
-    (error 'load-texture "Failed to load texture ~a: ~a" path (SDL-GetError)))
+  (define (path->texture path)
+    (define ptr (IMG-LoadTexture (renderer-ptr rend) path))
+    (unless ptr
+      (error 'load-texture "Failed to load texture ~a: ~a" path (SDL-GetError)))
+    (texture-from-pointer ptr #:custodian cust))
 
-  (texture-from-pointer ptr #:custodian cust))
+  (define (normalize-type v)
+    (cond
+      [(not v) #f]
+      [(string? v) v]
+      [(symbol? v) (string-upcase (symbol->string v))]
+      [else (error 'load-texture "type must be a string or symbol, got: ~a" v)]))
+
+  (define (source->bytes who v)
+    (cond
+      [(bytes? v) v]
+      [(input-port? v) (port->bytes v)]
+      [else (error who "expected bytes or input port, got: ~a" v)]))
+
+  (define (call-with-const-mem who bytes proc)
+    (define len (bytes-length bytes))
+    (define mem (malloc (max len 1) 'raw))
+    (memcpy mem bytes len)
+    (dynamic-wind
+      void
+      (lambda () (proc mem len))
+      (lambda () (free mem))))
+
+  (define (call-with-iostream who bytes proc)
+    (call-with-const-mem
+     who
+     bytes
+     (lambda (mem len)
+       (define stream (SDL-IOFromConstMem mem len))
+       (unless stream
+         (error who "failed to create IOStream: ~a" (SDL-GetError)))
+       (dynamic-wind
+         void
+         (lambda () (proc stream))
+         (lambda () (SDL-CloseIO stream))))))
+
+  (cond
+    [(or (string? source) (path? source))
+     (when type
+       (error 'load-texture "type hint is only supported for bytes/ports"))
+     (define path (if (path? source) (path->string source) source))
+     (path->texture path)]
+    [else
+     (define type-str (normalize-type type))
+     (define bytes (source->bytes 'load-texture source))
+     (define ptr
+       (call-with-iostream
+        'load-texture
+        bytes
+        (lambda (stream)
+          (if type-str
+              (IMG-LoadTextureTypedIO (renderer-ptr rend) stream #f type-str)
+              (IMG-LoadTextureIO (renderer-ptr rend) stream #f)))))
+     (unless ptr
+       (error 'load-texture "Failed to load texture: ~a" (SDL-GetError)))
+     (texture-from-pointer ptr #:custodian cust)]))
 
 (define (texture-from-pointer ptr
                               #:custodian [cust (current-custodian)])

@@ -424,14 +424,14 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 ### SDL3_image
 
 #### Loading (IOStream)
-- [ ] `IMG_Load_IO`, `IMG_LoadTyped_IO`
-- [ ] `IMG_LoadTexture_IO`, `IMG_LoadTextureTyped_IO`
+- [x] `IMG_Load_IO`, `IMG_LoadTyped_IO`
+- [x] `IMG_LoadTexture_IO`, `IMG_LoadTextureTyped_IO`
 
 #### Format-specific Loaders
 - [ ] All `IMG_Load*_IO` variants (AVIF, BMP, GIF, JPG, PNG, WebP, etc.)
 
 #### Format Detection
-- [ ] All `IMG_is*` functions
+- [x] All `IMG_is*` functions
 
 #### Saving (Advanced)
 - [ ] `IMG_SavePNG_IO`, `IMG_SaveJPG_IO`
@@ -475,7 +475,7 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 | Library | Functions Implemented | Estimated Total | Coverage |
 |---------|----------------------|-----------------|----------|
 | SDL3 Core | ~200 | ~350 | ~57% |
-| SDL3_image | 5 | ~60 | ~8% |
+| SDL3_image | ~27 | ~60 | ~45% |
 | SDL3_ttf | ~70 | ~100 | ~70% |
 
 **Note:** All essential (P0) features for building games and applications are complete. The remaining functions are primarily advanced features, alternative APIs (IOStream variants), and specialized subsystems (OpenGL, Vulkan, haptics).
@@ -484,8 +484,8 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 
 ## Suggested Next Steps
 
-1. **SDL_image IOStream + Format Detection** - load from ports/bytes, detect formats
-2. **Input Enumeration + Rect Utilities** - keyboard/mouse listing and rect helpers
-3. **Touch + Pen Events** - touch/pen event structs and parsing
-4. **Audio Advanced** - device format/gain, stream open, mix/convert
-5. **SDL_ttf Advanced** - remaining TTF IO and text engine APIs
+1. **Input Enumeration + Rect Utilities** - keyboard/mouse listing and rect helpers
+2. **Touch + Pen Events** - touch/pen event structs and parsing
+3. **Audio Advanced** - device format/gain, stream open, mix/convert
+4. **SDL_ttf Advanced** - remaining TTF IO and text engine APIs
+5. **SDL_image Animation** - GIF/WebP animation loading and playback

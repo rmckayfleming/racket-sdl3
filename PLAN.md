@@ -46,7 +46,7 @@ bindings, safe wrappers, constants/types, and example coverage.
     - Add safe wrapper with explicit lifetime management.
     - Add `examples/animation/timer-callbacks.rkt`.
 
-[ ] Phase 5: SDL_image IOStream + format detection
+[x] Phase 5: SDL_image IOStream + format detection
     - Add IOStream load/save APIs and format checks.
     - Add safe wrappers that accept ports/bytes.
     - Add `examples/textures/image-io.rkt`.

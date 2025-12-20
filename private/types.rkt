@@ -19,6 +19,8 @@
          _SDL_Renderer-pointer/null
          _SDL_Texture-pointer
          _SDL_Texture-pointer/null
+         _SDL_IOStream-pointer
+         _SDL_IOStream-pointer/null
          _SDL_Cursor-pointer
          _SDL_Cursor-pointer/null
          ;; Surface struct
@@ -391,6 +393,7 @@
 (define-cpointer-type _SDL_Window-pointer)
 (define-cpointer-type _SDL_Renderer-pointer)
 (define-cpointer-type _SDL_Texture-pointer)
+(define-cpointer-type _SDL_IOStream-pointer)
 (define-cpointer-type _SDL_Cursor-pointer)
 
 ;; ============================================================================

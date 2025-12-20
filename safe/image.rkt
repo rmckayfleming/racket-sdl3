@@ -9,6 +9,8 @@
 (require ffi/unsafe
          ffi/unsafe/custodian
          racket/list
+         racket/port
+         racket/string
          "../raw.rkt"
          "../raw/image.rkt"
          "../raw/surface.rkt"
@@ -76,6 +78,9 @@
          load-bmp
          save-bmp!
 
+         ;; Format detection
+         image-format
+
          ;; Saving (PNG/JPG via SDL_image)
          save-png!
          save-jpg!
@@ -117,8 +122,9 @@
 ;; Surface Loading
 ;; ============================================================================
 
-;; load-surface: Load an image file to a software surface
-;; path: path to the image file (PNG, JPG, WebP, etc.)
+;; load-surface: Load an image file or IO bytes to a software surface
+;; source: path string, path, bytes, or input port
+;; #:type: optional format hint (string or symbol) for IO sources
 ;; Returns: a surface object with custodian-managed cleanup
 ;;
 ;; Use this when you need to:
@@ -127,11 +133,120 @@
 ;; - Set window icons
 ;;
 ;; For rendering images, use load-texture instead (more efficient).
-(define (load-surface path #:custodian [cust (current-custodian)])
-  (define ptr (IMG-Load path))
-  (unless ptr
-    (error 'load-surface "failed to load image: ~a (~a)" path (SDL-GetError)))
-  (wrap-surface ptr #:custodian cust))
+(define (load-surface source
+                      #:type [type #f]
+                      #:custodian [cust (current-custodian)])
+  (define (path->surface path)
+    (define ptr (IMG-Load path))
+    (unless ptr
+      (error 'load-surface "failed to load image: ~a (~a)" path (SDL-GetError)))
+    (wrap-surface ptr #:custodian cust))
+
+  (define (normalize-type v)
+    (cond
+      [(not v) #f]
+      [(string? v) v]
+      [(symbol? v) (string-upcase (symbol->string v))]
+      [else (error 'load-surface "type must be a string or symbol, got: ~a" v)]))
+
+  (define (source->bytes who v)
+    (cond
+      [(bytes? v) v]
+      [(input-port? v) (port->bytes v)]
+      [else (error who "expected bytes or input port, got: ~a" v)]))
+
+  (define (call-with-const-mem who bytes proc)
+    (define len (bytes-length bytes))
+    (define mem (malloc (max len 1) 'raw))
+    (memcpy mem bytes len)
+    (dynamic-wind
+      void
+      (lambda () (proc mem len))
+      (lambda () (free mem))))
+
+  (define (call-with-iostream who bytes proc)
+    (call-with-const-mem
+     who
+     bytes
+     (lambda (mem len)
+       (define stream (SDL-IOFromConstMem mem len))
+       (unless stream
+         (error who "failed to create IOStream: ~a" (SDL-GetError)))
+       (dynamic-wind
+         void
+         (lambda () (proc stream))
+         (lambda () (SDL-CloseIO stream))))))
+
+  (cond
+    [(or (string? source) (path? source))
+     (when type
+       (error 'load-surface "type hint is only supported for bytes/ports"))
+     (define path (if (path? source) (path->string source) source))
+     (path->surface path)]
+    [else
+     (define type-str (normalize-type type))
+     (define bytes (source->bytes 'load-surface source))
+     (define ptr
+       (call-with-iostream
+        'load-surface
+        bytes
+        (lambda (stream)
+          (if type-str
+              (IMG-LoadTypedIO stream #f type-str)
+              (IMG-LoadIO stream #f)))))
+     (unless ptr
+       (error 'load-surface "failed to load image: ~a" (SDL-GetError)))
+     (wrap-surface ptr #:custodian cust)]))
+
+;; image-format: Detect an image format from bytes or an input port
+;; Returns: symbol (e.g., 'png, 'jpg) or #f if unknown
+(define (image-format source)
+  (define (source->bytes who v)
+    (cond
+      [(bytes? v) v]
+      [(input-port? v) (port->bytes v)]
+      [else (error who "expected bytes or input port, got: ~a" v)]))
+
+  (define bytes (source->bytes 'image-format source))
+
+  (define formats
+    (list (cons 'avif IMG-IsAVIF)
+          (cons 'ico IMG-IsICO)
+          (cons 'cur IMG-IsCUR)
+          (cons 'bmp IMG-IsBMP)
+          (cons 'gif IMG-IsGIF)
+          (cons 'jpg IMG-IsJPG)
+          (cons 'jxl IMG-IsJXL)
+          (cons 'lbm IMG-IsLBM)
+          (cons 'pcx IMG-IsPCX)
+          (cons 'png IMG-IsPNG)
+          (cons 'pnm IMG-IsPNM)
+          (cons 'svg IMG-IsSVG)
+          (cons 'qoi IMG-IsQOI)
+          (cons 'tif IMG-IsTIF)
+          (cons 'xcf IMG-IsXCF)
+          (cons 'xpm IMG-IsXPM)
+          (cons 'xv IMG-IsXV)
+          (cons 'webp IMG-IsWEBP)))
+
+  (define len (bytes-length bytes))
+  (define mem (malloc (max len 1) 'raw))
+  (memcpy mem bytes len)
+  (define result
+    (dynamic-wind
+      void
+      (lambda ()
+        (for/or ([entry (in-list formats)])
+          (define stream (SDL-IOFromConstMem mem len))
+          (unless stream
+            (error 'image-format "failed to create IOStream: ~a" (SDL-GetError)))
+          (dynamic-wind
+            void
+            (lambda ()
+              (and ((cdr entry) stream) (car entry)))
+            (lambda () (SDL-CloseIO stream)))))
+      (lambda () (free mem))))
+  result)
 
 ;; ============================================================================
 ;; Surface Saving
