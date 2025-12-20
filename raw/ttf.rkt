@@ -30,6 +30,25 @@
 (define-cpointer-type _TTF_Font-pointer)
 
 ;; ============================================================================
+;; FFI Enum Type Aliases
+;; ============================================================================
+
+;; Font style flags (bitmask)
+(define _TTF_FontStyleFlags _uint32)
+
+;; Hinting modes
+(define _TTF_HintingFlags _int)
+
+;; Horizontal alignment for wrapped text
+(define _TTF_HorizontalAlignment _int)
+
+;; Text direction (for HarfBuzz)
+(define _TTF_Direction _int)
+
+;; Glyph image type
+(define _TTF_ImageType _int)
+
+;; ============================================================================
 ;; Initialization
 ;; ============================================================================
 

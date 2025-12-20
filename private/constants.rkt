@@ -260,7 +260,47 @@
  SDL_GAMEPAD_BUTTON_LABEL_CROSS
  SDL_GAMEPAD_BUTTON_LABEL_CIRCLE
  SDL_GAMEPAD_BUTTON_LABEL_SQUARE
- SDL_GAMEPAD_BUTTON_LABEL_TRIANGLE)
+ SDL_GAMEPAD_BUTTON_LABEL_TRIANGLE
+ ;; TTF font style flags
+ TTF_STYLE_NORMAL
+ TTF_STYLE_BOLD
+ TTF_STYLE_ITALIC
+ TTF_STYLE_UNDERLINE
+ TTF_STYLE_STRIKETHROUGH
+ ;; TTF font hinting modes
+ TTF_HINTING_INVALID
+ TTF_HINTING_NORMAL
+ TTF_HINTING_LIGHT
+ TTF_HINTING_MONO
+ TTF_HINTING_NONE
+ TTF_HINTING_LIGHT_SUBPIXEL
+ ;; TTF horizontal alignment
+ TTF_HORIZONTAL_ALIGN_INVALID
+ TTF_HORIZONTAL_ALIGN_LEFT
+ TTF_HORIZONTAL_ALIGN_CENTER
+ TTF_HORIZONTAL_ALIGN_RIGHT
+ ;; TTF text direction
+ TTF_DIRECTION_INVALID
+ TTF_DIRECTION_LTR
+ TTF_DIRECTION_RTL
+ TTF_DIRECTION_TTB
+ TTF_DIRECTION_BTT
+ ;; TTF glyph image types
+ TTF_IMAGE_INVALID
+ TTF_IMAGE_ALPHA
+ TTF_IMAGE_COLOR
+ TTF_IMAGE_SDF
+ ;; TTF font weight constants
+ TTF_FONT_WEIGHT_THIN
+ TTF_FONT_WEIGHT_EXTRA_LIGHT
+ TTF_FONT_WEIGHT_LIGHT
+ TTF_FONT_WEIGHT_NORMAL
+ TTF_FONT_WEIGHT_MEDIUM
+ TTF_FONT_WEIGHT_SEMI_BOLD
+ TTF_FONT_WEIGHT_BOLD
+ TTF_FONT_WEIGHT_EXTRA_BOLD
+ TTF_FONT_WEIGHT_BLACK
+ TTF_FONT_WEIGHT_EXTRA_BLACK)
 
 ;; ============================================================================
 ;; Init Flags (SDL_InitFlags) - used with SDL_Init
@@ -610,3 +650,61 @@
 (define SDL_GAMEPAD_BUTTON_LABEL_CIRCLE   6)  ; PlayStation Circle
 (define SDL_GAMEPAD_BUTTON_LABEL_SQUARE   7)  ; PlayStation Square
 (define SDL_GAMEPAD_BUTTON_LABEL_TRIANGLE 8)  ; PlayStation Triangle
+
+;; ============================================================================
+;; SDL_ttf Font Style Flags (can be OR'd together)
+;; ============================================================================
+(define TTF_STYLE_NORMAL        #x00)
+(define TTF_STYLE_BOLD          #x01)
+(define TTF_STYLE_ITALIC        #x02)
+(define TTF_STYLE_UNDERLINE     #x04)
+(define TTF_STYLE_STRIKETHROUGH #x08)
+
+;; ============================================================================
+;; SDL_ttf Font Hinting Modes
+;; ============================================================================
+(define TTF_HINTING_INVALID        -1)
+(define TTF_HINTING_NORMAL          0)
+(define TTF_HINTING_LIGHT           1)
+(define TTF_HINTING_MONO            2)
+(define TTF_HINTING_NONE            3)
+(define TTF_HINTING_LIGHT_SUBPIXEL  4)
+
+;; ============================================================================
+;; SDL_ttf Horizontal Alignment for Wrapped Text
+;; ============================================================================
+(define TTF_HORIZONTAL_ALIGN_INVALID -1)
+(define TTF_HORIZONTAL_ALIGN_LEFT     0)
+(define TTF_HORIZONTAL_ALIGN_CENTER   1)
+(define TTF_HORIZONTAL_ALIGN_RIGHT    2)
+
+;; ============================================================================
+;; SDL_ttf Text Direction (values match HarfBuzz)
+;; ============================================================================
+(define TTF_DIRECTION_INVALID 0)
+(define TTF_DIRECTION_LTR     4)  ; Left to Right
+(define TTF_DIRECTION_RTL     5)  ; Right to Left
+(define TTF_DIRECTION_TTB     6)  ; Top to Bottom
+(define TTF_DIRECTION_BTT     7)  ; Bottom to Top
+
+;; ============================================================================
+;; SDL_ttf Glyph Image Types
+;; ============================================================================
+(define TTF_IMAGE_INVALID 0)
+(define TTF_IMAGE_ALPHA   1)  ; Color channels are white, alpha has data
+(define TTF_IMAGE_COLOR   2)  ; All color channels have data
+(define TTF_IMAGE_SDF     3)  ; Alpha has signed distance field
+
+;; ============================================================================
+;; SDL_ttf Font Weight Constants
+;; ============================================================================
+(define TTF_FONT_WEIGHT_THIN        100)
+(define TTF_FONT_WEIGHT_EXTRA_LIGHT 200)
+(define TTF_FONT_WEIGHT_LIGHT       300)
+(define TTF_FONT_WEIGHT_NORMAL      400)
+(define TTF_FONT_WEIGHT_MEDIUM      500)
+(define TTF_FONT_WEIGHT_SEMI_BOLD   600)
+(define TTF_FONT_WEIGHT_BOLD        700)
+(define TTF_FONT_WEIGHT_EXTRA_BOLD  800)
+(define TTF_FONT_WEIGHT_BLACK       900)
+(define TTF_FONT_WEIGHT_EXTRA_BLACK 950)
