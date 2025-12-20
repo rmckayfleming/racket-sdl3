@@ -55,6 +55,36 @@
 ;; Glyph image type
 (define _TTF_ImageType _int)
 
+;; Substring flags
+(define _TTF_SubStringFlags _uint32)
+
+;; GPU text engine winding
+(define _TTF_GPUTextEngineWinding _int)
+
+;; ============================================================================
+;; Advanced Text Types
+;; ============================================================================
+
+;; TTF_SubString - substring metrics for text layout
+(define-cstruct _TTF_SubString
+  ([flags _TTF_SubStringFlags]
+   [offset _int]
+   [length _int]
+   [line_index _int]
+   [cluster_index _int]
+   [rect _SDL_Rect]))
+
+;; TTF_GPUAtlasDrawSequence - draw data for GPU text rendering
+(define-cstruct _TTF_GPUAtlasDrawSequence
+  ([atlas_texture _SDL_GPUTexture-pointer]
+   [xy _SDL_FPoint-pointer]
+   [uv _SDL_FPoint-pointer]
+   [num_vertices _int]
+   [indices _pointer]
+   [num_indices _int]
+   [image_type _TTF_ImageType]
+   [next _pointer]))
+
 ;; ============================================================================
 ;; Initialization
 ;; ============================================================================
@@ -83,6 +113,22 @@
 ;; Returns: pointer to font, or NULL on failure
 (define-ttf TTF-OpenFont (_fun _string _float -> _TTF_Font-pointer/null)
   #:c-id TTF_OpenFont)
+
+;; TTF_OpenFontIO: Load a font from an IOStream at a specific point size
+;; src: SDL_IOStream
+;; closeio: close stream when font closes
+;; ptsize: point size (float)
+;; Returns: pointer to font, or NULL on failure
+(define-ttf TTF-OpenFontIO
+  (_fun _SDL_IOStream-pointer _bool _float -> _TTF_Font-pointer/null)
+  #:c-id TTF_OpenFontIO)
+
+;; TTF_OpenFontWithProperties: Load a font using SDL properties
+;; props: SDL_PropertiesID created with SDL_CreateProperties
+;; Returns: pointer to font, or NULL on failure
+(define-ttf TTF-OpenFontWithProperties
+  (_fun _SDL_PropertiesID -> _TTF_Font-pointer/null)
+  #:c-id TTF_OpenFontWithProperties)
 
 ;; TTF_CloseFont: Close a font and free resources
 ;; font: the font to close
@@ -274,6 +320,18 @@
 ;; Returns: number of faces
 (define-ttf TTF-GetNumFontFaces (_fun _TTF_Font-pointer -> _int)
   #:c-id TTF_GetNumFontFaces)
+
+;; TTF_GetFontProperties: Get the properties ID associated with a font
+;; font: the font to query
+;; Returns: SDL_PropertiesID or 0 on failure
+(define-ttf TTF-GetFontProperties (_fun _TTF_Font-pointer -> _SDL_PropertiesID)
+  #:c-id TTF_GetFontProperties)
+
+;; TTF_GetFontGeneration: Get the font generation counter
+;; font: the font to query
+;; Returns: generation value or 0 on failure
+(define-ttf TTF-GetFontGeneration (_fun _TTF_Font-pointer -> _uint32)
+  #:c-id TTF_GetFontGeneration)
 
 ;; TTF_FontIsFixedWidth: Check if a font is fixed-width (monospace)
 ;; font: the font to query
@@ -618,6 +676,13 @@
 (define-ttf TTF-CreateRendererTextEngine (_fun _SDL_Renderer-pointer -> _TTF_TextEngine-pointer/null)
   #:c-id TTF_CreateRendererTextEngine)
 
+;; TTF_CreateRendererTextEngineWithProperties: Create a renderer text engine with properties
+;; props: SDL_PropertiesID with renderer and atlas size
+;; Returns: text engine pointer, or NULL on failure
+(define-ttf TTF-CreateRendererTextEngineWithProperties
+  (_fun _SDL_PropertiesID -> _TTF_TextEngine-pointer/null)
+  #:c-id TTF_CreateRendererTextEngineWithProperties)
+
 ;; TTF_DestroyRendererTextEngine: Destroy a renderer text engine
 ;; engine: the text engine to destroy
 (define-ttf TTF-DestroyRendererTextEngine (_fun _TTF_TextEngine-pointer -> _void)
@@ -655,6 +720,49 @@
   #:c-id TTF_DrawSurfaceText)
 
 ;; ============================================================================
+;; Text Engine API - GPU Text Engine
+;; ============================================================================
+
+;; TTF_CreateGPUTextEngine: Create a text engine for SDL_GPU
+;; device: SDL_GPUDevice pointer
+;; Returns: text engine pointer, or NULL on failure
+(define-ttf TTF-CreateGPUTextEngine (_fun _SDL_GPUDevice-pointer -> _TTF_TextEngine-pointer/null)
+  #:c-id TTF_CreateGPUTextEngine)
+
+;; TTF_CreateGPUTextEngineWithProperties: Create a GPU text engine with properties
+;; props: SDL_PropertiesID with device and atlas size
+;; Returns: text engine pointer, or NULL on failure
+(define-ttf TTF-CreateGPUTextEngineWithProperties
+  (_fun _SDL_PropertiesID -> _TTF_TextEngine-pointer/null)
+  #:c-id TTF_CreateGPUTextEngineWithProperties)
+
+;; TTF_GetGPUTextDrawData: Get draw data for GPU text rendering
+;; text: the text object to query
+;; Returns: pointer to linked list of TTF_GPUAtlasDrawSequence
+(define-ttf TTF-GetGPUTextDrawData
+  (_fun _TTF_Text-pointer -> _TTF_GPUAtlasDrawSequence-pointer/null)
+  #:c-id TTF_GetGPUTextDrawData)
+
+;; TTF_DestroyGPUTextEngine: Destroy a GPU text engine
+;; engine: the text engine to destroy
+(define-ttf TTF-DestroyGPUTextEngine (_fun _TTF_TextEngine-pointer -> _void)
+  #:c-id TTF_DestroyGPUTextEngine)
+
+;; TTF_SetGPUTextEngineWinding: Set winding order for GPU text engine
+;; engine: the text engine to modify
+;; winding: TTF_GPUTextEngineWinding value
+(define-ttf TTF-SetGPUTextEngineWinding
+  (_fun _TTF_TextEngine-pointer _TTF_GPUTextEngineWinding -> _void)
+  #:c-id TTF_SetGPUTextEngineWinding)
+
+;; TTF_GetGPUTextEngineWinding: Get winding order for GPU text engine
+;; engine: the text engine to query
+;; Returns: TTF_GPUTextEngineWinding value
+(define-ttf TTF-GetGPUTextEngineWinding
+  (_fun _TTF_TextEngine-pointer -> _TTF_GPUTextEngineWinding)
+  #:c-id TTF_GetGPUTextEngineWinding)
+
+;; ============================================================================
 ;; Text Engine API - Text Objects
 ;; ============================================================================
 
@@ -664,7 +772,8 @@
 ;; text: UTF-8 text string
 ;; length: length in bytes, or 0 for null-terminated
 ;; Returns: text object pointer, or NULL on failure
-(define-ttf TTF-CreateText (_fun _TTF_TextEngine-pointer _TTF_Font-pointer _string _size -> _TTF_Text-pointer/null)
+(define-ttf TTF-CreateText
+  (_fun _TTF_TextEngine-pointer/null _TTF_Font-pointer _string _size -> _TTF_Text-pointer/null)
   #:c-id TTF_CreateText)
 
 ;; TTF_DestroyText: Destroy a text object
@@ -733,6 +842,78 @@
 (define-ttf TTF-GetTextColor (_fun _TTF_Text-pointer _pointer _pointer _pointer _pointer -> _bool)
   #:c-id TTF_GetTextColor)
 
+;; TTF_SetTextColorFloat: Set the color of a text object (float)
+;; text: the text object
+;; r, g, b, a: color components (0.0-1.0)
+;; Returns: true on success, false on failure
+(define-ttf TTF-SetTextColorFloat (_fun _TTF_Text-pointer _float _float _float _float -> _bool)
+  #:c-id TTF_SetTextColorFloat)
+
+;; TTF_GetTextColorFloat: Get the color of a text object (float)
+;; text: the text object
+;; r, g, b, a: pointers to store components (can be NULL)
+;; Returns: true on success, false on failure
+(define-ttf TTF-GetTextColorFloat (_fun _TTF_Text-pointer _pointer _pointer _pointer _pointer -> _bool)
+  #:c-id TTF_GetTextColorFloat)
+
+;; TTF_GetTextProperties: Get the properties ID associated with a text object
+;; text: the text object
+;; Returns: SDL_PropertiesID or 0 on failure
+(define-ttf TTF-GetTextProperties (_fun _TTF_Text-pointer -> _SDL_PropertiesID)
+  #:c-id TTF_GetTextProperties)
+
+;; TTF_SetTextEngine: Set the text engine for a text object
+;; text: the text object
+;; engine: the new text engine
+;; Returns: true on success, false on failure
+(define-ttf TTF-SetTextEngine (_fun _TTF_Text-pointer _TTF_TextEngine-pointer/null -> _bool)
+  #:c-id TTF_SetTextEngine)
+
+;; TTF_GetTextEngine: Get the text engine for a text object
+;; text: the text object
+;; Returns: text engine pointer, or NULL on failure
+(define-ttf TTF-GetTextEngine (_fun _TTF_Text-pointer -> _TTF_TextEngine-pointer/null)
+  #:c-id TTF_GetTextEngine)
+
+;; TTF_SetTextFont: Set the font for a text object
+;; text: the text object
+;; font: the new font
+;; Returns: true on success, false on failure
+(define-ttf TTF-SetTextFont (_fun _TTF_Text-pointer _TTF_Font-pointer -> _bool)
+  #:c-id TTF_SetTextFont)
+
+;; TTF_GetTextFont: Get the font for a text object
+;; text: the text object
+;; Returns: font pointer, or NULL on failure
+(define-ttf TTF-GetTextFont (_fun _TTF_Text-pointer -> _TTF_Font-pointer/null)
+  #:c-id TTF_GetTextFont)
+
+;; TTF_SetTextDirection: Set the text direction for a text object
+;; text: the text object
+;; direction: TTF_DIRECTION_* value
+;; Returns: true on success, false on failure
+(define-ttf TTF-SetTextDirection (_fun _TTF_Text-pointer _TTF_Direction -> _bool)
+  #:c-id TTF_SetTextDirection)
+
+;; TTF_GetTextDirection: Get the text direction for a text object
+;; text: the text object
+;; Returns: TTF_DIRECTION_* value
+(define-ttf TTF-GetTextDirection (_fun _TTF_Text-pointer -> _TTF_Direction)
+  #:c-id TTF_GetTextDirection)
+
+;; TTF_SetTextScript: Set the script for a text object
+;; text: the text object
+;; script: 4-character script tag as uint32
+;; Returns: true on success, false on failure
+(define-ttf TTF-SetTextScript (_fun _TTF_Text-pointer _uint32 -> _bool)
+  #:c-id TTF_SetTextScript)
+
+;; TTF_GetTextScript: Get the script for a text object
+;; text: the text object
+;; Returns: script tag as uint32
+(define-ttf TTF-GetTextScript (_fun _TTF_Text-pointer -> _uint32)
+  #:c-id TTF_GetTextScript)
+
 ;; TTF_SetTextPosition: Set the position of a text object
 ;; text: the text object
 ;; x: x position
@@ -763,8 +944,56 @@
 (define-ttf TTF-GetTextWrapWidth (_fun _TTF_Text-pointer _pointer -> _bool)
   #:c-id TTF_GetTextWrapWidth)
 
+;; TTF_SetTextWrapWhitespaceVisible: Show or hide wrap whitespace
+;; text: the text object
+;; visible: true to show, false to hide
+;; Returns: true on success, false on failure
+(define-ttf TTF-SetTextWrapWhitespaceVisible (_fun _TTF_Text-pointer _bool -> _bool)
+  #:c-id TTF_SetTextWrapWhitespaceVisible)
+
+;; TTF_TextWrapWhitespaceVisible: Check if wrap whitespace is visible
+;; text: the text object
+;; Returns: true if visible, false otherwise
+(define-ttf TTF-TextWrapWhitespaceVisible (_fun _TTF_Text-pointer -> _bool)
+  #:c-id TTF_TextWrapWhitespaceVisible)
+
 ;; TTF_UpdateText: Update a text object after changes
 ;; text: the text object
 ;; Returns: true on success, false on failure
 (define-ttf TTF-UpdateText (_fun _TTF_Text-pointer -> _bool)
   #:c-id TTF_UpdateText)
+
+;; ============================================================================
+;; Text Engine API - Text Substrings
+;; ============================================================================
+
+;; TTF_GetTextSubString: Get substring at a byte offset
+(define-ttf TTF-GetTextSubString (_fun _TTF_Text-pointer _int _TTF_SubString-pointer -> _bool)
+  #:c-id TTF_GetTextSubString)
+
+;; TTF_GetTextSubStringForLine: Get substring for a line index
+(define-ttf TTF-GetTextSubStringForLine (_fun _TTF_Text-pointer _int _TTF_SubString-pointer -> _bool)
+  #:c-id TTF_GetTextSubStringForLine)
+
+;; TTF_GetTextSubStringsForRange: Get substrings covering a range
+;; Returns: NULL-terminated array of substring pointers (free with SDL_free)
+(define-ttf TTF-GetTextSubStringsForRange
+  (_fun _TTF_Text-pointer _int _int (count : (_ptr o _int))
+        -> (result : _pointer)
+        -> (values result count))
+  #:c-id TTF_GetTextSubStringsForRange)
+
+;; TTF_GetTextSubStringForPoint: Get substring closest to a point
+(define-ttf TTF-GetTextSubStringForPoint
+  (_fun _TTF_Text-pointer _int _int _TTF_SubString-pointer -> _bool)
+  #:c-id TTF_GetTextSubStringForPoint)
+
+;; TTF_GetPreviousTextSubString: Get previous substring in text
+(define-ttf TTF-GetPreviousTextSubString
+  (_fun _TTF_Text-pointer _TTF_SubString-pointer _TTF_SubString-pointer -> _bool)
+  #:c-id TTF_GetPreviousTextSubString)
+
+;; TTF_GetNextTextSubString: Get next substring in text
+(define-ttf TTF-GetNextTextSubString
+  (_fun _TTF_Text-pointer _TTF_SubString-pointer _TTF_SubString-pointer -> _bool)
+  #:c-id TTF_GetNextTextSubString)

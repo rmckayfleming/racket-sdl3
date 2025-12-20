@@ -25,6 +25,7 @@
          "raw/gamepad.rkt"
          "raw/display.rkt"
          "raw/iostream.rkt"
+         "raw/properties.rkt"
          "raw/timer.rkt"
          "raw/clipboard.rkt"
          "raw/audio.rkt"
@@ -49,6 +50,7 @@
          (all-from-out "raw/gamepad.rkt")
          (all-from-out "raw/display.rkt")
          (all-from-out "raw/iostream.rkt")
+         (all-from-out "raw/properties.rkt")
          (all-from-out "raw/timer.rkt")
          (all-from-out "raw/clipboard.rkt")
          (all-from-out "raw/audio.rkt")

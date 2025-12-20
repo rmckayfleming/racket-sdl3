@@ -450,24 +450,24 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 ### SDL3_ttf
 
 #### Font Loading (Advanced)
-- [ ] `TTF_OpenFontIO`, `TTF_OpenFontWithProperties`
-- [ ] `TTF_GetFontProperties`, `TTF_GetFontGeneration`
+- [x] `TTF_OpenFontIO`, `TTF_OpenFontWithProperties`
+- [x] `TTF_GetFontProperties`, `TTF_GetFontGeneration`
 
 #### Text Engine API (Advanced)
-- [ ] `TTF_CreateRendererTextEngineWithProperties`
-- [ ] `TTF_CreateGPUTextEngine`, `TTF_CreateGPUTextEngineWithProperties`
-- [ ] `TTF_GetGPUTextDrawData`, `TTF_DestroyGPUTextEngine`
-- [ ] `TTF_SetGPUTextEngineWinding`, `TTF_GetGPUTextEngineWinding`
-- [ ] `TTF_GetTextProperties`
-- [ ] `TTF_SetTextEngine`, `TTF_GetTextEngine`
-- [ ] `TTF_SetTextFont`, `TTF_GetTextFont`
-- [ ] `TTF_SetTextDirection`, `TTF_GetTextDirection`
-- [ ] `TTF_SetTextScript`, `TTF_GetTextScript`
-- [ ] `TTF_SetTextColorFloat`, `TTF_GetTextColorFloat`
-- [ ] `TTF_SetTextWrapWhitespaceVisible`, `TTF_TextWrapWhitespaceVisible`
-- [ ] `TTF_GetTextSubString`, `TTF_GetTextSubStringForLine`
-- [ ] `TTF_GetTextSubStringsForRange`, `TTF_GetTextSubStringForPoint`
-- [ ] `TTF_GetPreviousTextSubString`, `TTF_GetNextTextSubString`
+- [x] `TTF_CreateRendererTextEngineWithProperties`
+- [x] `TTF_CreateGPUTextEngine`, `TTF_CreateGPUTextEngineWithProperties`
+- [x] `TTF_GetGPUTextDrawData`, `TTF_DestroyGPUTextEngine`
+- [x] `TTF_SetGPUTextEngineWinding`, `TTF_GetGPUTextEngineWinding`
+- [x] `TTF_GetTextProperties`
+- [x] `TTF_SetTextEngine`, `TTF_GetTextEngine`
+- [x] `TTF_SetTextFont`, `TTF_GetTextFont`
+- [x] `TTF_SetTextDirection`, `TTF_GetTextDirection`
+- [x] `TTF_SetTextScript`, `TTF_GetTextScript`
+- [x] `TTF_SetTextColorFloat`, `TTF_GetTextColorFloat`
+- [x] `TTF_SetTextWrapWhitespaceVisible`, `TTF_TextWrapWhitespaceVisible`
+- [x] `TTF_GetTextSubString`, `TTF_GetTextSubStringForLine`
+- [x] `TTF_GetTextSubStringsForRange`, `TTF_GetTextSubStringForPoint`
+- [x] `TTF_GetPreviousTextSubString`, `TTF_GetNextTextSubString`
 
 ---
 
@@ -487,5 +487,4 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 
 1. **Joystick + Gamepad Advanced** - send effect + mapping APIs
 2. **Touch + Pen Events** - touch/pen event structs and parsing
-3. **SDL_ttf Advanced** - remaining TTF IO and text engine APIs
-4. **SDL_image Animation** - GIF/WebP animation loading and playback
+3. **SDL_image Animation** - GIF/WebP animation loading and playback

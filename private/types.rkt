@@ -12,6 +12,7 @@
          ;; FFI type aliases
          _SDL_InitFlags
          _SDL_WindowFlags
+         _SDL_PropertiesID
          ;; Pointer types
          _SDL_Window-pointer
          _SDL_Window-pointer/null
@@ -23,6 +24,10 @@
          _SDL_IOStream-pointer/null
          _SDL_Cursor-pointer
          _SDL_Cursor-pointer/null
+         _SDL_GPUDevice-pointer
+         _SDL_GPUDevice-pointer/null
+         _SDL_GPUTexture-pointer
+         _SDL_GPUTexture-pointer/null
          ;; Surface struct
          _SDL_Surface
          _SDL_Surface-pointer
@@ -368,6 +373,9 @@
 ;; SDL_WindowFlags is a 64-bit unsigned integer in SDL3 (flags can be combined with bitwise-ior)
 (define _SDL_WindowFlags _uint64)
 
+;; SDL_PropertiesID is a 32-bit unsigned integer
+(define _SDL_PropertiesID _uint32)
+
 ;; SDL_AudioDeviceID - audio device instance ID (uint32)
 ;; Zero signifies an invalid/null device
 (define _SDL_AudioDeviceID _uint32)
@@ -405,6 +413,8 @@
 (define-cpointer-type _SDL_Texture-pointer)
 (define-cpointer-type _SDL_IOStream-pointer)
 (define-cpointer-type _SDL_Cursor-pointer)
+(define-cpointer-type _SDL_GPUDevice-pointer)
+(define-cpointer-type _SDL_GPUTexture-pointer)
 
 ;; ============================================================================
 ;; Surface Struct

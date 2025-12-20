@@ -69,7 +69,7 @@ bindings, safe wrappers, constants/types, and example coverage.
     - Add parsing in `safe/events.rkt`.
     - Add `examples/input/touch-pen-events.rkt`.
 
-[ ] Phase 10: SDL_ttf advanced
+[x] Phase 10: SDL_ttf advanced
     - Add remaining TTF IO and text engine APIs.
     - Add `examples/text/ttf-advanced.rkt`.
 

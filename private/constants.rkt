@@ -320,7 +320,34 @@
  TTF_FONT_WEIGHT_BOLD
  TTF_FONT_WEIGHT_EXTRA_BOLD
  TTF_FONT_WEIGHT_BLACK
- TTF_FONT_WEIGHT_EXTRA_BLACK)
+ TTF_FONT_WEIGHT_EXTRA_BLACK
+ ;; TTF properties (font and text engines)
+ TTF_PROP_FONT_CREATE_FILENAME_STRING
+ TTF_PROP_FONT_CREATE_IOSTREAM_POINTER
+ TTF_PROP_FONT_CREATE_IOSTREAM_OFFSET_NUMBER
+ TTF_PROP_FONT_CREATE_IOSTREAM_AUTOCLOSE_BOOLEAN
+ TTF_PROP_FONT_CREATE_SIZE_FLOAT
+ TTF_PROP_FONT_CREATE_FACE_NUMBER
+ TTF_PROP_FONT_CREATE_HORIZONTAL_DPI_NUMBER
+ TTF_PROP_FONT_CREATE_VERTICAL_DPI_NUMBER
+ TTF_PROP_FONT_CREATE_EXISTING_FONT
+ TTF_PROP_FONT_OUTLINE_LINE_CAP_NUMBER
+ TTF_PROP_FONT_OUTLINE_LINE_JOIN_NUMBER
+ TTF_PROP_FONT_OUTLINE_MITER_LIMIT_NUMBER
+ TTF_PROP_RENDERER_TEXT_ENGINE_RENDERER
+ TTF_PROP_RENDERER_TEXT_ENGINE_ATLAS_TEXTURE_SIZE
+ TTF_PROP_GPU_TEXT_ENGINE_DEVICE
+ TTF_PROP_GPU_TEXT_ENGINE_ATLAS_TEXTURE_SIZE
+ ;; TTF substring flags
+ TTF_SUBSTRING_DIRECTION_MASK
+ TTF_SUBSTRING_TEXT_START
+ TTF_SUBSTRING_LINE_START
+ TTF_SUBSTRING_LINE_END
+ TTF_SUBSTRING_TEXT_END
+ ;; TTF GPU text engine winding
+ TTF_GPU_TEXTENGINE_WINDING_INVALID
+ TTF_GPU_TEXTENGINE_WINDING_CLOCKWISE
+ TTF_GPU_TEXTENGINE_WINDING_COUNTER_CLOCKWISE)
 
 ;; ============================================================================
 ;; Init Flags (SDL_InitFlags) - used with SDL_Init
@@ -751,3 +778,42 @@
 (define TTF_FONT_WEIGHT_EXTRA_BOLD  800)
 (define TTF_FONT_WEIGHT_BLACK       900)
 (define TTF_FONT_WEIGHT_EXTRA_BLACK 950)
+
+;; ============================================================================
+;; SDL_ttf Property Names
+;; ============================================================================
+(define TTF_PROP_FONT_CREATE_FILENAME_STRING            "SDL_ttf.font.create.filename")
+(define TTF_PROP_FONT_CREATE_IOSTREAM_POINTER           "SDL_ttf.font.create.iostream")
+(define TTF_PROP_FONT_CREATE_IOSTREAM_OFFSET_NUMBER     "SDL_ttf.font.create.iostream.offset")
+(define TTF_PROP_FONT_CREATE_IOSTREAM_AUTOCLOSE_BOOLEAN "SDL_ttf.font.create.iostream.autoclose")
+(define TTF_PROP_FONT_CREATE_SIZE_FLOAT                 "SDL_ttf.font.create.size")
+(define TTF_PROP_FONT_CREATE_FACE_NUMBER                "SDL_ttf.font.create.face")
+(define TTF_PROP_FONT_CREATE_HORIZONTAL_DPI_NUMBER      "SDL_ttf.font.create.hdpi")
+(define TTF_PROP_FONT_CREATE_VERTICAL_DPI_NUMBER        "SDL_ttf.font.create.vdpi")
+(define TTF_PROP_FONT_CREATE_EXISTING_FONT              "SDL_ttf.font.create.existing_font")
+
+(define TTF_PROP_FONT_OUTLINE_LINE_CAP_NUMBER           "SDL_ttf.font.outline.line_cap")
+(define TTF_PROP_FONT_OUTLINE_LINE_JOIN_NUMBER          "SDL_ttf.font.outline.line_join")
+(define TTF_PROP_FONT_OUTLINE_MITER_LIMIT_NUMBER        "SDL_ttf.font.outline.miter_limit")
+
+(define TTF_PROP_RENDERER_TEXT_ENGINE_RENDERER           "SDL_ttf.renderer_text_engine.create.renderer")
+(define TTF_PROP_RENDERER_TEXT_ENGINE_ATLAS_TEXTURE_SIZE "SDL_ttf.renderer_text_engine.create.atlas_texture_size")
+
+(define TTF_PROP_GPU_TEXT_ENGINE_DEVICE             "SDL_ttf.gpu_text_engine.create.device")
+(define TTF_PROP_GPU_TEXT_ENGINE_ATLAS_TEXTURE_SIZE "SDL_ttf.gpu_text_engine.create.atlas_texture_size")
+
+;; ============================================================================
+;; SDL_ttf Substring Flags
+;; ============================================================================
+(define TTF_SUBSTRING_DIRECTION_MASK #x000000FF)
+(define TTF_SUBSTRING_TEXT_START     #x00000100)
+(define TTF_SUBSTRING_LINE_START     #x00000200)
+(define TTF_SUBSTRING_LINE_END       #x00000400)
+(define TTF_SUBSTRING_TEXT_END       #x00000800)
+
+;; ============================================================================
+;; SDL_ttf GPU Text Engine Winding
+;; ============================================================================
+(define TTF_GPU_TEXTENGINE_WINDING_INVALID          -1)
+(define TTF_GPU_TEXTENGINE_WINDING_CLOCKWISE         0)
+(define TTF_GPU_TEXTENGINE_WINDING_COUNTER_CLOCKWISE 1)
