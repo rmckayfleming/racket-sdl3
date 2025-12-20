@@ -6,3 +6,4 @@
 (define pkg-desc "SDL3 bindings for Racket")
 (define deps '("base"))
 (define license 'MIT)
+(define compile-omit-paths '("examples"))
