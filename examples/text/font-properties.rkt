@@ -6,6 +6,7 @@
 
 (require racket/match
          racket/format
+         racket/list
          sdl3)
 
 (define window-width 900)
@@ -24,8 +25,8 @@
 
   ;; Scale font for high-DPI displays
   (define pixel-density (window-pixel-density window))
-  (define font-size (* base-font-size pixel-density))
-  (define font (open-font font-path font-size))
+  (define scaled-font-size (* base-font-size pixel-density))
+  (define font (open-font font-path scaled-font-size))
   (define small-font (open-font font-path (* 18.0 pixel-density)))
 
   ;; Colors
