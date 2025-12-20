@@ -11,7 +11,7 @@ A complete idiomatic Racket layer on top of the raw bindings, providing:
 - Simpler APIs (fewer pointer manipulations)
 - Drawing helpers, texture management, font/text rendering, mouse state
 
-Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rkt`, `safe/ttf.rkt`, `safe/mouse.rkt`, `safe/clipboard.rkt`, `safe/timer.rkt`, `safe/audio.rkt`, `safe/keyboard.rkt`, `safe/display.rkt`, `safe/dialog.rkt`, `safe/hints.rkt`
+Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rkt`, `safe/ttf.rkt`, `safe/mouse.rkt`, `safe/clipboard.rkt`, `safe/timer.rkt`, `safe/audio.rkt`, `safe/keyboard.rkt`, `safe/display.rkt`, `safe/dialog.rkt`, `safe/hints.rkt`, `safe/joystick.rkt`, `safe/gamepad.rkt`
 
 ### SDL3 Core (`raw.rkt`)
 - [x] `SDL_Init`
@@ -516,27 +516,76 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 - [ ] `SDL_HasPrimarySelectionText`
 
 ### Joystick (P2)
-- [ ] `SDL_GetJoysticks`
-- [ ] `SDL_OpenJoystick`
-- [ ] `SDL_CloseJoystick`
-- [ ] `SDL_GetJoystickName`
-- [ ] `SDL_GetJoystickAxis`
-- [ ] `SDL_GetJoystickButton`
-- [ ] `SDL_GetJoystickHat`
-- [ ] `SDL_GetNumJoystickAxes`
-- [ ] `SDL_GetNumJoystickButtons`
-- [ ] `SDL_GetNumJoystickHats`
-- [ ] ... (many more)
+- [x] `SDL_HasJoystick`
+- [x] `SDL_GetJoysticks`
+- [x] `SDL_OpenJoystick`
+- [x] `SDL_CloseJoystick`
+- [x] `SDL_JoystickConnected`
+- [x] `SDL_GetJoystickName`
+- [x] `SDL_GetJoystickNameForID`
+- [x] `SDL_GetJoystickPath`
+- [x] `SDL_GetJoystickID`
+- [x] `SDL_GetJoystickType`
+- [x] `SDL_GetJoystickTypeForID`
+- [x] `SDL_GetJoystickVendor`
+- [x] `SDL_GetJoystickProduct`
+- [x] `SDL_GetJoystickSerial`
+- [x] `SDL_GetNumJoystickAxes`
+- [x] `SDL_GetNumJoystickButtons`
+- [x] `SDL_GetNumJoystickHats`
+- [x] `SDL_GetNumJoystickBalls`
+- [x] `SDL_GetJoystickAxis`
+- [x] `SDL_GetJoystickButton`
+- [x] `SDL_GetJoystickHat`
+- [x] `SDL_GetJoystickBall`
+- [x] `SDL_GetJoystickPlayerIndex`
+- [x] `SDL_SetJoystickPlayerIndex`
+- [x] `SDL_RumbleJoystick`
+- [x] `SDL_RumbleJoystickTriggers`
+- [x] `SDL_SetJoystickLED`
+- [x] `SDL_GetJoystickPowerInfo`
+- [x] `SDL_GetJoystickConnectionState`
+- [ ] `SDL_SendJoystickEffect`
+- [ ] `SDL_SendJoystickVirtualSensorData`
+- [ ] `SDL_GetJoystickGUID`
+- [ ] `SDL_GetJoystickGUIDForID`
 
 ### Gamepad (P2)
-- [ ] `SDL_GetGamepads`
-- [ ] `SDL_OpenGamepad`
-- [ ] `SDL_CloseGamepad`
-- [ ] `SDL_GetGamepadName`
-- [ ] `SDL_GetGamepadAxis`
-- [ ] `SDL_GetGamepadButton`
-- [ ] `SDL_GamepadConnected`
-- [ ] ... (many more)
+- [x] `SDL_HasGamepad`
+- [x] `SDL_GetGamepads`
+- [x] `SDL_IsGamepad`
+- [x] `SDL_OpenGamepad`
+- [x] `SDL_CloseGamepad`
+- [x] `SDL_GamepadConnected`
+- [x] `SDL_GetGamepadName`
+- [x] `SDL_GetGamepadNameForID`
+- [x] `SDL_GetGamepadPath`
+- [x] `SDL_GetGamepadID`
+- [x] `SDL_GetGamepadType`
+- [x] `SDL_GetGamepadTypeForID`
+- [x] `SDL_GetRealGamepadType`
+- [x] `SDL_GetGamepadVendor`
+- [x] `SDL_GetGamepadProduct`
+- [x] `SDL_GetGamepadSerial`
+- [x] `SDL_GetGamepadPlayerIndex`
+- [x] `SDL_SetGamepadPlayerIndex`
+- [x] `SDL_GetGamepadAxis`
+- [x] `SDL_GamepadHasAxis`
+- [x] `SDL_GetGamepadButton`
+- [x] `SDL_GamepadHasButton`
+- [x] `SDL_GetGamepadButtonLabel`
+- [x] `SDL_GetGamepadButtonLabelForType`
+- [x] `SDL_RumbleGamepad`
+- [x] `SDL_RumbleGamepadTriggers`
+- [x] `SDL_SetGamepadLED`
+- [x] `SDL_GetGamepadPowerInfo`
+- [x] `SDL_GetGamepadConnectionState`
+- [ ] `SDL_SendGamepadEffect`
+- [ ] `SDL_GetGamepadJoystick`
+- [ ] `SDL_GetGamepadMapping`
+- [ ] `SDL_SetGamepadMapping`
+- [ ] `SDL_AddGamepadMapping`
+- [ ] `SDL_GetGamepadMappingForGUID`
 
 ### Haptic/Force Feedback (P3)
 - [ ] Full haptic subsystem
@@ -798,9 +847,9 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 
 ### Init Flags (P0)
 - [x] `SDL_INIT_AUDIO`
-- [ ] `SDL_INIT_JOYSTICK`
+- [x] `SDL_INIT_JOYSTICK`
 - [ ] `SDL_INIT_HAPTIC`
-- [ ] `SDL_INIT_GAMEPAD`
+- [x] `SDL_INIT_GAMEPAD`
 - [x] `SDL_INIT_EVENTS`
 - [ ] `SDL_INIT_SENSOR`
 - [ ] `SDL_INIT_CAMERA`
@@ -832,17 +881,18 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 
 ### Event Types (P1)
 - [x] `SDL_EVENT_MOUSE_WHEEL`
-- [ ] `SDL_EVENT_JOYSTICK_AXIS_MOTION`
-- [ ] `SDL_EVENT_JOYSTICK_BUTTON_DOWN`
-- [ ] `SDL_EVENT_JOYSTICK_BUTTON_UP`
-- [ ] `SDL_EVENT_JOYSTICK_HAT_MOTION`
-- [ ] `SDL_EVENT_JOYSTICK_ADDED`
-- [ ] `SDL_EVENT_JOYSTICK_REMOVED`
-- [ ] `SDL_EVENT_GAMEPAD_AXIS_MOTION`
-- [ ] `SDL_EVENT_GAMEPAD_BUTTON_DOWN`
-- [ ] `SDL_EVENT_GAMEPAD_BUTTON_UP`
-- [ ] `SDL_EVENT_GAMEPAD_ADDED`
-- [ ] `SDL_EVENT_GAMEPAD_REMOVED`
+- [x] `SDL_EVENT_JOYSTICK_AXIS_MOTION`
+- [x] `SDL_EVENT_JOYSTICK_BUTTON_DOWN`
+- [x] `SDL_EVENT_JOYSTICK_BUTTON_UP`
+- [x] `SDL_EVENT_JOYSTICK_HAT_MOTION`
+- [x] `SDL_EVENT_JOYSTICK_ADDED`
+- [x] `SDL_EVENT_JOYSTICK_REMOVED`
+- [x] `SDL_EVENT_GAMEPAD_AXIS_MOTION`
+- [x] `SDL_EVENT_GAMEPAD_BUTTON_DOWN`
+- [x] `SDL_EVENT_GAMEPAD_BUTTON_UP`
+- [x] `SDL_EVENT_GAMEPAD_ADDED`
+- [x] `SDL_EVENT_GAMEPAD_REMOVED`
+- [x] `SDL_EVENT_GAMEPAD_REMAPPED`
 - [ ] `SDL_EVENT_DROP_FILE`
 - [ ] `SDL_EVENT_DROP_TEXT`
 - [ ] `SDL_EVENT_DROP_BEGIN`
@@ -854,13 +904,13 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 
 ### Event Structs (P1)
 - [x] `SDL_MouseWheelEvent`
-- [ ] `SDL_JoyAxisEvent`
-- [ ] `SDL_JoyButtonEvent`
-- [ ] `SDL_JoyHatEvent`
-- [ ] `SDL_JoyDeviceEvent`
-- [ ] `SDL_GamepadAxisEvent`
-- [ ] `SDL_GamepadButtonEvent`
-- [ ] `SDL_GamepadDeviceEvent`
+- [x] `SDL_JoyAxisEvent`
+- [x] `SDL_JoyButtonEvent`
+- [x] `SDL_JoyHatEvent`
+- [x] `SDL_JoyDeviceEvent`
+- [x] `SDL_GamepadAxisEvent`
+- [x] `SDL_GamepadButtonEvent`
+- [x] `SDL_GamepadDeviceEvent`
 - [ ] `SDL_DropEvent`
 - [ ] `SDL_ClipboardEvent`
 - [ ] `SDL_WindowEvent` (full struct with all fields)
@@ -942,13 +992,13 @@ Modules: `safe.rkt`, `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `saf
 
 ## Implementation Statistics
 
-**Currently Implemented:** ~190 functions
+**Currently Implemented:** ~250 functions
 **Estimated Total Available:** 500+ functions
 
 ### Coverage by Library
 | Library | Implemented | Estimated Total | Coverage |
 |---------|-------------|-----------------|----------|
-| SDL3 Core | ~170 | ~350 | ~49% |
+| SDL3 Core | ~230 | ~350 | ~66% |
 | SDL3_image | 5 | ~60 | ~8% |
 | SDL3_ttf | 16 | ~120 | ~13% |
 
@@ -982,5 +1032,5 @@ All P0 (essential) features are now complete:
 10. ~~**P1 - Display Management:** Multi-monitor support~~ ✓ DONE
 11. ~~**P2 - File Dialogs:** Open/save file dialogs~~ ✓ DONE
 12. **P1 - Surface Operations:** Create, manipulate, and blit surfaces
-13. **P2 - Joystick/Gamepad:** Basic input support
+13. ~~**P2 - Joystick/Gamepad:** Basic input support~~ ✓ DONE
 14. **P2 - OpenGL Support:** GL context creation and management
