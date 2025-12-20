@@ -212,6 +212,10 @@
          set-SDL_AudioSpec-freq!
          _SDL_AudioStream-pointer
          _SDL_AudioStream-pointer/null
+         ;; Timer types
+         _SDL_TimerID
+         _SDL_TimerCallback
+         _SDL_NSTimerCallback
          ;; Window ID type
          _SDL_WindowID
          ;; Display ID type
@@ -361,6 +365,25 @@
 ;; SDL_AudioDeviceID - audio device instance ID (uint32)
 ;; Zero signifies an invalid/null device
 (define _SDL_AudioDeviceID _uint32)
+
+;; SDL_TimerID - timer handle (Uint32)
+(define _SDL_TimerID _uint32)
+
+;; SDL_TimerCallback - millisecond timer callback
+(define _SDL_TimerCallback
+  (_fun #:async-apply (lambda (thunk) (thunk))
+        _pointer
+        _SDL_TimerID
+        _uint32
+        -> _uint32))
+
+;; SDL_NSTimerCallback - nanosecond timer callback
+(define _SDL_NSTimerCallback
+  (_fun #:async-apply (lambda (thunk) (thunk))
+        _pointer
+        _SDL_TimerID
+        _uint64
+        -> _uint64))
 
 ;; ============================================================================
 ;; Pointer Types

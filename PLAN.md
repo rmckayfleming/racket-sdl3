@@ -26,22 +26,22 @@ bindings, safe wrappers, constants/types, and example coverage.
 - `README.md` (as needed)
 
 ## Phased plan
-[ ] Phase 1: Drop + clipboard events
+[x] Phase 1: Drop + clipboard events
     - Add event constants and structs for drop + clipboard events.
     - Parse events in `safe/events.rkt`.
     - Add `examples/input/drop-events.rkt` and `examples/input/clipboard-events.rkt`.
 
-[ ] Phase 2: Audio device events + app metadata
+[x] Phase 2: Audio device events + app metadata
     - Add audio device event struct + constants.
     - Add raw bindings for app metadata (init subsystem helpers if needed).
     - Add `examples/audio/device-events.rkt` and `examples/advanced/app-metadata.rkt`.
 
-[ ] Phase 3: Texture streaming + float color/alpha mods
+[x] Phase 3: Texture streaming + float color/alpha mods
     - Add raw texture update/lock APIs and float mod APIs.
     - Add safe helpers for streaming textures.
     - Add `examples/textures/streaming-texture.rkt`.
 
-[ ] Phase 4: Timer callbacks
+[x] Phase 4: Timer callbacks
     - Add `SDL_AddTimer`, `SDL_AddTimerNS`, `SDL_RemoveTimer`.
     - Add safe wrapper with explicit lifetime management.
     - Add `examples/animation/timer-callbacks.rkt`.

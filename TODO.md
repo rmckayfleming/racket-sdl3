@@ -359,7 +359,7 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 - [ ] `SDL_GetRectAndLineIntersection`, `SDL_GetRectAndLineIntersectionFloat`
 
 #### Timer (Advanced)
-- [ ] `SDL_AddTimer`, `SDL_AddTimerNS`, `SDL_RemoveTimer`
+- [x] `SDL_AddTimer`, `SDL_AddTimerNS`, `SDL_RemoveTimer`
 
 #### Audio (Advanced)
 - [ ] `SDL_GetAudioDeviceFormat`
@@ -484,8 +484,8 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 
 ## Suggested Next Steps
 
-1. **OpenGL Support** - For 3D graphics applications
-2. **Drop Events** - For drag-and-drop file handling
-3. **Timer Callbacks** - `SDL_AddTimer` for scheduled callbacks
-4. **Animation Loading** - GIF/WebP animation support via SDL3_image
-5. **Texture Streaming** - `SDL_LockTexture` for dynamic texture updates
+1. **SDL_image IOStream + Format Detection** - load from ports/bytes, detect formats
+2. **Input Enumeration + Rect Utilities** - keyboard/mouse listing and rect helpers
+3. **Touch + Pen Events** - touch/pen event structs and parsing
+4. **Audio Advanced** - device format/gain, stream open, mix/convert
+5. **SDL_ttf Advanced** - remaining TTF IO and text engine APIs

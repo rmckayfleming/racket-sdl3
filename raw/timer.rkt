@@ -14,7 +14,10 @@
          SDL-GetPerformanceFrequency
          SDL-Delay
          SDL-DelayNS
-         SDL-DelayPrecise)
+         SDL-DelayPrecise
+         SDL-AddTimer
+         SDL-AddTimerNS
+         SDL-RemoveTimer)
 
 ;; ============================================================================
 ;; Timer
@@ -44,16 +47,41 @@
 
 ;; SDL_Delay: Wait a specified number of milliseconds before returning
 ;; ms: The number of milliseconds to delay
-(define-sdl SDL-Delay (_fun _uint32 -> _void)
+(define-sdl SDL-Delay (_fun #:blocking? #t _uint32 -> _void)
   #:c-id SDL_Delay)
 
 ;; SDL_DelayNS: Wait a specified number of nanoseconds before returning
 ;; ns: The number of nanoseconds to delay
-(define-sdl SDL-DelayNS (_fun _uint64 -> _void)
+(define-sdl SDL-DelayNS (_fun #:blocking? #t _uint64 -> _void)
   #:c-id SDL_DelayNS)
 
 ;; SDL_DelayPrecise: Wait a specified number of nanoseconds with busy-waiting
 ;; More precise than SDL_DelayNS, but uses more CPU. Good for frame timing.
 ;; ns: The number of nanoseconds to delay
-(define-sdl SDL-DelayPrecise (_fun _uint64 -> _void)
+(define-sdl SDL-DelayPrecise (_fun #:blocking? #t _uint64 -> _void)
   #:c-id SDL_DelayPrecise)
+
+;; SDL_AddTimer: Call a callback after a specified delay (milliseconds)
+;; interval: delay in milliseconds
+;; callback: SDL_TimerCallback
+;; userdata: pointer passed to callback (use #f for NULL)
+;; Returns: SDL_TimerID or 0 on failure
+(define-sdl SDL-AddTimer
+  (_fun _uint32 _SDL_TimerCallback _pointer -> _SDL_TimerID)
+  #:c-id SDL_AddTimer)
+
+;; SDL_AddTimerNS: Call a callback after a specified delay (nanoseconds)
+;; interval: delay in nanoseconds
+;; callback: SDL_NSTimerCallback
+;; userdata: pointer passed to callback (use #f for NULL)
+;; Returns: SDL_TimerID or 0 on failure
+(define-sdl SDL-AddTimerNS
+  (_fun _uint64 _SDL_NSTimerCallback _pointer -> _SDL_TimerID)
+  #:c-id SDL_AddTimerNS)
+
+;; SDL_RemoveTimer: Remove a timer created with SDL_AddTimer/SDL_AddTimerNS
+;; id: the timer ID to remove
+;; Returns: #t on success, #f on failure
+(define-sdl SDL-RemoveTimer
+  (_fun _SDL_TimerID -> _sdl-bool)
+  #:c-id SDL_RemoveTimer)
