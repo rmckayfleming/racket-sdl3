@@ -496,3 +496,59 @@
 (define-ttf TTF-MeasureString
   (_fun _TTF_Font-pointer _string _size _int _pointer _pointer -> _bool)
   #:c-id TTF_MeasureString)
+
+;; ============================================================================
+;; Text Shaping (HarfBuzz)
+;; ============================================================================
+
+;; TTF_SetFontDirection: Set the text direction for a font
+;; font: the font to modify
+;; direction: one of TTF_DIRECTION_* constants
+;; Returns: true on success, false if HarfBuzz support is not available
+(define-ttf TTF-SetFontDirection (_fun _TTF_Font-pointer _TTF_Direction -> _bool)
+  #:c-id TTF_SetFontDirection)
+
+;; TTF_GetFontDirection: Get the text direction of a font
+;; font: the font to query
+;; Returns: one of TTF_DIRECTION_* constants
+(define-ttf TTF-GetFontDirection (_fun _TTF_Font-pointer -> _TTF_Direction)
+  #:c-id TTF_GetFontDirection)
+
+;; TTF_SetFontScript: Set the script for a font (ISO 15924 code)
+;; font: the font to modify
+;; script: 4-character script tag as uint32
+;; Returns: true on success, false if HarfBuzz support is not available
+(define-ttf TTF-SetFontScript (_fun _TTF_Font-pointer _uint32 -> _bool)
+  #:c-id TTF_SetFontScript)
+
+;; TTF_GetFontScript: Get the script of a font
+;; font: the font to query
+;; Returns: script tag as uint32
+(define-ttf TTF-GetFontScript (_fun _TTF_Font-pointer -> _uint32)
+  #:c-id TTF_GetFontScript)
+
+;; TTF_SetFontLanguage: Set the language for a font (BCP47 code)
+;; font: the font to modify
+;; language: BCP47 language tag string (e.g., "en", "ar", "zh-Hans")
+;; Returns: true on success, false if HarfBuzz support is not available
+(define-ttf TTF-SetFontLanguage (_fun _TTF_Font-pointer _string -> _bool)
+  #:c-id TTF_SetFontLanguage)
+
+;; TTF_StringToTag: Convert a 4-character string to a tag
+;; string: 4-character string
+;; Returns: tag as uint32
+(define-ttf TTF-StringToTag (_fun _string -> _uint32)
+  #:c-id TTF_StringToTag)
+
+;; TTF_TagToString: Convert a tag to a 4-character string
+;; tag: tag value
+;; string: buffer to store result (at least 5 bytes)
+;; size: size of buffer
+(define-ttf TTF-TagToString (_fun _uint32 _pointer _size -> _void)
+  #:c-id TTF_TagToString)
+
+;; TTF_GetGlyphScript: Get the script for a Unicode codepoint
+;; ch: Unicode codepoint
+;; Returns: script tag as uint32
+(define-ttf TTF-GetGlyphScript (_fun _uint32 -> _uint32)
+  #:c-id TTF_GetGlyphScript)
