@@ -354,3 +354,27 @@
 (define-ttf TTF-GetStringSize
   (_fun _TTF_Font-pointer _string _size _pointer _pointer -> _bool)
   #:c-id TTF_GetStringSize)
+
+;; TTF_GetStringSizeWrapped: Get the size of wrapped text when rendered
+;; font: the font to use
+;; text: UTF-8 text to measure
+;; length: length in bytes, or 0 for null-terminated
+;; wrap_width: maximum line width in pixels (0 for no wrapping)
+;; w: pointer to store width (can be NULL)
+;; h: pointer to store height (can be NULL)
+;; Returns: true on success, false on failure
+(define-ttf TTF-GetStringSizeWrapped
+  (_fun _TTF_Font-pointer _string _size _int _pointer _pointer -> _bool)
+  #:c-id TTF_GetStringSizeWrapped)
+
+;; TTF_MeasureString: Measure how much of a string fits within a width
+;; font: the font to use
+;; text: UTF-8 text to measure
+;; length: length in bytes, or 0 for null-terminated
+;; max_width: maximum width in pixels
+;; measured_width: pointer to store actual width used (can be NULL)
+;; measured_length: pointer to store bytes that fit (can be NULL)
+;; Returns: true on success, false on failure
+(define-ttf TTF-MeasureString
+  (_fun _TTF_Font-pointer _string _size _int _pointer _pointer -> _bool)
+  #:c-id TTF_MeasureString)
