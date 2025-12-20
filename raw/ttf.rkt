@@ -82,6 +82,30 @@
 (define-ttf TTF-CloseFont (_fun _TTF_Font-pointer -> _void)
   #:c-id TTF_CloseFont)
 
+;; TTF_CopyFont: Create a copy of an existing font
+;; font: the font to copy
+;; Returns: new font pointer, or NULL on failure
+(define-ttf TTF-CopyFont (_fun _TTF_Font-pointer -> _TTF_Font-pointer/null)
+  #:c-id TTF_CopyFont)
+
+;; TTF_AddFallbackFont: Add a fallback font for missing glyphs
+;; font: the primary font
+;; fallback: the fallback font to add
+;; Returns: true on success, false on failure
+(define-ttf TTF-AddFallbackFont (_fun _TTF_Font-pointer _TTF_Font-pointer -> _bool)
+  #:c-id TTF_AddFallbackFont)
+
+;; TTF_RemoveFallbackFont: Remove a fallback font
+;; font: the primary font
+;; fallback: the fallback font to remove
+(define-ttf TTF-RemoveFallbackFont (_fun _TTF_Font-pointer _TTF_Font-pointer -> _void)
+  #:c-id TTF_RemoveFallbackFont)
+
+;; TTF_ClearFallbackFonts: Remove all fallback fonts
+;; font: the primary font
+(define-ttf TTF-ClearFallbackFonts (_fun _TTF_Font-pointer -> _void)
+  #:c-id TTF_ClearFallbackFonts)
+
 ;; ============================================================================
 ;; Font Properties
 ;; ============================================================================
