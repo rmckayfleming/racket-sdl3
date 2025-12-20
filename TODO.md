@@ -411,13 +411,13 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 - [ ] And others...
 
 #### Additional Event Types
-- [ ] `SDL_EVENT_DROP_FILE`, `SDL_EVENT_DROP_TEXT`, `SDL_EVENT_DROP_BEGIN`, `SDL_EVENT_DROP_COMPLETE`
+- [x] `SDL_EVENT_DROP_FILE`, `SDL_EVENT_DROP_TEXT`, `SDL_EVENT_DROP_BEGIN`, `SDL_EVENT_DROP_COMPLETE`, `SDL_EVENT_DROP_POSITION`
 - [ ] `SDL_EVENT_AUDIO_DEVICE_ADDED`, `SDL_EVENT_AUDIO_DEVICE_REMOVED`
-- [ ] `SDL_EVENT_CLIPBOARD_UPDATE`
+- [x] `SDL_EVENT_CLIPBOARD_UPDATE`
 - [ ] Touch/pen events
 
 #### Additional Event Structs
-- [ ] `SDL_DropEvent`, `SDL_ClipboardEvent`
+- [x] `SDL_DropEvent`, `SDL_ClipboardEvent`
 - [ ] `SDL_TouchFingerEvent`
 - [ ] `SDL_PenMotionEvent`, `SDL_PenButtonEvent`
 

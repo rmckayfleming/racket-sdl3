@@ -150,6 +150,20 @@
          SDL_MouseWheelEvent-direction
          SDL_MouseWheelEvent-mouse_x
          SDL_MouseWheelEvent-mouse_y
+         _SDL_DropEvent
+         _SDL_DropEvent-pointer
+         SDL_DropEvent-type
+         SDL_DropEvent-windowID
+         SDL_DropEvent-x
+         SDL_DropEvent-y
+         SDL_DropEvent-source
+         SDL_DropEvent-data
+         _SDL_ClipboardEvent
+         _SDL_ClipboardEvent-pointer
+         SDL_ClipboardEvent-type
+         SDL_ClipboardEvent-owner
+         SDL_ClipboardEvent-num_mime_types
+         SDL_ClipboardEvent-mime_types
          ;; Event union helpers
          sdl-event-type
          event->keyboard
@@ -157,6 +171,8 @@
          event->mouse-button
          event->text-input
          event->mouse-wheel
+         event->drop
+         event->clipboard
          ;; Keycode type
          _SDL_Keycode
          ;; Modifier key type
@@ -484,6 +500,29 @@
    [mouse_x _float]     ; mouse x position
    [mouse_y _float]))   ; mouse y position
 
+;; SDL_DropEvent - drag-and-drop event
+(define-cstruct _SDL_DropEvent
+  ([type _uint32]
+   [reserved _uint32]
+   [timestamp _uint64]
+   [windowID _uint32]
+   [x _float]
+   [y _float]
+   [source _pointer]   ; const char*
+   [data _pointer]))   ; const char*
+
+;; SDL_ClipboardEvent - clipboard update event
+(define-cstruct _SDL_ClipboardEvent
+  ([type _uint32]
+   [reserved _uint32]
+   [timestamp _uint64]
+   [owner _stdbool]
+   [padding1 _uint8]
+   [padding2 _uint8]
+   [padding3 _uint8]
+   [num_mime_types _sint32]
+   [mime_types _pointer])) ; const char**
+
 ;; Helper to get event type from any event pointer
 (define (sdl-event-type event-ptr)
   (ptr-ref event-ptr _uint32))
@@ -503,6 +542,12 @@
 
 (define (event->mouse-wheel event-ptr)
   (cast event-ptr _pointer _SDL_MouseWheelEvent-pointer))
+
+(define (event->drop event-ptr)
+  (cast event-ptr _pointer _SDL_DropEvent-pointer))
+
+(define (event->clipboard event-ptr)
+  (cast event-ptr _pointer _SDL_ClipboardEvent-pointer))
 
 ;; ============================================================================
 ;; FFI Type Aliases for Enums

@@ -39,6 +39,14 @@
  SDL_EVENT_MOUSE_BUTTON_DOWN
  SDL_EVENT_MOUSE_BUTTON_UP
  SDL_EVENT_MOUSE_WHEEL
+ ;; Clipboard events
+ SDL_EVENT_CLIPBOARD_UPDATE
+ ;; Drop events
+ SDL_EVENT_DROP_FILE
+ SDL_EVENT_DROP_TEXT
+ SDL_EVENT_DROP_BEGIN
+ SDL_EVENT_DROP_COMPLETE
+ SDL_EVENT_DROP_POSITION
  ;; Mouse wheel direction
  SDL_MOUSEWHEEL_NORMAL
  SDL_MOUSEWHEEL_FLIPPED
@@ -341,6 +349,14 @@
 (define SDL_EVENT_MOUSE_BUTTON_DOWN #x401)
 (define SDL_EVENT_MOUSE_BUTTON_UP #x402)
 (define SDL_EVENT_MOUSE_WHEEL #x403)
+;; Clipboard events
+(define SDL_EVENT_CLIPBOARD_UPDATE #x900)
+;; Drop events
+(define SDL_EVENT_DROP_FILE #x1000)
+(define SDL_EVENT_DROP_TEXT #x1001)
+(define SDL_EVENT_DROP_BEGIN #x1002)
+(define SDL_EVENT_DROP_COMPLETE #x1003)
+(define SDL_EVENT_DROP_POSITION #x1004)
 
 ;; ============================================================================
 ;; Mouse Wheel Direction

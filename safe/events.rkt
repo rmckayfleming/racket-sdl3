@@ -34,6 +34,12 @@
  mouse-wheel-event-direction
  mouse-wheel-event-mouse-x mouse-wheel-event-mouse-y
 
+ drop-event drop-event?
+ drop-event-type drop-event-x drop-event-y drop-event-source drop-event-data
+
+ clipboard-event clipboard-event?
+ clipboard-event-owner? clipboard-event-mime-types
+
  ;; Joystick events
  joy-axis-event joy-axis-event?
  joy-axis-event-which joy-axis-event-axis joy-axis-event-value
@@ -182,6 +188,18 @@
 ;; direction is 'normal or 'flipped
 ;; mouse-x, mouse-y are cursor position (floats)
 
+;; Drop events (drag-and-drop)
+(struct drop-event sdl-event (type x y source data) #:transparent)
+;; type is 'file, 'text, 'begin, 'complete, or 'position
+;; x, y are position (floats, may be 0 for begin/complete)
+;; source is source app string or #f
+;; data is dropped file path or text, or #f
+
+;; Clipboard update events
+(struct clipboard-event sdl-event (owner? mime-types) #:transparent)
+;; owner? is #t if we own the clipboard
+;; mime-types is a list of mime type strings
+
 ;; Joystick axis motion
 (struct joy-axis-event sdl-event (which axis value) #:transparent)
 ;; which is the joystick instance ID
@@ -247,6 +265,36 @@
     [(= raw-type SDL_EVENT_WINDOW_FOCUS_LOST) 'focus-lost]
     [(= raw-type SDL_EVENT_WINDOW_CLOSE_REQUESTED) 'close-requested]
     [else 'unknown]))
+
+;; ============================================================================
+;; Drop Event Type Mapping
+;; ============================================================================
+
+(define (drop-event-type-symbol raw-type)
+  (cond
+    [(= raw-type SDL_EVENT_DROP_FILE) 'file]
+    [(= raw-type SDL_EVENT_DROP_TEXT) 'text]
+    [(= raw-type SDL_EVENT_DROP_BEGIN) 'begin]
+    [(= raw-type SDL_EVENT_DROP_COMPLETE) 'complete]
+    [(= raw-type SDL_EVENT_DROP_POSITION) 'position]
+    [else 'unknown]))
+
+;; ============================================================================
+;; Pointer Helpers
+;; ============================================================================
+
+(define (pointer->maybe-string ptr)
+  (and ptr (cast ptr _pointer _string/utf-8)))
+
+(define (clipboard-mime-types cb)
+  (define count (SDL_ClipboardEvent-num_mime_types cb))
+  (define ptr (SDL_ClipboardEvent-mime_types cb))
+  (cond
+    [(or (not ptr) (<= count 0)) '()]
+    [else
+     (for/list ([i (in-range count)]
+                #:when (ptr-ref ptr _pointer i))
+       (cast (ptr-ref ptr _pointer i) _pointer _string/utf-8))]))
 
 ;; ============================================================================
 ;; Mouse Button Symbol Mapping
@@ -382,6 +430,25 @@
                         (if (= dir SDL_MOUSEWHEEL_NORMAL) 'normal 'flipped)
                         (SDL_MouseWheelEvent-mouse_x mw)
                         (SDL_MouseWheelEvent-mouse_y mw))]
+
+    ;; Drop events
+    [(or (= type SDL_EVENT_DROP_FILE)
+         (= type SDL_EVENT_DROP_TEXT)
+         (= type SDL_EVENT_DROP_BEGIN)
+         (= type SDL_EVENT_DROP_COMPLETE)
+         (= type SDL_EVENT_DROP_POSITION))
+     (define drop (event->drop buf))
+     (drop-event (drop-event-type-symbol type)
+                 (SDL_DropEvent-x drop)
+                 (SDL_DropEvent-y drop)
+                 (pointer->maybe-string (SDL_DropEvent-source drop))
+                 (pointer->maybe-string (SDL_DropEvent-data drop)))]
+
+    ;; Clipboard update
+    [(= type SDL_EVENT_CLIPBOARD_UPDATE)
+     (define cb (event->clipboard buf))
+     (clipboard-event (SDL_ClipboardEvent-owner cb)
+                      (clipboard-mime-types cb))]
 
     ;; Joystick axis motion
     [(= type SDL_EVENT_JOYSTICK_AXIS_MOTION)
