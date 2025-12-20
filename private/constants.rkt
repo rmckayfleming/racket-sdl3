@@ -47,6 +47,10 @@
  SDL_EVENT_DROP_BEGIN
  SDL_EVENT_DROP_COMPLETE
  SDL_EVENT_DROP_POSITION
+ ;; Audio device events
+ SDL_EVENT_AUDIO_DEVICE_ADDED
+ SDL_EVENT_AUDIO_DEVICE_REMOVED
+ SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED
  ;; Mouse wheel direction
  SDL_MOUSEWHEEL_NORMAL
  SDL_MOUSEWHEEL_FLIPPED
@@ -114,6 +118,14 @@
  SDL_SYSTEM_CURSOR_SW_RESIZE
  SDL_SYSTEM_CURSOR_W_RESIZE
  SDL_SYSTEM_CURSOR_COUNT
+ ;; App metadata properties
+ SDL_PROP_APP_METADATA_NAME_STRING
+ SDL_PROP_APP_METADATA_VERSION_STRING
+ SDL_PROP_APP_METADATA_IDENTIFIER_STRING
+ SDL_PROP_APP_METADATA_CREATOR_STRING
+ SDL_PROP_APP_METADATA_COPYRIGHT_STRING
+ SDL_PROP_APP_METADATA_URL_STRING
+ SDL_PROP_APP_METADATA_TYPE_STRING
  ;; Audio constants
  SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK
  SDL_AUDIO_DEVICE_DEFAULT_RECORDING
@@ -357,6 +369,10 @@
 (define SDL_EVENT_DROP_BEGIN #x1002)
 (define SDL_EVENT_DROP_COMPLETE #x1003)
 (define SDL_EVENT_DROP_POSITION #x1004)
+;; Audio device events
+(define SDL_EVENT_AUDIO_DEVICE_ADDED #x1100)
+(define SDL_EVENT_AUDIO_DEVICE_REMOVED #x1101)
+(define SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED #x1102)
 
 ;; ============================================================================
 ;; Mouse Wheel Direction
@@ -520,6 +536,17 @@
 (define SDL_HINT_VIDEO_ALLOW_SCREENSAVER "SDL_VIDEO_ALLOW_SCREENSAVER")
 (define SDL_HINT_FRAMEBUFFER_ACCELERATION "SDL_FRAMEBUFFER_ACCELERATION")
 (define SDL_HINT_MOUSE_RELATIVE_MODE_WARP "SDL_MOUSE_RELATIVE_MODE_WARP")
+
+;; ============================================================================
+;; App Metadata Properties
+;; ============================================================================
+(define SDL_PROP_APP_METADATA_NAME_STRING "SDL.app.metadata.name")
+(define SDL_PROP_APP_METADATA_VERSION_STRING "SDL.app.metadata.version")
+(define SDL_PROP_APP_METADATA_IDENTIFIER_STRING "SDL.app.metadata.identifier")
+(define SDL_PROP_APP_METADATA_CREATOR_STRING "SDL.app.metadata.creator")
+(define SDL_PROP_APP_METADATA_COPYRIGHT_STRING "SDL.app.metadata.copyright")
+(define SDL_PROP_APP_METADATA_URL_STRING "SDL.app.metadata.url")
+(define SDL_PROP_APP_METADATA_TYPE_STRING "SDL.app.metadata.type")
 
 ;; ============================================================================
 ;; Joystick Event Constants

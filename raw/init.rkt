@@ -9,6 +9,12 @@
          "../private/types.rkt")
 
 (provide SDL-Init
+         SDL-InitSubSystem
+         SDL-QuitSubSystem
+         SDL-WasInit
+         SDL-SetAppMetadata
+         SDL-SetAppMetadataProperty
+         SDL-GetAppMetadataProperty
          SDL-Quit
          SDL-GetError
          SDL-free)
@@ -22,6 +28,38 @@
 ;; Returns: true on success, false on failure
 (define-sdl SDL-Init (_fun _SDL_InitFlags -> _sdl-bool)
   #:c-id SDL_Init)
+
+;; SDL_InitSubSystem: Initialize specific SDL subsystems
+;; flags: SDL_InitFlags bitmask
+;; Returns: true on success, false on failure
+(define-sdl SDL-InitSubSystem (_fun _SDL_InitFlags -> _sdl-bool)
+  #:c-id SDL_InitSubSystem)
+
+;; SDL_QuitSubSystem: Shut down specific SDL subsystems
+;; flags: SDL_InitFlags bitmask
+(define-sdl SDL-QuitSubSystem (_fun _SDL_InitFlags -> _void)
+  #:c-id SDL_QuitSubSystem)
+
+;; SDL_WasInit: Query initialized subsystems
+;; flags: SDL_InitFlags bitmask to check
+;; Returns: flags that are initialized
+(define-sdl SDL-WasInit (_fun _SDL_InitFlags -> _SDL_InitFlags)
+  #:c-id SDL_WasInit)
+
+;; SDL_SetAppMetadata: Set basic app metadata
+;; Returns: true on success, false on failure
+(define-sdl SDL-SetAppMetadata (_fun _string/utf-8 _string/utf-8 _string/utf-8 -> _sdl-bool)
+  #:c-id SDL_SetAppMetadata)
+
+;; SDL_SetAppMetadataProperty: Set metadata key/value
+;; Returns: true on success, false on failure
+(define-sdl SDL-SetAppMetadataProperty (_fun _string/utf-8 _string/utf-8 -> _sdl-bool)
+  #:c-id SDL_SetAppMetadataProperty)
+
+;; SDL_GetAppMetadataProperty: Get metadata value
+;; Returns: string or #f
+(define-sdl SDL-GetAppMetadataProperty (_fun _string -> _string/utf-8)
+  #:c-id SDL_GetAppMetadataProperty)
 
 ;; SDL_Quit: Clean up all initialized subsystems
 (define-sdl SDL-Quit (_fun -> _void)

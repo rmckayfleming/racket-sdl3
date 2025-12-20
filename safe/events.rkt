@@ -40,6 +40,9 @@
  clipboard-event clipboard-event?
  clipboard-event-owner? clipboard-event-mime-types
 
+ audio-device-event audio-device-event?
+ audio-device-event-type audio-device-event-which audio-device-event-recording?
+
  ;; Joystick events
  joy-axis-event joy-axis-event?
  joy-axis-event-which joy-axis-event-axis joy-axis-event-value
@@ -200,6 +203,12 @@
 ;; owner? is #t if we own the clipboard
 ;; mime-types is a list of mime type strings
 
+;; Audio device events
+(struct audio-device-event sdl-event (type which recording?) #:transparent)
+;; type is 'added, 'removed, or 'format-changed
+;; which is the SDL_AudioDeviceID
+;; recording? is #t for recording devices
+
 ;; Joystick axis motion
 (struct joy-axis-event sdl-event (which axis value) #:transparent)
 ;; which is the joystick instance ID
@@ -277,6 +286,17 @@
     [(= raw-type SDL_EVENT_DROP_BEGIN) 'begin]
     [(= raw-type SDL_EVENT_DROP_COMPLETE) 'complete]
     [(= raw-type SDL_EVENT_DROP_POSITION) 'position]
+    [else 'unknown]))
+
+;; ============================================================================
+;; Audio Device Event Type Mapping
+;; ============================================================================
+
+(define (audio-device-event-type-symbol raw-type)
+  (cond
+    [(= raw-type SDL_EVENT_AUDIO_DEVICE_ADDED) 'added]
+    [(= raw-type SDL_EVENT_AUDIO_DEVICE_REMOVED) 'removed]
+    [(= raw-type SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED) 'format-changed]
     [else 'unknown]))
 
 ;; ============================================================================
@@ -449,6 +469,15 @@
      (define cb (event->clipboard buf))
      (clipboard-event (SDL_ClipboardEvent-owner cb)
                       (clipboard-mime-types cb))]
+
+    ;; Audio device events
+    [(or (= type SDL_EVENT_AUDIO_DEVICE_ADDED)
+         (= type SDL_EVENT_AUDIO_DEVICE_REMOVED)
+         (= type SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED))
+     (define ad (event->audio-device buf))
+     (audio-device-event (audio-device-event-type-symbol type)
+                         (SDL_AudioDeviceEvent-which ad)
+                         (SDL_AudioDeviceEvent-recording ad))]
 
     ;; Joystick axis motion
     [(= type SDL_EVENT_JOYSTICK_AXIS_MOTION)

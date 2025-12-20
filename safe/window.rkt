@@ -10,7 +10,13 @@
 (provide
  ;; Initialization
  sdl-init!
+ sdl-init-subsystem!
  sdl-quit!
+ sdl-quit-subsystem!
+ sdl-was-init
+ set-app-metadata!
+ set-app-metadata-property!
+ get-app-metadata-property
 
  ;; Window management
  make-window
@@ -81,7 +87,16 @@
  SDL_INIT_AUDIO
  SDL_INIT_EVENTS
  SDL_INIT_JOYSTICK
- SDL_INIT_GAMEPAD)
+ SDL_INIT_GAMEPAD
+
+ ;; Re-export app metadata property names
+ SDL_PROP_APP_METADATA_NAME_STRING
+ SDL_PROP_APP_METADATA_VERSION_STRING
+ SDL_PROP_APP_METADATA_IDENTIFIER_STRING
+ SDL_PROP_APP_METADATA_CREATOR_STRING
+ SDL_PROP_APP_METADATA_COPYRIGHT_STRING
+ SDL_PROP_APP_METADATA_URL_STRING
+ SDL_PROP_APP_METADATA_TYPE_STRING)
 
 ;; ============================================================================
 ;; Resource wrapper structs
@@ -98,8 +113,33 @@
   (unless (SDL-Init flags)
     (error 'sdl-init! "Failed to initialize SDL: ~a" (SDL-GetError))))
 
+(define (sdl-init-subsystem! flags)
+  (unless (SDL-InitSubSystem flags)
+    (error 'sdl-init-subsystem! "Failed to initialize subsystem: ~a" (SDL-GetError))))
+
 (define (sdl-quit!)
   (SDL-Quit))
+
+(define (sdl-quit-subsystem! flags)
+  (SDL-QuitSubSystem flags))
+
+(define (sdl-was-init [flags 0])
+  (SDL-WasInit flags))
+
+;; ============================================================================
+;; App Metadata
+;; ============================================================================
+
+(define (set-app-metadata! name version identifier)
+  (unless (SDL-SetAppMetadata name version identifier)
+    (error 'set-app-metadata! "Failed to set app metadata: ~a" (SDL-GetError))))
+
+(define (set-app-metadata-property! name value)
+  (unless (SDL-SetAppMetadataProperty name value)
+    (error 'set-app-metadata-property! "Failed to set app metadata property: ~a" (SDL-GetError))))
+
+(define (get-app-metadata-property name)
+  (SDL-GetAppMetadataProperty name))
 
 ;; ============================================================================
 ;; Window Management

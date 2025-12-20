@@ -310,8 +310,8 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 ### SDL3 Core
 
 #### Initialization
-- [ ] `SDL_InitSubSystem`, `SDL_QuitSubSystem`, `SDL_WasInit`
-- [ ] `SDL_SetAppMetadata`, `SDL_SetAppMetadataProperty`, `SDL_GetAppMetadataProperty`
+- [x] `SDL_InitSubSystem`, `SDL_QuitSubSystem`, `SDL_WasInit`
+- [x] `SDL_SetAppMetadata`, `SDL_SetAppMetadataProperty`, `SDL_GetAppMetadataProperty`
 
 #### Texture (Advanced)
 - [ ] `SDL_CreateTextureWithProperties`, `SDL_GetTextureProperties`
@@ -412,7 +412,7 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 
 #### Additional Event Types
 - [x] `SDL_EVENT_DROP_FILE`, `SDL_EVENT_DROP_TEXT`, `SDL_EVENT_DROP_BEGIN`, `SDL_EVENT_DROP_COMPLETE`, `SDL_EVENT_DROP_POSITION`
-- [ ] `SDL_EVENT_AUDIO_DEVICE_ADDED`, `SDL_EVENT_AUDIO_DEVICE_REMOVED`
+- [x] `SDL_EVENT_AUDIO_DEVICE_ADDED`, `SDL_EVENT_AUDIO_DEVICE_REMOVED`, `SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED`
 - [x] `SDL_EVENT_CLIPBOARD_UPDATE`
 - [ ] Touch/pen events
 

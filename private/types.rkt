@@ -164,6 +164,11 @@
          SDL_ClipboardEvent-owner
          SDL_ClipboardEvent-num_mime_types
          SDL_ClipboardEvent-mime_types
+         _SDL_AudioDeviceEvent
+         _SDL_AudioDeviceEvent-pointer
+         SDL_AudioDeviceEvent-type
+         SDL_AudioDeviceEvent-which
+         SDL_AudioDeviceEvent-recording
          ;; Event union helpers
          sdl-event-type
          event->keyboard
@@ -173,6 +178,7 @@
          event->mouse-wheel
          event->drop
          event->clipboard
+         event->audio-device
          ;; Keycode type
          _SDL_Keycode
          ;; Modifier key type
@@ -352,6 +358,10 @@
 ;; SDL_WindowFlags is a 64-bit unsigned integer in SDL3 (flags can be combined with bitwise-ior)
 (define _SDL_WindowFlags _uint64)
 
+;; SDL_AudioDeviceID - audio device instance ID (uint32)
+;; Zero signifies an invalid/null device
+(define _SDL_AudioDeviceID _uint32)
+
 ;; ============================================================================
 ;; Pointer Types
 ;; ============================================================================
@@ -523,6 +533,17 @@
    [num_mime_types _sint32]
    [mime_types _pointer])) ; const char**
 
+;; SDL_AudioDeviceEvent - audio device add/remove/format change
+(define-cstruct _SDL_AudioDeviceEvent
+  ([type _uint32]
+   [reserved _uint32]
+   [timestamp _uint64]
+   [which _SDL_AudioDeviceID]
+   [recording _stdbool]
+   [padding1 _uint8]
+   [padding2 _uint8]
+   [padding3 _uint8]))
+
 ;; Helper to get event type from any event pointer
 (define (sdl-event-type event-ptr)
   (ptr-ref event-ptr _uint32))
@@ -548,6 +569,9 @@
 
 (define (event->clipboard event-ptr)
   (cast event-ptr _pointer _SDL_ClipboardEvent-pointer))
+
+(define (event->audio-device event-ptr)
+  (cast event-ptr _pointer _SDL_AudioDeviceEvent-pointer))
 
 ;; ============================================================================
 ;; FFI Type Aliases for Enums
@@ -583,10 +607,6 @@
 ;; ============================================================================
 ;; Audio Types
 ;; ============================================================================
-
-;; SDL_AudioDeviceID - audio device instance ID (uint32)
-;; Zero signifies an invalid/null device
-(define _SDL_AudioDeviceID _uint32)
 
 ;; SDL_AudioFormat - audio format specifier (uint16 enum)
 (define _SDL_AudioFormat _uint16)
