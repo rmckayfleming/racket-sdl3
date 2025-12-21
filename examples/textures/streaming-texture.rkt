@@ -39,7 +39,7 @@
 
   (define-values (window renderer)
     (make-window+renderer "SDL3 Streaming Texture" window-width window-height
-                          #:window-flags SDL_WINDOW_RESIZABLE))
+                          #:window-flags 'resizable))
 
   (define tex
     (create-texture renderer tex-width tex-height

@@ -44,7 +44,7 @@
 
   (define-values (window renderer)
     (make-window+renderer initial-title initial-width initial-height
-                          #:window-flags SDL_WINDOW_RESIZABLE))
+                          #:window-flags 'resizable))
 
   ;; Scale font for high-DPI
   (define pixel-density (window-pixel-density window))

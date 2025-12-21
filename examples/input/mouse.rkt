@@ -162,7 +162,7 @@
 
   (define-values (window renderer)
     (make-window+renderer window-title window-width window-height
-                          #:window-flags SDL_WINDOW_RESIZABLE))
+                          #:window-flags 'resizable))
 
   (printf "Mouse Input Demo~n")
   (printf "================~n")

@@ -61,7 +61,7 @@
 
   (define-values (window renderer)
     (make-window+renderer window-title window-width window-height
-                          #:window-flags SDL_WINDOW_HIGH_PIXEL_DENSITY))
+                          #:window-flags 'high-pixel-density))
 
   ;; Create an off-screen texture that can be rendered to
   (define target-texture

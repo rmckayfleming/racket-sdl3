@@ -30,8 +30,7 @@
 
   ;; Create window with OpenGL flag
   (define window (make-window "SDL3 OpenGL Window" window-width window-height
-                              #:flags (bitwise-ior SDL_WINDOW_RESIZABLE
-                                                   SDL_WINDOW_OPENGL)))
+                              #:flags '(resizable opengl)))
 
   ;; Create OpenGL context
   (printf "Creating OpenGL context...~n")

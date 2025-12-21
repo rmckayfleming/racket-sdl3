@@ -10,9 +10,9 @@
          sdl3)
 
 (define (main)
-  (sdl-init! (bitwise-ior SDL_INIT_VIDEO SDL_INIT_CAMERA))
+  (sdl-init! '(video camera))
 
-  (set-hint! hint-name-render-vsync "1")
+  (set-hint! 'render-vsync "1")
 
   (define-values (window renderer)
     (make-window+renderer "Camera Preview" 960 540))

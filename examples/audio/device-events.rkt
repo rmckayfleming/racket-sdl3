@@ -13,11 +13,11 @@
 (define window-height 360)
 
 (define (main)
-  (sdl-init! (bitwise-ior SDL_INIT_VIDEO SDL_INIT_AUDIO))
+  (sdl-init! '(video audio))
 
   (define-values (window renderer)
     (make-window+renderer "SDL3 Audio Device Events" window-width window-height
-                          #:window-flags SDL_WINDOW_RESIZABLE))
+                          #:window-flags 'resizable))
 
   (define running? #t)
   (define last-type 'none)

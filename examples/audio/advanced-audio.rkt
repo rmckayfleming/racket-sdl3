@@ -22,7 +22,7 @@
 (define window-height 420)
 
 (define (main)
-  (sdl-init! (bitwise-ior SDL_INIT_VIDEO SDL_INIT_AUDIO))
+  (sdl-init! '(video audio))
 
   (define-values (window renderer)
     (make-window+renderer "SDL3 Audio - Advanced" window-width window-height))

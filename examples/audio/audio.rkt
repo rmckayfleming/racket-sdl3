@@ -19,7 +19,7 @@
 
 (define (main)
   ;; Initialize SDL with video and audio
-  (sdl-init! (bitwise-ior SDL_INIT_VIDEO SDL_INIT_AUDIO))
+  (sdl-init! '(video audio))
 
   ;; Create window and renderer
   (define-values (window renderer)

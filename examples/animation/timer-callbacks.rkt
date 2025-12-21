@@ -18,7 +18,7 @@
 
   (define-values (window renderer)
     (make-window+renderer window-title window-width window-height
-                          #:window-flags SDL_WINDOW_RESIZABLE))
+                          #:window-flags 'resizable))
 
   ;; Start a Racket thread to handle periodic updates.
   ;; This is safer and more idiomatic than SDL_AddTimer.

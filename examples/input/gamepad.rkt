@@ -19,8 +19,8 @@
 (require sdl3)
 
 ;; Initialize SDL with gamepad support
-;; Note: SDL_INIT_JOYSTICK is required for gamepad detection on some platforms
-(sdl-init! (bitwise-ior SDL_INIT_VIDEO SDL_INIT_GAMEPAD SDL_INIT_JOYSTICK))
+;; Note: joystick subsystem is required for gamepad detection on some platforms
+(sdl-init! '(video gamepad joystick))
 
 (define WIDTH 800)
 (define HEIGHT 600)

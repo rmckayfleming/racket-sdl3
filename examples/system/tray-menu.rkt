@@ -8,7 +8,7 @@
 (require sdl3)
 
 (define (main)
-  (sdl-init! (bitwise-ior SDL_INIT_VIDEO SDL_INIT_EVENTS))
+  (sdl-init! '(video events))
 
   (define icon (load-surface "examples/assets/test.png"))
   (define tray (make-tray icon "SDL3 Tray Menu"))

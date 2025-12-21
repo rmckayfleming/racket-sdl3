@@ -22,7 +22,7 @@
 
   (define-values (window renderer)
     (make-window+renderer "SDL3 Drop Events" window-width window-height
-                          #:window-flags SDL_WINDOW_RESIZABLE))
+                          #:window-flags 'resizable))
 
   (define running? #t)
   (define last-type 'none)

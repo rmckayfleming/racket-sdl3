@@ -21,7 +21,7 @@
   (define-values (window renderer)
     (make-window+renderer "SDL3_ttf Font Properties"
                           window-width window-height
-                          #:window-flags SDL_WINDOW_HIGH_PIXEL_DENSITY))
+                          #:window-flags 'high-pixel-density))
 
   ;; Scale font for high-DPI displays
   (define pixel-density (window-pixel-density window))

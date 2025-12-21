@@ -36,15 +36,15 @@
   (set-app-id! "com.example.hints-demo")
 
   ;; We can also check if hints are set
-  (printf "App name hint: ~a~n" (or (get-hint hint-name-app-name) "(not set)"))
-  (printf "App ID hint: ~a~n" (or (get-hint hint-name-app-id) "(not set)"))
+  (printf "App name hint: ~a~n" (or (get-hint 'app-name) "(not set)"))
+  (printf "App ID hint: ~a~n" (or (get-hint 'app-id) "(not set)"))
 
   ;; Initialize SDL
   (sdl-init!)
 
   (define-values (window renderer)
     (make-window+renderer window-title window-width window-height
-                          #:window-flags SDL_WINDOW_RESIZABLE))
+                          #:window-flags 'resizable))
 
   ;; Scale font for high-DPI
   (define pixel-density (window-pixel-density window))
@@ -70,7 +70,7 @@
 
             [(key-event 'down 'v _ _ _)
              (define new-vs? (not vs?))
-             (set-hint! hint-name-render-vsync (if new-vs? "1" "0"))
+             (set-hint! 'render-vsync (if new-vs? "1" "0"))
              (printf "VSync hint set to: ~a~n" (if new-vs? "1" "0"))
              (values run? new-vs? ss?)]
 
@@ -112,31 +112,31 @@
                     20 100 '(200 200 255 255))
 
         ;; App name
-        (define app-name-val (or (get-hint hint-name-app-name) "(not set)"))
+        (define app-name-val (or (get-hint 'app-name) "(not set)"))
         (draw-text! renderer font (format "  App Name: ~a" app-name-val)
                     20 130 '(180 255 180 255))
 
         ;; App ID
-        (define app-id-val (or (get-hint hint-name-app-id) "(not set)"))
+        (define app-id-val (or (get-hint 'app-id) "(not set)"))
         (draw-text! renderer font (format "  App ID: ~a" app-id-val)
                     20 155 '(180 255 180 255))
 
         ;; VSync
-        (define vsync-val (or (get-hint hint-name-render-vsync) "(not set)"))
-        (define vsync-bool (get-hint-boolean hint-name-render-vsync #f))
+        (define vsync-val (or (get-hint 'render-vsync) "(not set)"))
+        (define vsync-bool (get-hint-boolean 'render-vsync #f))
         (draw-text! renderer font (format "  Render VSync: ~a (boolean: ~a)"
                                           vsync-val vsync-bool)
                     20 180 '(255 255 180 255))
 
         ;; Screensaver
-        (define ss-val (or (get-hint hint-name-video-allow-screensaver) "(not set)"))
-        (define ss-bool (get-hint-boolean hint-name-video-allow-screensaver #t))
+        (define ss-val (or (get-hint 'video-allow-screensaver) "(not set)"))
+        (define ss-bool (get-hint-boolean 'video-allow-screensaver #t))
         (draw-text! renderer font (format "  Allow Screensaver: ~a (boolean: ~a)"
                                           ss-val ss-bool)
                     20 205 '(255 255 180 255))
 
         ;; Render driver
-        (define driver-val (or (get-hint hint-name-render-driver) "(auto)"))
+        (define driver-val (or (get-hint 'render-driver) "(auto)"))
         (draw-text! renderer font (format "  Render Driver: ~a" driver-val)
                     20 230 '(180 180 255 255))
 

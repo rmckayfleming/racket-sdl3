@@ -105,7 +105,7 @@
 
   (define-values (window renderer)
     (make-window+renderer "SDL3 Viewport Demo" window-width window-height
-                          #:window-flags SDL_WINDOW_RESIZABLE))
+                          #:window-flags 'resizable))
 
   (let loop ([running? #t])
     (when running?

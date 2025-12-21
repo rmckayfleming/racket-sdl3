@@ -25,7 +25,7 @@
 
   (define-values (window renderer)
     (make-window+renderer "SDL3 Display Info" 600 400
-                          #:window-flags SDL_WINDOW_RESIZABLE))
+                          #:window-flags 'resizable))
 
   ;; Get display list
   (set! display-list (get-displays))

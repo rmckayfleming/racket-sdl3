@@ -19,7 +19,7 @@
     (printf "  ~a: ~a (id ~a)~n" idx display-name id)))
 
 (define (main)
-  (sdl-init! SDL_INIT_VIDEO)
+  (sdl-init!)
   (define win (make-window "SDL3 Racket - Device Enumeration" 640 360))
 
   (printf "Has keyboard? ~a~n" (has-keyboard?))

@@ -73,26 +73,7 @@
  ;; Convenience
  make-window+renderer
 
- ;; Re-export window flags
- SDL_WINDOW_FULLSCREEN
- SDL_WINDOW_RESIZABLE
- SDL_WINDOW_HIGH_PIXEL_DENSITY
- SDL_WINDOW_OPENGL
-
- ;; Re-export flash operations
- SDL_FLASH_CANCEL
- SDL_FLASH_BRIEFLY
- SDL_FLASH_UNTIL_FOCUSED
-
- ;; Re-export init flags
- SDL_INIT_VIDEO
- SDL_INIT_AUDIO
- SDL_INIT_EVENTS
- SDL_INIT_CAMERA
- SDL_INIT_JOYSTICK
- SDL_INIT_GAMEPAD
-
- ;; Re-export app metadata property names
+ ;; Re-export app metadata property names (used as strings, not flags)
  SDL_PROP_APP_METADATA_NAME_STRING
  SDL_PROP_APP_METADATA_VERSION_STRING
  SDL_PROP_APP_METADATA_IDENTIFIER_STRING
@@ -100,6 +81,58 @@
  SDL_PROP_APP_METADATA_COPYRIGHT_STRING
  SDL_PROP_APP_METADATA_URL_STRING
  SDL_PROP_APP_METADATA_TYPE_STRING)
+
+;; ============================================================================
+;; Symbol-based Flag Mappings
+;; ============================================================================
+
+;; Window flags: symbol -> SDL constant
+;; Accepts symbol or list of symbols like '(resizable high-pixel-density)
+(define window-flag-table
+  (hasheq 'fullscreen          SDL_WINDOW_FULLSCREEN
+          'resizable           SDL_WINDOW_RESIZABLE
+          'high-pixel-density  SDL_WINDOW_HIGH_PIXEL_DENSITY
+          'opengl              SDL_WINDOW_OPENGL))
+
+;; Convert window flags to integer
+;; Accepts: symbol or list of symbols
+(define (window-flags->integer flags)
+  (cond
+    [(symbol? flags)
+     (hash-ref window-flag-table flags
+               (lambda () (error 'window-flags->integer
+                                 "unknown window flag: ~a (expected one of: ~a)"
+                                 flags (hash-keys window-flag-table))))]
+    [(list? flags)
+     (for/fold ([result 0]) ([f (in-list flags)])
+       (bitwise-ior result (window-flags->integer f)))]
+    [else (error 'window-flags->integer
+                 "expected symbol or list of symbols; got: ~e" flags)]))
+
+;; Init flags: symbol -> SDL constant
+;; Accepts symbol or list of symbols like '(video audio)
+(define init-flag-table
+  (hasheq 'video    SDL_INIT_VIDEO
+          'audio    SDL_INIT_AUDIO
+          'events   SDL_INIT_EVENTS
+          'camera   SDL_INIT_CAMERA
+          'joystick SDL_INIT_JOYSTICK
+          'gamepad  SDL_INIT_GAMEPAD))
+
+;; Convert init flags to integer
+;; Accepts: symbol or list of symbols
+(define (init-flags->integer flags)
+  (cond
+    [(symbol? flags)
+     (hash-ref init-flag-table flags
+               (lambda () (error 'init-flags->integer
+                                 "unknown init flag: ~a (expected one of: ~a)"
+                                 flags (hash-keys init-flag-table))))]
+    [(list? flags)
+     (for/fold ([result 0]) ([f (in-list flags)])
+       (bitwise-ior result (init-flags->integer f)))]
+    [else (error 'init-flags->integer
+                 "expected symbol or list of symbols; got: ~e" flags)]))
 
 ;; ============================================================================
 ;; Resource wrapper structs
@@ -112,19 +145,32 @@
 ;; Initialization
 ;; ============================================================================
 
-(define (sdl-init! [flags SDL_INIT_VIDEO])
-  (unless (SDL-Init flags)
+;; Initialize SDL with the given subsystems
+;; flags can be:
+;;   - An integer (SDL_INIT_* constant)
+;;   - A symbol ('video, 'audio, 'events, 'camera, 'joystick, 'gamepad)
+;;   - A list of symbols: '(video audio)
+;; Examples:
+;;   (sdl-init!)                       ; defaults to video
+;;   (sdl-init! 'video)                ; video only
+;;   (sdl-init! '(video audio))        ; video and audio
+(define (sdl-init! [flags 'video])
+  (unless (SDL-Init (init-flags->integer flags))
     (error 'sdl-init! "Failed to initialize SDL: ~a" (SDL-GetError))))
 
+;; Initialize additional subsystems after SDL has been initialized
+;; flags can be integer, symbol, or list of symbols (like sdl-init!)
 (define (sdl-init-subsystem! flags)
-  (unless (SDL-InitSubSystem flags)
+  (unless (SDL-InitSubSystem (init-flags->integer flags))
     (error 'sdl-init-subsystem! "Failed to initialize subsystem: ~a" (SDL-GetError))))
 
 (define (sdl-quit!)
   (SDL-Quit))
 
+;; Shut down specific subsystems
+;; flags can be integer, symbol, or list of symbols
 (define (sdl-quit-subsystem! flags)
-  (SDL-QuitSubSystem flags))
+  (SDL-QuitSubSystem (init-flags->integer flags)))
 
 (define (sdl-was-init [flags 0])
   (SDL-WasInit flags))
@@ -151,10 +197,22 @@
 ;; Window Management
 ;; ============================================================================
 
+;; Create a window with the given title and dimensions
+;; flags can be:
+;;   - A symbol ('resizable, 'fullscreen, 'high-pixel-density, 'opengl)
+;;   - A list of symbols: '(resizable high-pixel-density)
+;;   - '() or #f for no flags (default)
+;; Examples:
+;;   (make-window "Title" 800 600)
+;;   (make-window "Title" 800 600 #:flags 'resizable)
+;;   (make-window "Title" 800 600 #:flags '(resizable high-pixel-density))
 (define (make-window title width height
-                     #:flags [flags 0]
+                     #:flags [flags '()]
                      #:custodian [cust (current-custodian)])
-  (define ptr (SDL-CreateWindow title width height flags))
+  (define flag-bits (if (or (null? flags) (not flags))
+                        0
+                        (window-flags->integer flags)))
+  (define ptr (SDL-CreateWindow title width height flag-bits))
   (unless ptr
     (error 'make-window "Failed to create window: ~a" (SDL-GetError)))
   (wrap-window ptr #:custodian cust))
@@ -345,8 +403,14 @@
 ;; Convenience Functions
 ;; ============================================================================
 
+;; Create a window and renderer in one call
+;; window-flags can be a symbol or list of symbols
+;; Examples:
+;;   (make-window+renderer "Title" 800 600)
+;;   (make-window+renderer "Title" 800 600 #:window-flags 'resizable)
+;;   (make-window+renderer "Title" 800 600 #:window-flags '(resizable high-pixel-density))
 (define (make-window+renderer title width height
-                              #:window-flags [window-flags 0]
+                              #:window-flags [window-flags '()]
                               #:renderer-name [renderer-name #f]
                               #:custodian [cust (current-custodian)])
   (define win (make-window title width height

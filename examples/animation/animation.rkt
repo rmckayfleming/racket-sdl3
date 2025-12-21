@@ -19,7 +19,7 @@
 
   (define-values (window renderer)
     (make-window+renderer window-title window-width window-height
-                          #:window-flags SDL_WINDOW_RESIZABLE))
+                          #:window-flags 'resizable))
 
   (let loop ([ball-x 400.0] [ball-y 300.0]
              [ball-vx 200.0] [ball-vy 150.0]

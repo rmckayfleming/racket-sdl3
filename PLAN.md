@@ -51,23 +51,31 @@ This is the biggest friction point in examples.
 - [x] `examples/advanced/collision.rkt` - uses `(key-event 'down 'escape _ _ _)`
 - [x] All 58 other examples and 3 demos updated to use symbol-based keys
 
-## Phase 2: Symbol-Based Flags (Medium Priority)
+## Phase 2: Symbol-Based Flags (Medium Priority) ✅ COMPLETE
 
-### 2.1 Window Flags
-- [ ] Create mapping: `'resizable` -> `SDL_WINDOW_RESIZABLE`, etc.
-- [ ] Update `make-window` to accept `#:flags '(resizable high-pixel-density)`
-- [ ] Supported symbols:
-  - `'resizable`, `'fullscreen`, `'borderless`, `'hidden`
-  - `'high-pixel-density`, `'always-on-top`, `'minimized`, `'maximized`
-  - `'opengl`, `'vulkan`, `'metal`
+### 2.1 Window Flags ✅
+- [x] Create mapping: `'resizable` -> `SDL_WINDOW_RESIZABLE`, etc.
+- [x] Update `make-window` to accept `#:flags '(resizable high-pixel-density)`
+- [x] Supported symbols: `'resizable`, `'fullscreen`, `'high-pixel-density`, `'opengl`
+- [x] Also accepts single symbol: `#:flags 'resizable`
+- [x] Default: `'()` (no flags)
+- [x] Removed `SDL_WINDOW_*` constant re-exports (symbols only now)
 
-### 2.2 Init Flags
-- [ ] Update `sdl-init!` to accept symbols: `(sdl-init! '(video audio))`
-- [ ] Mapping: `'video`, `'audio`, `'events`, `'joystick`, `'gamepad`, `'camera`
+### 2.2 Init Flags ✅
+- [x] Update `sdl-init!` to accept symbols: `(sdl-init! '(video audio))`
+- [x] Mapping: `'video`, `'audio`, `'events`, `'joystick`, `'gamepad`, `'camera`
+- [x] Default changed to `'video`
+- [x] Removed `SDL_INIT_*` constant re-exports (symbols only now)
 
-### 2.3 Hint Names
-- [ ] Add symbol-based hint names: `'render-vsync`, `'app-name`
-- [ ] Update `set-hint!` / `get-hint` to accept symbols or strings
+### 2.3 Hint Names ✅
+- [x] Add symbol-based hint names: `'render-vsync`, `'app-name`, `'app-id`, etc.
+- [x] Update `set-hint!` / `get-hint` / `get-hint-boolean` / `reset-hint!` to accept symbols only
+- [x] Removed `hint-name-*` constant re-exports (symbols only now)
+
+### 2.4 Update Examples ✅
+- [x] All 23 examples updated to use symbol-based flags
+- [x] All 3 demos verified (already used simple forms)
+- [x] OpenGL examples use `'(resizable opengl)` for combined flags
 
 ## Phase 3: Object-Based Parameters (Medium Priority)
 

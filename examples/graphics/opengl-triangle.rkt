@@ -56,8 +56,7 @@
   (gl-set-attribute! SDL_GL_DEPTH_SIZE 24)
 
   (define window (make-window "SDL3 OpenGL Triangle" window-width window-height
-                              #:flags (bitwise-ior SDL_WINDOW_RESIZABLE
-                                                   SDL_WINDOW_OPENGL)))
+                              #:flags '(resizable opengl)))
 
   (define ctx (create-gl-context window))
   (gl-make-current! window ctx)

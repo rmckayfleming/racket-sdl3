@@ -26,7 +26,7 @@
 
   (define-values (window renderer)
     (make-window+renderer "SDL_ttf Advanced Text" window-width window-height
-                          #:window-flags SDL_WINDOW_HIGH_PIXEL_DENSITY))
+                          #:window-flags 'high-pixel-density))
 
   ;; Load font from bytes using open-font-io
   (define font-bytes (call-with-input-file font-path port->bytes))

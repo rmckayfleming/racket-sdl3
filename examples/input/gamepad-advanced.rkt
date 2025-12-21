@@ -27,12 +27,12 @@
 (define window-height 500)
 
 (define (main)
-  ;; Note: SDL_INIT_JOYSTICK is required for gamepad detection on some platforms
-  (sdl-init! (bitwise-ior SDL_INIT_VIDEO SDL_INIT_GAMEPAD SDL_INIT_JOYSTICK))
+  ;; Note: joystick subsystem is required for gamepad detection on some platforms
+  (sdl-init! '(video gamepad joystick))
 
   (define-values (window renderer)
     (make-window+renderer "Gamepad Advanced" window-width window-height
-                          #:window-flags SDL_WINDOW_HIGH_PIXEL_DENSITY))
+                          #:window-flags 'high-pixel-density))
 
   (define font (open-font "/System/Library/Fonts/Supplemental/Arial.ttf" 18.0))
   (define small-font (open-font "/System/Library/Fonts/Supplemental/Arial.ttf" 14.0))
