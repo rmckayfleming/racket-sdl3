@@ -11,7 +11,7 @@ A complete idiomatic Racket layer on top of the raw bindings, providing:
 - Simpler APIs (fewer pointer manipulations)
 - Drawing helpers, texture management, font/text rendering, mouse state
 
-Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rkt`, `safe/ttf.rkt`, `safe/mouse.rkt`, `safe/keyboard.rkt`, `safe/clipboard.rkt`, `safe/timer.rkt`, `safe/audio.rkt`, `safe/display.rkt`, `safe/dialog.rkt`, `safe/hints.rkt`, `safe/joystick.rkt`, `safe/gamepad.rkt`, `safe/image.rkt`, `safe/collision.rkt`, `safe/gl.rkt`, `safe/vulkan.rkt`, `safe/gpu.rkt`
+Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rkt`, `safe/ttf.rkt`, `safe/mouse.rkt`, `safe/keyboard.rkt`, `safe/clipboard.rkt`, `safe/timer.rkt`, `safe/audio.rkt`, `safe/camera.rkt`, `safe/display.rkt`, `safe/dialog.rkt`, `safe/hints.rkt`, `safe/joystick.rkt`, `safe/gamepad.rkt`, `safe/image.rkt`, `safe/collision.rkt`, `safe/gl.rkt`, `safe/vulkan.rkt`, `safe/gpu.rkt`
 
 ### SDL3 Core (`raw/`)
 
@@ -160,6 +160,14 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 - [x] `SDL_LoadWAV_IO`
 - [x] `SDL_MixAudio`, `SDL_ConvertAudioSamples`
 - [x] `SDL_GetAudioFormatName`
+
+#### Camera (`raw/camera.rkt`)
+- [x] `SDL_GetNumCameraDrivers`, `SDL_GetCameraDriver`, `SDL_GetCurrentCameraDriver`
+- [x] `SDL_GetCameras`, `SDL_GetCameraSupportedFormats`
+- [x] `SDL_GetCameraName`, `SDL_GetCameraPosition`
+- [x] `SDL_OpenCamera`, `SDL_CloseCamera`
+- [x] `SDL_GetCameraPermissionState`, `SDL_GetCameraID`, `SDL_GetCameraProperties`, `SDL_GetCameraFormat`
+- [x] `SDL_AcquireCameraFrame`, `SDL_ReleaseCameraFrame`
 
 #### Joystick (`raw/joystick.rkt`)
 - [x] `SDL_HasJoystick`, `SDL_GetJoysticks`
@@ -387,11 +395,6 @@ Advanced features that may still be needed:
 - [ ] GPU debug label functions (`SDL_InsertGPUDebugLabel`, etc.)
 - [ ] Additional texture format queries
 
-#### Camera API (`SDL_camera.h`) - *New in SDL3*
-- [ ] Camera enumeration and driver info
-- [ ] Opening/Closing cameras, permission state
-- [ ] Acquiring/Releasing frames, format management
-
 #### Filesystem & IO (`SDL_filesystem.h`, `SDL_storage.h`, `SDL_asyncio.h`)
 - [ ] `SDL_GetBasePath`, `SDL_GetPrefPath`, `SDL_GetUserFolder`
 - [ ] `SDL_GlobDirectory`, `SDL_GetCurrentDirectory`
@@ -477,6 +480,6 @@ These subsystems are intentionally skipped because Racket provides superior, saf
 ## Suggested Next Steps
 
 1. ~~**SDL_gpu** - The most significant new feature in SDL3.~~ [DONE - Core API implemented]
-2. **SDL_camera** - Support for video input devices.
+2. ~~**SDL_camera** - Support for video input devices.~~ [DONE - Camera API implemented]
 3. **SDL_filesystem/storage** - Improved path and file management.
 4. **SDL_tray** - Native system tray support.

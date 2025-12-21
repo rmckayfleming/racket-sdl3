@@ -43,6 +43,9 @@
  audio-device-event audio-device-event?
  audio-device-event-type audio-device-event-which audio-device-event-recording?
 
+ camera-device-event camera-device-event?
+ camera-device-event-type camera-device-event-which
+
  ;; Joystick events
  joy-axis-event joy-axis-event?
  joy-axis-event-which joy-axis-event-axis joy-axis-event-value
@@ -246,6 +249,11 @@
 ;; which is the SDL_AudioDeviceID
 ;; recording? is #t for recording devices
 
+;; Camera device events
+(struct camera-device-event sdl-event (type which) #:transparent)
+;; type is 'added, 'removed, 'approved, or 'denied
+;; which is the SDL_CameraID
+
 ;; Joystick axis motion
 (struct joy-axis-event sdl-event (which axis value) #:transparent)
 ;; which is the joystick instance ID
@@ -378,6 +386,18 @@
     [(= raw-type SDL_EVENT_AUDIO_DEVICE_ADDED) 'added]
     [(= raw-type SDL_EVENT_AUDIO_DEVICE_REMOVED) 'removed]
     [(= raw-type SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED) 'format-changed]
+    [else 'unknown]))
+
+;; ============================================================================
+;; Camera Device Event Type Mapping
+;; ============================================================================
+
+(define (camera-device-event-type-symbol raw-type)
+  (cond
+    [(= raw-type SDL_EVENT_CAMERA_DEVICE_ADDED) 'added]
+    [(= raw-type SDL_EVENT_CAMERA_DEVICE_REMOVED) 'removed]
+    [(= raw-type SDL_EVENT_CAMERA_DEVICE_APPROVED) 'approved]
+    [(= raw-type SDL_EVENT_CAMERA_DEVICE_DENIED) 'denied]
     [else 'unknown]))
 
 ;; ============================================================================
@@ -597,6 +617,15 @@
      (audio-device-event (audio-device-event-type-symbol type)
                          (SDL_AudioDeviceEvent-which ad)
                          (SDL_AudioDeviceEvent-recording ad))]
+
+    ;; Camera device events
+    [(or (= type SDL_EVENT_CAMERA_DEVICE_ADDED)
+         (= type SDL_EVENT_CAMERA_DEVICE_REMOVED)
+         (= type SDL_EVENT_CAMERA_DEVICE_APPROVED)
+         (= type SDL_EVENT_CAMERA_DEVICE_DENIED))
+     (define cd (event->camera-device buf))
+     (camera-device-event (camera-device-event-type-symbol type)
+                          (SDL_CameraDeviceEvent-which cd))]
 
     ;; Joystick axis motion
     [(= type SDL_EVENT_JOYSTICK_AXIS_MOTION)

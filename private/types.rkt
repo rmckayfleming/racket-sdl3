@@ -32,6 +32,8 @@
          _SDL_IOStream-pointer/null
          _SDL_Cursor-pointer
          _SDL_Cursor-pointer/null
+         _SDL_Camera-pointer
+         _SDL_Camera-pointer/null
          _SDL_GPUDevice-pointer
          _SDL_GPUDevice-pointer/null
          _SDL_GPUTexture-pointer
@@ -365,6 +367,10 @@
          SDL_AudioDeviceEvent-type
          SDL_AudioDeviceEvent-which
          SDL_AudioDeviceEvent-recording
+         _SDL_CameraDeviceEvent
+         _SDL_CameraDeviceEvent-pointer
+         SDL_CameraDeviceEvent-type
+         SDL_CameraDeviceEvent-which
          ;; Event union helpers
          sdl-event-type
          event->keyboard
@@ -375,6 +381,7 @@
          event->drop
          event->clipboard
          event->audio-device
+         event->camera-device
          ;; Keycode type
          _SDL_Keycode
          ;; Modifier key type
@@ -391,6 +398,8 @@
          _SDL_ScaleMode
          ;; Pixel format type
          _SDL_PixelFormat
+         ;; Colorspace type
+         _SDL_Colorspace
          ;; System cursor type
          _SDL_SystemCursor
          ;; Audio types
@@ -420,6 +429,19 @@
          _SDL_WindowID
          ;; Display ID type
          _SDL_DisplayID
+         ;; Camera types
+         _SDL_CameraID
+         _SDL_CameraPosition
+         _SDL_CameraSpec
+         _SDL_CameraSpec-pointer
+         _SDL_CameraSpec-pointer/null
+         make-SDL_CameraSpec
+         SDL_CameraSpec-format
+         SDL_CameraSpec-colorspace
+         SDL_CameraSpec-width
+         SDL_CameraSpec-height
+         SDL_CameraSpec-framerate_numerator
+         SDL_CameraSpec-framerate_denominator
          ;; Display mode struct
          _SDL_DisplayMode
          _SDL_DisplayMode-pointer
@@ -650,6 +672,9 @@
 ;; SDL_MouseID - mouse instance ID (uint32)
 (define _SDL_MouseID _uint32)
 
+;; SDL_CameraID - camera instance ID (uint32)
+(define _SDL_CameraID _uint32)
+
 ;; SDL_TimerID - timer handle (Uint32)
 (define _SDL_TimerID _uint32)
 
@@ -677,6 +702,7 @@
 (define-cpointer-type _SDL_Texture-pointer)
 (define-cpointer-type _SDL_IOStream-pointer)
 (define-cpointer-type _SDL_Cursor-pointer)
+(define-cpointer-type _SDL_Camera-pointer)
 (define-cpointer-type _SDL_GPUDevice-pointer)
 (define-cpointer-type _SDL_GPUTexture-pointer)
 (define-cpointer-type _SDL_GPUBuffer-pointer)
@@ -865,6 +891,13 @@
    [padding2 _uint8]
    [padding3 _uint8]))
 
+;; SDL_CameraDeviceEvent - camera device add/remove/approval
+(define-cstruct _SDL_CameraDeviceEvent
+  ([type _uint32]
+   [reserved _uint32]
+   [timestamp _uint64]
+   [which _SDL_CameraID]))
+
 ;; Helper to get event type from any event pointer
 (define (sdl-event-type event-ptr)
   (ptr-ref event-ptr _uint32))
@@ -894,6 +927,9 @@
 (define (event->audio-device event-ptr)
   (cast event-ptr _pointer _SDL_AudioDeviceEvent-pointer))
 
+(define (event->camera-device event-ptr)
+  (cast event-ptr _pointer _SDL_CameraDeviceEvent-pointer))
+
 ;; ============================================================================
 ;; FFI Type Aliases for Enums
 ;; ============================================================================
@@ -921,6 +957,9 @@
 
 ;; SDL_PixelFormat - pixel format values
 (define _SDL_PixelFormat _uint32)
+
+;; SDL_Colorspace - colorspace values
+(define _SDL_Colorspace _uint32)
 
 ;; SDL_SystemCursor - predefined system cursor types
 (define _SDL_SystemCursor _int)
@@ -978,6 +1017,22 @@
    [refresh_rate_numerator _int]           ; precise refresh rate numerator
    [refresh_rate_denominator _int]         ; precise refresh rate denominator
    [internal _pointer]))                   ; private data (opaque)
+
+;; ============================================================================
+;; Camera Types
+;; ============================================================================
+
+;; SDL_CameraPosition enum
+(define _SDL_CameraPosition _int)
+
+;; SDL_CameraSpec - camera output format specification
+(define-cstruct _SDL_CameraSpec
+  ([format _SDL_PixelFormat]
+   [colorspace _SDL_Colorspace]
+   [width _int]
+   [height _int]
+   [framerate_numerator _int]
+   [framerate_denominator _int]))
 
 ;; ============================================================================
 ;; Flash Operation
@@ -1752,4 +1807,3 @@
 
 ;; Allocation callbacks (opaque pointer, usually NULL)
 (define _VkAllocationCallbacks-pointer/null _pointer)
-

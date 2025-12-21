@@ -14,6 +14,7 @@
  SDL_INIT_JOYSTICK
  SDL_INIT_GAMEPAD
  SDL_INIT_EVENTS
+ SDL_INIT_CAMERA
  ;; Window flags
  SDL_WINDOW_FULLSCREEN
  SDL_WINDOW_RESIZABLE
@@ -52,6 +53,15 @@
  SDL_EVENT_AUDIO_DEVICE_ADDED
  SDL_EVENT_AUDIO_DEVICE_REMOVED
  SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED
+ ;; Camera device events
+ SDL_EVENT_CAMERA_DEVICE_ADDED
+ SDL_EVENT_CAMERA_DEVICE_REMOVED
+ SDL_EVENT_CAMERA_DEVICE_APPROVED
+ SDL_EVENT_CAMERA_DEVICE_DENIED
+ ;; Camera positions
+ SDL_CAMERA_POSITION_UNKNOWN
+ SDL_CAMERA_POSITION_FRONT_FACING
+ SDL_CAMERA_POSITION_BACK_FACING
  ;; Mouse wheel direction
  SDL_MOUSEWHEEL_NORMAL
  SDL_MOUSEWHEEL_FLIPPED
@@ -616,6 +626,7 @@
 (define SDL_INIT_JOYSTICK #x00000200)
 (define SDL_INIT_GAMEPAD  #x00001000)
 (define SDL_INIT_EVENTS   #x00004000)
+(define SDL_INIT_CAMERA   #x00010000)
 
 ;; ============================================================================
 ;; Window Flags (SDL_WindowFlags) - 64-bit in SDL3
@@ -660,6 +671,18 @@
 (define SDL_EVENT_AUDIO_DEVICE_ADDED #x1100)
 (define SDL_EVENT_AUDIO_DEVICE_REMOVED #x1101)
 (define SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED #x1102)
+;; Camera device events
+(define SDL_EVENT_CAMERA_DEVICE_ADDED #x1400)
+(define SDL_EVENT_CAMERA_DEVICE_REMOVED #x1401)
+(define SDL_EVENT_CAMERA_DEVICE_APPROVED #x1402)
+(define SDL_EVENT_CAMERA_DEVICE_DENIED #x1403)
+
+;; ============================================================================
+;; Camera Positions
+;; ============================================================================
+(define SDL_CAMERA_POSITION_UNKNOWN 0)
+(define SDL_CAMERA_POSITION_FRONT_FACING 1)
+(define SDL_CAMERA_POSITION_BACK_FACING 2)
 
 ;; ============================================================================
 ;; Mouse Wheel Direction
@@ -1440,4 +1463,3 @@
 (define SDL_GPU_SWAPCHAINCOMPOSITION_SDR_LINEAR          1)
 (define SDL_GPU_SWAPCHAINCOMPOSITION_HDR_EXTENDED_LINEAR 2)
 (define SDL_GPU_SWAPCHAINCOMPOSITION_HDR10_ST2084        3)
-

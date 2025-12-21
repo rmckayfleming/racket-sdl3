@@ -28,10 +28,10 @@
 - [x] **Example:** Add `examples/graphics/gpu-triangle.rkt` using the new SDL3 GPU API with Metal shaders.
 - [x] **Example:** Add `examples/graphics/gpu-cube.rkt` showing a rotating 3D cube with depth testing.
 
-## Phase 5: Camera & Video Input
-- [ ] Bind `SDL_camera.h` functions (enumeration, open/close).
-- [ ] Add `safe/camera.rkt` for idiomatic camera usage.
-- [ ] **Example:** Add `examples/video/camera-preview.rkt` to show a live camera feed.
+## Phase 5: Camera & Video Input [DONE]
+- [x] Bind `SDL_camera.h` functions (enumeration, open/close).
+- [x] Add `safe/camera.rkt` for idiomatic camera usage.
+- [x] **Example:** Add `examples/video/camera-preview.rkt` to show a live camera feed.
 
 ## Phase 6: System Integration & Storage
 - [ ] Implement `SDL_tray.h` bindings for system tray icons and menus.

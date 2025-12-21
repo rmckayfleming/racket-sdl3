@@ -29,6 +29,7 @@
          "raw/timer.rkt"
          "raw/clipboard.rkt"
          "raw/audio.rkt"
+         "raw/camera.rkt"
          "raw/dialog.rkt"
          "raw/hints.rkt"
          "raw/image.rkt"
@@ -57,6 +58,7 @@
          (all-from-out "raw/timer.rkt")
          (all-from-out "raw/clipboard.rkt")
          (all-from-out "raw/audio.rkt")
+         (all-from-out "raw/camera.rkt")
          (all-from-out "raw/dialog.rkt")
          (all-from-out "raw/hints.rkt")
          (all-from-out "raw/image.rkt")

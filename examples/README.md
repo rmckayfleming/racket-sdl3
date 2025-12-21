@@ -12,8 +12,9 @@ A collection of examples demonstrating the sdl3 Racket library, organized from s
 4. **text/** - Font rendering
 5. **input/** - Keyboard and mouse handling
 6. **animation/** - Time-based animation
-7. **advanced/** - Cameras, viewports, collision
-8. **graphics/** - OpenGL, Vulkan, and GPU API examples
+7. **video/** - Camera capture and video input
+8. **advanced/** - Virtual cameras, viewports, collision
+9. **graphics/** - OpenGL, Vulkan, and GPU API examples
 
 ## Running Examples
 
@@ -96,6 +97,14 @@ Time-based animation techniques.
 | Example | Concepts |
 |---------|----------|
 | `animation.rkt` | Delta time, frame-rate independence |
+
+### video/
+
+Camera capture and video input.
+
+| Example | Concepts |
+|---------|----------|
+| `camera-preview.rkt` | Enumerate cameras, open device, live preview |
 
 ### audio/
 
