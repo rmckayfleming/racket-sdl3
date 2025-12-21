@@ -71,31 +71,24 @@
              #f]
 
             ;; Key down events
-            [(key-event 'down key _ _ _)
-             (cond
-               ;; Escape to quit
-               [(= key SDLK_ESCAPE) #f]
+            [(key-event 'down 'escape _ _ _) #f]
 
-               ;; Space to play sound
-               [(= key SDLK_SPACE)
-                (printf "Playing sound...\n")
-                (play-audio! stream wav-data wav-length)
-                run?]
+            [(key-event 'down 'space _ _ _)
+             (printf "Playing sound...\n")
+             (play-audio! stream wav-data wav-length)
+             run?]
 
-               ;; P to toggle pause
-               [(= key SDLK_P)
-                (if paused?
-                    (begin
-                      (resume-audio-device! device)
-                      (set! paused? #f)
-                      (printf "Audio resumed\n"))
-                    (begin
-                      (pause-audio-device! device)
-                      (set! paused? #t)
-                      (printf "Audio paused\n")))
-                run?]
-
-               [else run?])]
+            [(key-event 'down 'p _ _ _)
+             (if paused?
+                 (begin
+                   (resume-audio-device! device)
+                   (set! paused? #f)
+                   (printf "Audio resumed\n"))
+                 (begin
+                   (pause-audio-device! device)
+                   (set! paused? #t)
+                   (printf "Audio paused\n")))
+             run?]
 
             ;; Ignore other events
             [_ run?])))

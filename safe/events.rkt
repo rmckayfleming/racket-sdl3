@@ -4,7 +4,8 @@
 
 (require ffi/unsafe
          racket/match
-         "../raw.rkt")
+         "../raw.rkt"
+         "keyboard.rkt")
 
 (provide
  ;; Base event type
@@ -203,10 +204,15 @@
 ;; Keyboard events
 (struct key-event sdl-event (type key scancode mod repeat?) #:transparent)
 ;; type is 'down or 'up
-;; key is the SDL keycode (integer)
+;; key is a symbol ('escape, 'a, 'space, etc.) or the raw keycode if unknown
 ;; scancode is the physical key scancode (integer)
 ;; mod is modifier flags (integer)
 ;; repeat? is #t if this is a key repeat
+;;
+;; Match examples:
+;;   [(key-event 'down 'escape _ _ _) ...]
+;;   [(key-event 'down 'w _ _ _) ...]
+;;   [(key-event type 'space _ mod _) (when (mod-shift? mod) ...)]
 
 ;; Mouse motion
 (struct mouse-motion-event sdl-event (x y xrel yrel state) #:transparent)
@@ -549,8 +555,11 @@
     ;; Keyboard events
     [(or (= type SDL_EVENT_KEY_DOWN) (= type SDL_EVENT_KEY_UP))
      (define kb (event->keyboard buf))
+     (define keycode (SDL_KeyboardEvent-key kb))
+     ;; Convert keycode to symbol, fall back to integer if unknown
+     (define key-sym (or (keycode->symbol keycode) keycode))
      (key-event (if (= type SDL_EVENT_KEY_DOWN) 'down 'up)
-                (SDL_KeyboardEvent-key kb)
+                key-sym
                 (SDL_KeyboardEvent-scancode kb)
                 (SDL_KeyboardEvent-mod kb)
                 (SDL_KeyboardEvent-repeat kb))]
@@ -808,9 +817,13 @@
 ;; Key Utilities
 ;; ============================================================================
 
-;; Get a human-readable name for a keycode
-(define (key-name keycode)
-  (SDL-GetKeyName keycode))
+;; Get a human-readable name for a key
+;; Accepts a keycode (integer) or a key symbol
+(define (key-name key)
+  (cond
+    [(symbol? key) (symbol->string key)]
+    [(integer? key) (SDL-GetKeyName key)]
+    [else (format "~a" key)]))
 
 ;; ============================================================================
 ;; Modifier Predicates
@@ -845,5 +858,5 @@
   (match ev
     [(quit-event) #t]
     [(window-event 'close-requested) #t]
-    [(key-event 'down (== SDLK_ESCAPE) _ _ _) #t]
+    [(key-event 'down 'escape _ _ _) #t]
     [_ #f]))

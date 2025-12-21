@@ -60,10 +60,11 @@
           (match ev
             [(or (quit-event) (window-event 'close-requested))
              #f]
+            [(key-event 'down 'escape _ _ _) #f]
+
             [(key-event 'down key _ _ _)
              (cond
-               [(= key SDLK_ESCAPE) #f]
-               [(= key SDLK_1)
+               [(eq? key '1)
                 (set! current-styles
                       (if (member 'bold current-styles)
                           (remove 'bold current-styles)
@@ -71,7 +72,7 @@
                 (when (null? current-styles) (set! current-styles '(normal)))
                 (apply set-font-style! font current-styles)
                 run?]
-               [(= key SDLK_2)
+               [(eq? key '2)
                 (set! current-styles
                       (if (member 'italic current-styles)
                           (remove 'italic current-styles)
@@ -79,7 +80,7 @@
                 (when (null? current-styles) (set! current-styles '(normal)))
                 (apply set-font-style! font current-styles)
                 run?]
-               [(= key SDLK_3)
+               [(eq? key '3)
                 (set! current-styles
                       (if (member 'underline current-styles)
                           (remove 'underline current-styles)
@@ -87,7 +88,7 @@
                 (when (null? current-styles) (set! current-styles '(normal)))
                 (apply set-font-style! font current-styles)
                 run?]
-               [(= key SDLK_4)
+               [(eq? key '4)
                 (set! current-styles
                       (if (member 'strikethrough current-styles)
                           (remove 'strikethrough current-styles)
@@ -95,7 +96,7 @@
                 (when (null? current-styles) (set! current-styles '(normal)))
                 (apply set-font-style! font current-styles)
                 run?]
-               [(= key SDLK_5)
+               [(eq? key '5)
                 (set! current-styles '(normal))
                 (set-font-style! font 'normal)
                 run?]

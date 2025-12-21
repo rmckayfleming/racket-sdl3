@@ -48,11 +48,11 @@
       (for/or ([ev (in-events)])
         (match ev
           [(quit-event) #t]
-          [(key-event 'down (== SDLK_ESCAPE) _ _ _) #t]
-          [(key-event 'down (== SDLK_TAB) _ _ _)
+          [(key-event 'down 'escape _ _ _) #t]
+          [(key-event 'down 'tab _ _ _)
            (set! selected-display (modulo (add1 selected-display) (length display-list)))
            #f]
-          [(key-event 'down (== SDLK_F) _ _ _)
+          [(key-event 'down 'f _ _ _)
            (window-set-fullscreen! window (not (window-fullscreen? window)))
            #f]
           [_ #f])))

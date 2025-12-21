@@ -194,12 +194,12 @@
           (match ev
             [(or (quit-event) (window-event 'close-requested)) #f]
 
+            [(key-event 'down 'escape _ _ _) #f]
+
             [(key-event 'down key _ _ _)
              (cond
-               [(= key SDLK_ESCAPE) #f]
-
                ;; Test 1: Try to load a missing image
-               [(= key SDLK_1)
+               [(eq? key '1)
                 (set! status-message "Attempting to load missing image...")
                 (define-values (tex err)
                   (try-load-texture renderer "examples/assets/nonexistent.png"))
@@ -215,7 +215,7 @@
                 run?]
 
                ;; Test 2: Try to load a missing font
-               [(= key SDLK_2)
+               [(eq? key '2)
                 (set! status-message "Attempting to load missing font...")
                 (define-values (fnt err)
                   (try-open-font "examples/assets/nonexistent.ttf" 24))
@@ -231,7 +231,7 @@
                 run?]
 
                ;; Test 3: Load a valid image
-               [(= key SDLK_3)
+               [(eq? key '3)
                 (set! status-message "Attempting to load valid image...")
                 (define-values (tex err)
                   (try-load-texture renderer "examples/assets/test.png"))
@@ -247,7 +247,7 @@
                 run?]
 
                ;; Reset
-               [(= key SDLK_R)
+               [(eq? key 'r)
                 (when current-texture
                   (texture-destroy! current-texture)
                   (set! current-texture #f))

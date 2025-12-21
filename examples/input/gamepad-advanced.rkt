@@ -93,26 +93,20 @@
                    #:break (not run?))
           (match ev
             [(or (quit-event) (window-event 'close-requested)) #f]
-            [(key-event 'down key _ _ _)
-             (cond
-               [(= key SDLK_ESCAPE) #f]
-               [(= key SDLK_R)
-                (test-rumble!)
-                run?]
-               [(= key SDLK_M)
-                (if current-gamepad
-                    (begin
-                      (update-mapping-info!)
-                      (set! status-message "Mapping info updated (see below)"))
-                    (set! status-message "No gamepad connected - connect one first"))
-                run?]
-               [(= key SDLK_L)
-                (show-mapping-count!)
-                run?]
-               [(= key SDLK_F)
-                (show-mapping-format!)
-                run?]
-               [else run?])]
+            [(key-event 'down 'escape _ _ _) #f]
+            [(key-event 'down 'r _ _ _)
+             (test-rumble!) run?]
+            [(key-event 'down 'm _ _ _)
+             (if current-gamepad
+                 (begin
+                   (update-mapping-info!)
+                   (set! status-message "Mapping info updated (see below)"))
+                 (set! status-message "No gamepad connected - connect one first"))
+             run?]
+            [(key-event 'down 'l _ _ _)
+             (show-mapping-count!) run?]
+            [(key-event 'down 'f _ _ _)
+             (show-mapping-format!) run?]
 
             ;; Gamepad connected (or joystick that might be a gamepad)
             ;; Note: On some platforms (macOS), only joystick events fire

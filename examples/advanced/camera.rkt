@@ -176,17 +176,17 @@
       ;; Get keyboard state for smooth movement
       (define keys (get-keyboard-state))
 
-      ;; Calculate movement (keys is a procedure that takes a scancode)
+      ;; Calculate movement (keys now accepts symbols)
       (define move-x
-        (+ (if (or (keys SDL_SCANCODE_RIGHT)
-                   (keys SDL_SCANCODE_D)) 1 0)
-           (if (or (keys SDL_SCANCODE_LEFT)
-                   (keys SDL_SCANCODE_A)) -1 0)))
+        (+ (if (or (keys 'right)
+                   (keys 'd)) 1 0)
+           (if (or (keys 'left)
+                   (keys 'a)) -1 0)))
       (define move-y
-        (+ (if (or (keys SDL_SCANCODE_DOWN)
-                   (keys SDL_SCANCODE_S)) 1 0)
-           (if (or (keys SDL_SCANCODE_UP)
-                   (keys SDL_SCANCODE_W)) -1 0)))
+        (+ (if (or (keys 'down)
+                   (keys 's)) 1 0)
+           (if (or (keys 'up)
+                   (keys 'w)) -1 0)))
 
       ;; Update player position
       (define new-player-x
@@ -207,12 +207,12 @@
             [(or (quit-event) (window-event 'close-requested))
              (values smooth? para? #f)]
 
-            [(key-event 'down key _ _ _)
-             (cond
-               [(= key SDLK_ESCAPE) (values smooth? para? #f)]
-               [(= key SDLK_SPACE) (values (not smooth?) para? run?)]
-               [(= key SDLK_P) (values smooth? (not para?) run?)]
-               [else (values smooth? para? run?)])]
+            [(key-event 'down 'escape _ _ _)
+             (values smooth? para? #f)]
+            [(key-event 'down 'space _ _ _)
+             (values (not smooth?) para? run?)]
+            [(key-event 'down 'p _ _ _)
+             (values smooth? (not para?) run?)]
 
             [_ (values smooth? para? run?)])))
 

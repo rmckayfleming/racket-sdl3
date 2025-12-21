@@ -202,42 +202,34 @@
           (match ev
             [(or (quit-event) (window-event 'close-requested)) #f]
 
-            [(key-event 'down key _ _ _)
-             (cond
-               [(= key SDLK_ESCAPE) #f]
-               [(= key SDLK_1)
-                (set! current-style CURSOR-CROSSHAIR)
-                run?]
-               [(= key SDLK_2)
-                (set! current-style CURSOR-CIRCLE)
-                run?]
-               [(= key SDLK_3)
-                (set! current-style CURSOR-ARROW)
-                run?]
-               [(= key SDLK_4)
-                (set! current-style CURSOR-TARGET)
-                run?]
-               [(= key SDLK_5)
-                (set! current-style CURSOR-HAND)
-                run?]
-               ;; Toggle system cursor
-               [(= key SDLK_S)
-                (set! using-system-cursor? (not using-system-cursor?))
-                (if using-system-cursor?
-                    (show-cursor!)
-                    (hide-cursor!))
-                run?]
-               ;; Cycle system cursor types
-               [(= key SDLK_C)
-                (set! system-cursor-index
-                      (modulo (+ system-cursor-index 1) (length system-cursor-types)))
-                (when current-system-cursor
-                  (destroy-cursor! current-system-cursor))
-                (set! current-system-cursor
-                      (create-system-cursor (list-ref system-cursor-types system-cursor-index)))
-                (set-cursor! current-system-cursor)
-                run?]
-               [else run?])]
+            [(key-event 'down 'escape _ _ _) #f]
+            [(key-event 'down '1 _ _ _)
+             (set! current-style CURSOR-CROSSHAIR) run?]
+            [(key-event 'down '2 _ _ _)
+             (set! current-style CURSOR-CIRCLE) run?]
+            [(key-event 'down '3 _ _ _)
+             (set! current-style CURSOR-ARROW) run?]
+            [(key-event 'down '4 _ _ _)
+             (set! current-style CURSOR-TARGET) run?]
+            [(key-event 'down '5 _ _ _)
+             (set! current-style CURSOR-HAND) run?]
+            ;; Toggle system cursor
+            [(key-event 'down 's _ _ _)
+             (set! using-system-cursor? (not using-system-cursor?))
+             (if using-system-cursor?
+                 (show-cursor!)
+                 (hide-cursor!))
+             run?]
+            ;; Cycle system cursor types
+            [(key-event 'down 'c _ _ _)
+             (set! system-cursor-index
+                   (modulo (+ system-cursor-index 1) (length system-cursor-types)))
+             (when current-system-cursor
+               (destroy-cursor! current-system-cursor))
+             (set! current-system-cursor
+                   (create-system-cursor (list-ref system-cursor-types system-cursor-index)))
+             (set-cursor! current-system-cursor)
+             run?]
 
             [_ run?])))
 

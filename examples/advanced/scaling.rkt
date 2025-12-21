@@ -97,14 +97,12 @@
           [(or (quit-event) (window-event 'close-requested))
            (values #t s)]
 
-          [(key-event 'down key _ _ _)
-           (cond
-             [(= key SDLK_ESCAPE) (values #t s)]
-             [(or (= key SDLK_EQUALS) (= key SDLK_PLUS))
-              (values #f (min 4.0 (+ s 0.25)))]
-             [(= key SDLK_MINUS)
-              (values #f (max 0.25 (- s 0.25)))]
-             [else (values #f s)])]
+          [(key-event 'down 'escape _ _ _)
+           (values #t s)]
+          [(key-event 'down (or 'equals 'kp-plus) _ _ _)
+           (values #f (min 4.0 (+ s 0.25)))]
+          [(key-event 'down 'minus _ _ _)
+           (values #f (max 0.25 (- s 0.25)))]
 
           [_ (values #f s)])))
 

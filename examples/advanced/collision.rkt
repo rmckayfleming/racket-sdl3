@@ -64,37 +64,25 @@
           (match ev
             [(or (quit-event) (window-event 'close-requested))
              #f]
-            [(key-event 'down key _ _ _)
-             (cond
-               [(= key SDLK_ESCAPE) #f]
-               [(or (= key SDLK_LEFT) (= key SDLK_A))
-                (set! move-left #t)
-                run?]
-               [(or (= key SDLK_RIGHT) (= key SDLK_D))
-                (set! move-right #t)
-                run?]
-               [(or (= key SDLK_UP) (= key SDLK_W))
-                (set! move-up #t)
-                run?]
-               [(or (= key SDLK_DOWN) (= key SDLK_S))
-                (set! move-down #t)
-                run?]
-               [else run?])]
-            [(key-event 'up key _ _ _)
-             (cond
-               [(or (= key SDLK_LEFT) (= key SDLK_A))
-                (set! move-left #f)
-                run?]
-               [(or (= key SDLK_RIGHT) (= key SDLK_D))
-                (set! move-right #f)
-                run?]
-               [(or (= key SDLK_UP) (= key SDLK_W))
-                (set! move-up #f)
-                run?]
-               [(or (= key SDLK_DOWN) (= key SDLK_S))
-                (set! move-down #f)
-                run?]
-               [else run?])]
+            ;; Key down - direct symbol matching
+            [(key-event 'down 'escape _ _ _) #f]
+            [(key-event 'down (or 'left 'a) _ _ _)
+             (set! move-left #t) run?]
+            [(key-event 'down (or 'right 'd) _ _ _)
+             (set! move-right #t) run?]
+            [(key-event 'down (or 'up 'w) _ _ _)
+             (set! move-up #t) run?]
+            [(key-event 'down (or 'down 's) _ _ _)
+             (set! move-down #t) run?]
+            ;; Key up
+            [(key-event 'up (or 'left 'a) _ _ _)
+             (set! move-left #f) run?]
+            [(key-event 'up (or 'right 'd) _ _ _)
+             (set! move-right #f) run?]
+            [(key-event 'up (or 'up 'w) _ _ _)
+             (set! move-up #f) run?]
+            [(key-event 'up (or 'down 's) _ _ _)
+             (set! move-down #f) run?]
             [_ run?])))
 
       (when still-running?

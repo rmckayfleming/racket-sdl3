@@ -36,14 +36,12 @@
         (match ev
           [(or (quit-event) (window-event 'close-requested))
            (set! running? #f)]
-          [(key-event 'down key _ _ _)
-           (cond
-             [(= key SDLK_ESCAPE) (set! running? #f)]
-             [(= key SDLK_C)
-              (define text (format "Clipboard set at ~a" (current-seconds)))
-              (set-clipboard-text! text)
-              (set! last-text text)]
-             [else (void)])]
+          [(key-event 'down 'escape _ _ _)
+           (set! running? #f)]
+          [(key-event 'down 'c _ _ _)
+           (define text (format "Clipboard set at ~a" (current-seconds)))
+           (set-clipboard-text! text)
+           (set! last-text text)]
           [(clipboard-event owner? mime-types)
            (set! last-event
                  (format "owner?: ~a | mime types: ~a"

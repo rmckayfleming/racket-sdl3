@@ -20,42 +20,42 @@ Main gaps:
 - No scoped resource helpers (`call-with-*`)
 - `rect-line-intersection` returns a list instead of multiple values
 
-## Phase 1: Symbol-Based Keyboard Input (High Priority)
+## Phase 1: Symbol-Based Keyboard Input (High Priority) ✅ COMPLETE
 
 This is the biggest friction point in examples.
 
-### 1.1 Key Symbol Mapping
-- [ ] Create bidirectional mapping between symbols and scancodes/keycodes
-- [ ] Handle letter keys: `'a` through `'z` (case-insensitive)
-- [ ] Handle number keys: `'0` through `'9`
-- [ ] Handle special keys: `'escape`, `'space`, `'return`, `'tab`, `'backspace`, `'delete`
-- [ ] Handle arrow keys: `'up`, `'down`, `'left`, `'right`
-- [ ] Handle modifier keys: `'left-shift`, `'right-shift`, `'left-ctrl`, `'right-ctrl`, `'left-alt`, `'right-alt`
-- [ ] Handle function keys: `'f1` through `'f12`
-- [ ] Handle navigation: `'home`, `'end`, `'page-up`, `'page-down`, `'insert`
+### 1.1 Key Symbol Mapping ✅
+- [x] Create bidirectional mapping between symbols and scancodes/keycodes
+- [x] Handle letter keys: `'a` through `'z` (case-insensitive)
+- [x] Handle number keys: `'0` through `'9`
+- [x] Handle special keys: `'escape`, `'space`, `'return`, `'tab`, `'backspace`, `'delete`
+- [x] Handle arrow keys: `'up`, `'down`, `'left`, `'right`
+- [x] Handle modifier keys: `'left-shift`, `'right-shift`, `'left-ctrl`, `'right-ctrl`, `'left-alt`, `'right-alt`
+- [x] Handle function keys: `'f1` through `'f12`
+- [x] Handle navigation: `'home`, `'end`, `'page-up`, `'page-down`, `'insert`
 
-### 1.2 Update Keyboard State API
-- [ ] Modify `key-pressed?` to accept symbol or scancode
-- [ ] Modify `get-keyboard-state` to return procedure accepting symbol or scancode
-- [ ] Add `symbol->scancode` and `scancode->symbol` helpers
-- [ ] Add `symbol->keycode` and `keycode->symbol` helpers
+### 1.2 Update Keyboard State API ✅
+- [x] Modify `key-pressed?` to accept symbol or scancode
+- [x] Modify `get-keyboard-state` to return procedure accepting symbol or scancode
+- [x] Add `symbol->scancode` and `scancode->symbol` helpers
+- [x] Add `symbol->keycode` and `keycode->symbol` helpers
 
-### 1.3 Update Event Matching (Optional Enhancement)
-- [ ] Consider adding key symbol to `key-event` struct (alongside integer keycode)
-- [ ] Or provide `key-event-symbol` accessor that converts on demand
+### 1.3 Update Event Matching ✅
+- [x] Modified `key-event` struct to provide key as symbol directly (not integer keycode)
+- [x] Falls back to integer keycode for unknown keys
+- [x] Enables clean pattern matching: `[(key-event 'down 'escape _ _ _) ...]`
 
-### 1.4 Update Examples
-- [ ] `examples/basics/input.rkt` - replace `SDL_SCANCODE_*` with symbols
-- [ ] `examples/input/keyboard.rkt` - replace `SDLK_*` and `SDL_SCANCODE_*`
-- [ ] `examples/advanced/collision.rkt` - replace `SDLK_*`
-- [ ] All other examples using keyboard constants
+### 1.4 Update Examples ✅
+- [x] `examples/basics/input.rkt` - uses `(kbd 'w)`, `(kbd 'up)`, etc.
+- [x] `examples/input/keyboard.rkt` - uses symbol-based matching
+- [x] `examples/advanced/collision.rkt` - uses `(key-event 'down 'escape _ _ _)`
+- [x] All 58 other examples and 3 demos updated to use symbol-based keys
 
 ## Phase 2: Symbol-Based Flags (Medium Priority)
 
 ### 2.1 Window Flags
 - [ ] Create mapping: `'resizable` -> `SDL_WINDOW_RESIZABLE`, etc.
 - [ ] Update `make-window` to accept `#:flags '(resizable high-pixel-density)`
-- [ ] Keep integer flags working for backwards compatibility
 - [ ] Supported symbols:
   - `'resizable`, `'fullscreen`, `'borderless`, `'hidden`
   - `'high-pixel-density`, `'always-on-top`, `'minimized`, `'maximized`
@@ -68,7 +68,6 @@ This is the biggest friction point in examples.
 ### 2.3 Hint Names
 - [ ] Add symbol-based hint names: `'render-vsync`, `'app-name`
 - [ ] Update `set-hint!` / `get-hint` to accept symbols or strings
-- [ ] Keep string names working
 
 ## Phase 3: Object-Based Parameters (Medium Priority)
 
@@ -93,10 +92,6 @@ This is the biggest friction point in examples.
 ### 4.2 Syntax Forms (Optional)
 - [ ] Consider `with-sdl`, `with-window`, etc. macros for prettier syntax
 - [ ] These would just wrap the `call-with-*` procedures
-
-### 4.3 Update Examples
-- [ ] Update `examples/basics/` to use scoped helpers
-- [ ] Show both styles in documentation
 
 ## Phase 5: Geometry Cleanup (Low Priority)
 

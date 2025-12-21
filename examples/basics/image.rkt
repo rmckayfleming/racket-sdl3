@@ -32,7 +32,7 @@
       (for/or ([ev (in-events)])
         (match ev
           [(quit-event) #t]
-          [(key-event 'down (== SDLK_ESCAPE) _ _ _) #t]
+          [(key-event 'down 'escape _ _ _) #t]
           [_ #f])))
 
     (unless quit?

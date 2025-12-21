@@ -377,7 +377,7 @@ MSL
       (for ([e (in-events)])
         (match e
           [(quit-event) (set! running? #f)]
-          [(key-event 'down key _ _ _) (if (= key SDLK_ESCAPE) (set! running? #f) (void))]
+          [(key-event 'down 'escape _ _ _) (set! running? #f)]
           [_ (void)]))
 
       (when running?

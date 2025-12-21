@@ -174,10 +174,8 @@
             [(or (quit-event) (window-event 'close-requested))
              (values clicked #f)]
 
-            [(key-event 'down key _ _ _)
-             (if (= key SDLK_ESCAPE)
-                 (values clicked #f)
-                 (values clicked run?))]
+            [(key-event 'down 'escape _ _ _)
+             (values clicked #f)]
 
             ;; Mouse button down - track which button was pressed
             [(mouse-button-event 'down 'left x y _)

@@ -181,8 +181,8 @@
           (match ev
             [(or (quit-event) (window-event 'close-requested))
              #f]
-            [(key-event 'down key _ _ _)
-             (if (= key SDLK_ESCAPE) #f run?)]
+            [(key-event 'down 'escape _ _ _) #f]
+            [(key-event 'down _ _ _ _) run?]
             [_ run?])))
 
       ;; Clear screen

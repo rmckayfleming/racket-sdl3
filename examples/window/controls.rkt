@@ -77,91 +77,82 @@
             [(or (quit-event) (window-event 'close-requested))
              (values #f oidx bord?)]
 
+            [(key-event 'down 'escape _ _ _) (values #f oidx bord?)]
+
+            [(key-event 'down 'left _ _ _)
+             (window-set-position! window (- win-x move-step) win-y)
+             (values run? oidx bord?)]
+
+            [(key-event 'down 'right _ _ _)
+             (window-set-position! window (+ win-x move-step) win-y)
+             (values run? oidx bord?)]
+
+            [(key-event 'down 'up _ _ _)
+             (window-set-position! window win-x (- win-y move-step))
+             (values run? oidx bord?)]
+
+            [(key-event 'down 'down _ _ _)
+             (window-set-position! window win-x (+ win-y move-step))
+             (values run? oidx bord?)]
+
+            [(key-event 'down 'minus _ _ _)
+             (window-set-size! window
+                               (max min-size (- win-w size-step))
+                               (max min-size (- win-h size-step)))
+             (values run? oidx bord?)]
+
+            [(key-event 'down 'f _ _ _)
+             (window-set-fullscreen! window (not fullscreen?))
+             (values run? oidx bord?)]
+
+            [(key-event 'down 'c _ _ _)
+             (window-set-position! window
+                                   (quotient (- 1920 win-w) 2)
+                                   (quotient (- 1080 win-h) 2))
+             (values run? oidx bord?)]
+
+            [(key-event 'down 'r _ _ _)
+             (when fullscreen?
+               (window-set-fullscreen! window #f))
+             (window-set-size! window initial-width initial-height)
+             (window-set-position! window init-x init-y)
+             (set-window-opacity! window 1.0)
+             (set-window-bordered! window #t)
+             (values run? 0 #t)]  ; reset opacity-idx and bordered?
+
+            [(key-event 'down 'o _ _ _)
+             (define next-idx (modulo (+ oidx 1) (length opacity-levels)))
+             (define next-opacity (list-ref opacity-levels next-idx))
+             (set-window-opacity! window next-opacity)
+             (values run? next-idx bord?)]
+
+            [(key-event 'down 'b _ _ _)
+             (define new-bord? (not bord?))
+             (set-window-bordered! window new-bord?)
+             (values run? oidx new-bord?)]
+
+            [(key-event 'down 'm _ _ _)
+             (minimize-window! window)
+             (values run? oidx bord?)]
+
+            [(key-event 'down 'x _ _ _)
+             (maximize-window! window)
+             (values run? oidx bord?)]
+
+            [(key-event 'down 'a _ _ _)
+             (flash-window! window 'briefly)
+             (values run? oidx bord?)]
+
+            [(key-event 'down 't _ _ _)
+             (printf "Window title: ~a~n" (window-title window))
+             (values run? oidx bord?)]
+
             [(key-event 'down key _ _ _)
              (cond
-               [(= key SDLK_ESCAPE) (values #f oidx bord?)]
-
-               ;; Arrow keys - move window
-               [(= key SDLK_LEFT)
-                (window-set-position! window (- win-x move-step) win-y)
-                (values run? oidx bord?)]
-               [(= key SDLK_RIGHT)
-                (window-set-position! window (+ win-x move-step) win-y)
-                (values run? oidx bord?)]
-               [(= key SDLK_UP)
-                (window-set-position! window win-x (- win-y move-step))
-                (values run? oidx bord?)]
-               [(= key SDLK_DOWN)
-                (window-set-position! window win-x (+ win-y move-step))
-                (values run? oidx bord?)]
-
                ;; +/= - increase size
-               [(or (= key SDLK_EQUALS) (= key SDLK_PLUS))
+               [(or (eq? key 'equals) (eq? key 'kp-plus))
                 (window-set-size! window (+ win-w size-step) (+ win-h size-step))
                 (values run? oidx bord?)]
-
-               ;; - decrease size
-               [(= key SDLK_MINUS)
-                (window-set-size! window
-                                  (max min-size (- win-w size-step))
-                                  (max min-size (- win-h size-step)))
-                (values run? oidx bord?)]
-
-               ;; F - toggle fullscreen
-               [(= key SDLK_F)
-                (window-set-fullscreen! window (not fullscreen?))
-                (values run? oidx bord?)]
-
-               ;; C - center window (approximate, assumes 1920x1080 display)
-               [(= key SDLK_C)
-                (window-set-position! window
-                                      (quotient (- 1920 win-w) 2)
-                                      (quotient (- 1080 win-h) 2))
-                (values run? oidx bord?)]
-
-               ;; R - reset
-               [(= key SDLK_R)
-                (when fullscreen?
-                  (window-set-fullscreen! window #f))
-                (window-set-size! window initial-width initial-height)
-                (window-set-position! window init-x init-y)
-                (set-window-opacity! window 1.0)
-                (set-window-bordered! window #t)
-                (values run? 0 #t)]  ; reset opacity-idx and bordered?
-
-               ;; O - cycle opacity
-               [(= key SDLK_O)
-                (define next-idx (modulo (+ oidx 1) (length opacity-levels)))
-                (define next-opacity (list-ref opacity-levels next-idx))
-                (set-window-opacity! window next-opacity)
-                (values run? next-idx bord?)]
-
-               ;; B - toggle border
-               [(= key SDLK_B)
-                (define new-bord? (not bord?))
-                (set-window-bordered! window new-bord?)
-                (values run? oidx new-bord?)]
-
-               ;; M - minimize
-               [(= key SDLK_M)
-                (minimize-window! window)
-                (values run? oidx bord?)]
-
-               ;; X - maximize
-               [(= key SDLK_X)
-                (maximize-window! window)
-                (values run? oidx bord?)]
-
-               ;; A - flash window
-               [(= key SDLK_A)
-                (flash-window! window 'briefly)
-                (values run? oidx bord?)]
-
-               ;; T - show window title
-               [(= key SDLK_T)
-                (printf "Window title: ~a~n" (window-title window))
-                (values run? oidx bord?)]
-
                [else (values run? oidx bord?)])]
 
             [_ (values run? oidx bord?)])))

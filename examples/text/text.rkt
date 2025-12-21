@@ -13,7 +13,6 @@
 (define window-height 600)
 (define font-path "/System/Library/Fonts/Supplemental/Arial.ttf")
 (define base-font-size 24.0)
-(define backspace-key 8)
 
 (define (trim-last s)
   (if (zero? (string-length s))
@@ -80,26 +79,29 @@
             [(or (quit-event) (window-event 'close-requested))
              (values curr-text #f)]
 
-            [(key-event 'down key _ mod _)
-             (define cmd-or-ctrl? (or (mod-gui? mod) (mod-ctrl? mod)))
-             (cond
-               [(= key SDLK_ESCAPE) (values curr-text #f)]
-               [(= key backspace-key) (values (trim-last curr-text) run?)]
-               ;; Cmd/Ctrl+C: copy current text
-               [(and cmd-or-ctrl? (= key SDLK_C))
-                (when (> (string-length curr-text) 0)
-                  (set-clipboard-text! curr-text)
-                  (printf "Copied: ~a~n" curr-text))
-                (values curr-text run?)]
-               ;; Cmd/Ctrl+V: paste from clipboard
-               [(and cmd-or-ctrl? (= key SDLK_V))
-                (define pasted (clipboard-text))
-                (if pasted
-                    (begin
-                      (printf "Pasted: ~a~n" pasted)
-                      (values (string-append curr-text pasted) run?))
-                    (values curr-text run?))]
-               [else (values curr-text run?)])]
+            [(key-event 'down 'escape _ _ _)
+             (values curr-text #f)]
+
+            [(key-event 'down 'backspace _ _ _)
+             (values (trim-last curr-text) run?)]
+
+            ;; Cmd/Ctrl+C: copy current text
+            [(key-event 'down 'c _ mod _)
+             #:when (or (mod-gui? mod) (mod-ctrl? mod))
+             (when (> (string-length curr-text) 0)
+               (set-clipboard-text! curr-text)
+               (printf "Copied: ~a~n" curr-text))
+             (values curr-text run?)]
+
+            ;; Cmd/Ctrl+V: paste from clipboard
+            [(key-event 'down 'v _ mod _)
+             #:when (or (mod-gui? mod) (mod-ctrl? mod))
+             (define pasted (clipboard-text))
+             (if pasted
+                 (begin
+                   (printf "Pasted: ~a~n" pasted)
+                   (values (string-append curr-text pasted) run?))
+                 (values curr-text run?))]
 
             [(text-input-event txt)
              (values (string-append curr-text txt) run?)]

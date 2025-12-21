@@ -64,15 +64,13 @@
                    #:break (not run?))
           (match ev
             [(or (quit-event) (window-event 'close-requested)) #f]
-            [(key-event 'down key _ _ _)
-             (cond
-               [(= key SDLK_ESCAPE) #f]
-               [(= key SDLK_W)
-                (set! wrap-visible? (not wrap-visible?))
-                (set-text-wrap-whitespace-visible! text-obj wrap-visible?)
-                (update-text! text-obj)
-                run?]
-               [else run?])]
+            [(key-event 'down 'escape _ _ _) #f]
+
+            [(key-event 'down 'w _ _ _)
+             (set! wrap-visible? (not wrap-visible?))
+             (set-text-wrap-whitespace-visible! text-obj wrap-visible?)
+             (update-text! text-obj)
+             run?]
             [_ run?])))
 
       (when still-running?

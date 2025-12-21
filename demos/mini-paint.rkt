@@ -210,13 +210,13 @@
             [(or (quit-event) (window-event 'close-requested))
              (values #f col size draw? lx ly msg)]
 
+            [(key-event 'down 'escape _ _ _)
+             (values #f col size draw? lx ly msg)]
+
             [(key-event 'down key _ _ _)
              (cond
-               [(= key SDLK_ESCAPE)
-                (values #f col size draw? lx ly msg)]
-
                ;; Open file
-               [(= key SDLK_O)
+               [(eq? key 'o)
                 (define files (open-file-dialog
                                #:filters image-filters
                                #:allow-multiple? #t
@@ -252,7 +252,7 @@
                   [else (values run? col size draw? lx ly msg)])]
 
                ;; Save file
-               [(= key SDLK_S)
+               [(eq? key 's)
                 (define file (save-file-dialog
                               #:filters save-filters
                               #:default-path "drawing.png"
@@ -274,35 +274,35 @@
                              (~a "Saved: " path)))])]
 
                ;; Clear canvas
-               [(= key SDLK_C)
+               [(eq? key 'c)
                 (with-render-target renderer canvas
                   (set-draw-color! renderer 255 255 255)
                   (render-clear! renderer))
                 (values run? col size draw? lx ly "Canvas cleared")]
 
                ;; Transforms
-               [(= key SDLK_H)
+               [(eq? key 'h)
                 (transform-canvas! renderer canvas 'flip-h)
                 (values run? col size draw? lx ly "Flipped horizontal")]
-               [(= key SDLK_V)
+               [(eq? key 'v)
                 (transform-canvas! renderer canvas 'flip-v)
                 (values run? col size draw? lx ly "Flipped vertical")]
-               [(= key SDLK_R)
+               [(eq? key 'r)
                 (transform-canvas! renderer canvas 'rotate-cw)
                 (values run? col size draw? lx ly "Rotated 90 degrees")]
 
                ;; Color selection
-               [(= key SDLK_1) (values run? 0 size draw? lx ly "Color: Black")]
-               [(= key SDLK_2) (values run? 1 size draw? lx ly "Color: Red")]
-               [(= key SDLK_3) (values run? 2 size draw? lx ly "Color: Green")]
-               [(= key SDLK_4) (values run? 3 size draw? lx ly "Color: Blue")]
-               [(= key SDLK_5) (values run? 4 size draw? lx ly "Color: White (eraser)")]
+               [(eq? key '1) (values run? 0 size draw? lx ly "Color: Black")]
+               [(eq? key '2) (values run? 1 size draw? lx ly "Color: Red")]
+               [(eq? key '3) (values run? 2 size draw? lx ly "Color: Green")]
+               [(eq? key '4) (values run? 3 size draw? lx ly "Color: Blue")]
+               [(eq? key '5) (values run? 4 size draw? lx ly "Color: White (eraser)")]
 
                ;; Brush size
-               [(or (= key SDLK_EQUALS) (= key SDLK_PLUS) (= key SDLK_KP_PLUS))
+               [(or (eq? key 'equals) (eq? key 'kp-plus))
                 (define new-size (min 50 (+ size 2)))
                 (values run? col new-size draw? lx ly (~a "Brush size: " new-size))]
-               [(or (= key SDLK_MINUS) (= key SDLK_KP_MINUS))
+               [(or (eq? key 'minus) (eq? key 'kp-minus))
                 (define new-size (max 2 (- size 2)))
                 (values run? col new-size draw? lx ly (~a "Brush size: " new-size))]
 

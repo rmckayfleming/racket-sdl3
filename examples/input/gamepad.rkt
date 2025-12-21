@@ -196,7 +196,7 @@
       [(quit-event)
        (set! running? #f)]
 
-      [(key-event 'down (== SDLK_ESCAPE) _ _ _)
+      [(key-event 'down (== (symbol->keycode 'escape)) _ _ _)
        (set! running? #f)]
 
       ;; Gamepad connected (or joystick that might be a gamepad)

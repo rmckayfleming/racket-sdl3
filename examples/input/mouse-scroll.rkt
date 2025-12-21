@@ -183,10 +183,11 @@
              #f]
 
             ;; Key events - track modifiers and handle escape
-            [(key-event type key _ mod _)
+            [(key-event 'down 'escape _ mod _)
+             (set! current-mod mod) #f]
+            [(key-event _ _ _ mod _)
              ;; Update modifier state from key event
-             (set! current-mod mod)
-             (if (and (eq? type 'down) (= key SDLK_ESCAPE)) #f run?)]
+             (set! current-mod mod) run?]
 
             ;; Mouse wheel - main scrolling logic
             [(mouse-wheel-event wx wy direction mx my)

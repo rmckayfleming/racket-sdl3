@@ -99,12 +99,12 @@
           (match ev
             [(or (quit-event) (window-event 'close-requested))
              (values #f #f #f)]
-            [(key-event 'down key _ _ _)
-             (if (= key SDLK_ESCAPE)
-                 (if captured?
-                     (values run? #f #t)  ; release on escape if captured
-                     (values #f #f #f))   ; quit on escape if not captured
-                 (values run? capture? release?))]
+            [(key-event 'down 'escape _ _ _)
+             (if captured?
+                 (values run? #f #t)  ; release on escape if captured
+                 (values #f #f #f))]  ; quit on escape if not captured
+            [(key-event 'down _ _ _ _)
+             (values run? capture? release?)]
             [(mouse-button-event 'down _ _ _ _)
              (if (not captured?)
                  (values run? #t #f)

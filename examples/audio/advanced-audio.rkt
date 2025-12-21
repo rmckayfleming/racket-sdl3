@@ -80,16 +80,18 @@
                    #:break (not run?))
           (match ev
             [(or (quit-event) (window-event 'close-requested)) #f]
+            [(key-event 'down 'escape _ _ _) #f]
+
+            [(key-event 'down 'space _ _ _)
+             (play-audio! stream converted-data converted-length)
+             run?]
+
             [(key-event 'down key _ _ _)
              (cond
-               [(= key SDLK_ESCAPE) #f]
-               [(= key SDLK_SPACE)
-                (play-audio! stream converted-data converted-length)
-                run?]
-               [(or (= key SDLK_M) (= key SDLK_N))
+               [(or (eq? key 'm) (eq? key 'n))
                 (play-audio! stream mix-buf converted-length)
                 run?]
-               [(= key SDLK_P)
+               [(eq? key 'p)
                 (if paused?
                     (begin
                       (resume-audio-stream-device! stream)

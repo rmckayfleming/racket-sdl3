@@ -125,24 +125,26 @@
             [(or (quit-event) (window-event 'close-requested))
              (values x dur pause? rev? #f)]
 
-            [(key-event 'down key _ _ _)
-             (cond
-               [(= key SDLK_ESCAPE)
-                (values x dur pause? rev? #f)]
-               [(= key SDLK_LEFT)
-                (values (max 50 (- x 20)) dur pause? rev? run?)]
-               [(= key SDLK_RIGHT)
-                (values (min (- window-width 50) (+ x 20)) dur pause? rev? run?)]
-               [(= key SDLK_UP)
-                (values x (max 20 (- dur 20)) pause? rev? run?)]
-               [(= key SDLK_DOWN)
-                (values x (min 500 (+ dur 20)) pause? rev? run?)]
-               [(= key SDLK_SPACE)
-                (values x dur (not pause?) rev? run?)]
-               [(= key SDLK_R)
-                (values x dur pause? (not rev?) run?)]
-               [else
-                (values x dur pause? rev? run?)])]
+            [(key-event 'down 'escape _ _ _)
+             (values x dur pause? rev? #f)]
+
+            [(key-event 'down 'left _ _ _)
+             (values (max 50 (- x 20)) dur pause? rev? run?)]
+
+            [(key-event 'down 'right _ _ _)
+             (values (min (- window-width 50) (+ x 20)) dur pause? rev? run?)]
+
+            [(key-event 'down 'up _ _ _)
+             (values x (max 20 (- dur 20)) pause? rev? run?)]
+
+            [(key-event 'down 'down _ _ _)
+             (values x (min 500 (+ dur 20)) pause? rev? run?)]
+
+            [(key-event 'down 'space _ _ _)
+             (values x dur (not pause?) rev? run?)]
+
+            [(key-event 'down 'r _ _ _)
+             (values x dur pause? (not rev?) run?)]
 
             [_ (values x dur pause? rev? run?)])))
 

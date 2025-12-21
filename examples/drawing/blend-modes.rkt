@@ -20,13 +20,6 @@
 (define font-path "/System/Library/Fonts/Supplemental/Arial.ttf")
 (define base-font-size 20.0)
 
-;; Number keys 1-5
-(define SDLK_1 49)
-(define SDLK_2 50)
-(define SDLK_3 51)
-(define SDLK_4 52)
-(define SDLK_5 53)
-
 ;; Blend mode info for display
 (define blend-modes
   '((none . "1: None - No blending (opaque)")
@@ -61,14 +54,15 @@
           (match ev
             [(or (quit-event) (window-event 'close-requested))
              (values mode #f)]
+            [(key-event 'down 'escape _ _ _) (values mode #f)]
+
             [(key-event 'down key _ _ _)
              (cond
-               [(= key SDLK_ESCAPE) (values mode #f)]
-               [(= key SDLK_1) (values 'none run?)]
-               [(= key SDLK_2) (values 'blend run?)]
-               [(= key SDLK_3) (values 'add run?)]
-               [(= key SDLK_4) (values 'mod run?)]
-               [(= key SDLK_5) (values 'mul run?)]
+               [(eq? key '1) (values 'none run?)]
+               [(eq? key '2) (values 'blend run?)]
+               [(eq? key '3) (values 'add run?)]
+               [(eq? key '4) (values 'mod run?)]
+               [(eq? key '5) (values 'mul run?)]
                [else (values mode run?)])]
             [_ (values mode run?)])))
 

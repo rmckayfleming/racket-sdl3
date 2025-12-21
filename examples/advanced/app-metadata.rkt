@@ -42,9 +42,8 @@
         (match ev
           [(or (quit-event) (window-event 'close-requested))
            (set! running? #f)]
-          [(key-event 'down key _ _ _)
-           (when (= key SDLK_ESCAPE)
-             (set! running? #f))]
+          [(key-event 'down 'escape _ _ _)
+           (set! running? #f)]
           [_ (void)]))
 
       (set-draw-color! renderer 20 20 30)

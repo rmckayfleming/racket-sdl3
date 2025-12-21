@@ -97,26 +97,26 @@
   (define green '(100 200 100))
   (define yellow '(200 200 100))
 
-  ;; WASD keys
+  ;; WASD keys (using symbol-based key lookup)
   (draw-key-box! renderer (+ wasd-x key-w gap) wasd-y key-w key-h "W"
-                 (kbd SDL_SCANCODE_W) green)
+                 (kbd 'w) green)
   (draw-key-box! renderer wasd-x (+ wasd-y key-h gap) key-w key-h "A"
-                 (kbd SDL_SCANCODE_A) green)
+                 (kbd 'a) green)
   (draw-key-box! renderer (+ wasd-x key-w gap) (+ wasd-y key-h gap) key-w key-h "S"
-                 (kbd SDL_SCANCODE_S) green)
+                 (kbd 's) green)
   (draw-key-box! renderer (+ wasd-x (* 2 (+ key-w gap))) (+ wasd-y key-h gap) key-w key-h "D"
-                 (kbd SDL_SCANCODE_D) green)
+                 (kbd 'd) green)
 
   ;; Arrow keys
   (define arrow-x 160)
   (draw-key-box! renderer (+ arrow-x key-w gap) wasd-y key-w key-h "^"
-                 (kbd SDL_SCANCODE_UP) yellow)
+                 (kbd 'up) yellow)
   (draw-key-box! renderer arrow-x (+ wasd-y key-h gap) key-w key-h "<"
-                 (kbd SDL_SCANCODE_LEFT) yellow)
+                 (kbd 'left) yellow)
   (draw-key-box! renderer (+ arrow-x key-w gap) (+ wasd-y key-h gap) key-w key-h "v"
-                 (kbd SDL_SCANCODE_DOWN) yellow)
+                 (kbd 'down) yellow)
   (draw-key-box! renderer (+ arrow-x (* 2 (+ key-w gap))) (+ wasd-y key-h gap) key-w key-h ">"
-                 (kbd SDL_SCANCODE_RIGHT) yellow))
+                 (kbd 'right) yellow))
 
 ;; Draw modifier state
 (define (draw-mod-state! renderer)
@@ -233,25 +233,22 @@
             [(or (quit-event) (window-event 'close-requested))
              #f]
 
-            ;; Event-driven key handling
+            ;; Event-driven key handling (key is now a symbol!)
+            [(key-event 'down 'escape _ _ _) #f]
+            [(key-event 'down 'r _ _ _)
+             (set! last-key-pressed "r") (set! last-key-time current-time)
+             (set! bg-r 80) (set! bg-g 30) (set! bg-b 30) run?]
+            [(key-event 'down 'g _ _ _)
+             (set! last-key-pressed "g") (set! last-key-time current-time)
+             (set! bg-r 30) (set! bg-g 80) (set! bg-b 30) run?]
+            [(key-event 'down 'b _ _ _)
+             (set! last-key-pressed "b") (set! last-key-time current-time)
+             (set! bg-r 30) (set! bg-g 30) (set! bg-b 80) run?]
             [(key-event 'down key _ _ _)
-             ;; Track last key for display
+             ;; Track other keys for display
              (set! last-key-pressed (key-name key))
              (set! last-key-time current-time)
-
-             (cond
-               [(= key SDLK_ESCAPE) #f]
-               ;; Event-driven color changes
-               [(= key SDLK_R)
-                (set! bg-r 80) (set! bg-g 30) (set! bg-b 30)
-                run?]
-               [(= key SDLK_G)
-                (set! bg-r 30) (set! bg-g 80) (set! bg-b 30)
-                run?]
-               [(= key SDLK_B)
-                (set! bg-r 30) (set! bg-g 30) (set! bg-b 80)
-                run?]
-               [else run?])]
+             run?]
 
             [_ run?])))
 
@@ -262,13 +259,14 @@
               (* move-speed 2)
               move-speed))
 
-        (when (or (kbd SDL_SCANCODE_W) (kbd SDL_SCANCODE_UP))
+        ;; Using symbol-based keys for movement
+        (when (or (kbd 'w) (kbd 'up))
           (set! player-y (max (/ player-size 2) (- player-y speed))))
-        (when (or (kbd SDL_SCANCODE_S) (kbd SDL_SCANCODE_DOWN))
+        (when (or (kbd 's) (kbd 'down))
           (set! player-y (min (- window-height (/ player-size 2)) (+ player-y speed))))
-        (when (or (kbd SDL_SCANCODE_A) (kbd SDL_SCANCODE_LEFT))
+        (when (or (kbd 'a) (kbd 'left))
           (set! player-x (max (/ player-size 2) (- player-x speed))))
-        (when (or (kbd SDL_SCANCODE_D) (kbd SDL_SCANCODE_RIGHT))
+        (when (or (kbd 'd) (kbd 'right))
           (set! player-x (min (- window-width (/ player-size 2)) (+ player-x speed))))
 
         ;; Clear background (color set by events)

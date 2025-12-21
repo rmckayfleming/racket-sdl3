@@ -66,31 +66,24 @@
             [(or (quit-event) (window-event 'close-requested))
              (values #f vs? ss?)]
 
-            [(key-event 'down key _ _ _)
-             (cond
-               [(= key SDLK_ESCAPE) (values #f vs? ss?)]
+            [(key-event 'down 'escape _ _ _) (values #f vs? ss?)]
 
-               ;; V - Toggle vsync
-               [(= key SDLK_V)
-                (define new-vs? (not vs?))
-                (set-hint! hint-name-render-vsync (if new-vs? "1" "0"))
-                (printf "VSync hint set to: ~a~n" (if new-vs? "1" "0"))
-                (values run? new-vs? ss?)]
+            [(key-event 'down 'v _ _ _)
+             (define new-vs? (not vs?))
+             (set-hint! hint-name-render-vsync (if new-vs? "1" "0"))
+             (printf "VSync hint set to: ~a~n" (if new-vs? "1" "0"))
+             (values run? new-vs? ss?)]
 
-               ;; S - Toggle screensaver
-               [(= key SDLK_S)
-                (define new-ss? (not ss?))
-                (allow-screensaver! new-ss?)
-                (printf "Screensaver allowed: ~a~n" new-ss?)
-                (values run? vs? new-ss?)]
+            [(key-event 'down 's _ _ _)
+             (define new-ss? (not ss?))
+             (allow-screensaver! new-ss?)
+             (printf "Screensaver allowed: ~a~n" new-ss?)
+             (values run? vs? new-ss?)]
 
-               ;; R - Reset all hints
-               [(= key SDLK_R)
-                (reset-all-hints!)
-                (printf "All hints reset to defaults~n")
-                (values run? #f #t)]
-
-               [else (values run? vs? ss?)])]
+            [(key-event 'down 'r _ _ _)
+             (reset-all-hints!)
+             (printf "All hints reset to defaults~n")
+             (values run? #f #t)]
 
             [_ (values run? vs? ss?)])))
 

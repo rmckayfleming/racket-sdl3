@@ -39,8 +39,8 @@
                  #:break (not run?))
         (match e
           [(quit-event) #f]
-          [(key-event 'down key _ _ _)
-           (if (= key SDLK_ESCAPE) #f run?)]
+          [(key-event 'down 'escape _ _ _) #f]
+          [(key-event 'down _ _ _ _) run?]
           [_ run?])))
     (when running?
       (delay! 16)

@@ -44,9 +44,9 @@
     (for ([ev (in-events)])
       (match ev
         [(quit-event) (set! running? #f)]
-        [(key-event 'down (== SDLK_ESCAPE) _ _ _) (set! running? #f)]
-        [(key-event 'down (== SDLK_H) _ _ _) (set! flip-h? (not flip-h?))]
-        [(key-event 'down (== SDLK_V) _ _ _) (set! flip-v? (not flip-v?))]
+        [(key-event 'down 'escape _ _ _) (set! running? #f)]
+        [(key-event 'down 'h _ _ _) (set! flip-h? (not flip-h?))]
+        [(key-event 'down 'v _ _ _) (set! flip-v? (not flip-v?))]
         [(camera-device-event 'denied _)
          (printf "Camera permission denied.~n")
          (set! running? #f)]

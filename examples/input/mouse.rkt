@@ -188,17 +188,14 @@
           (match ev
             [(or (quit-event) (window-event 'close-requested)) #f]
 
-            [(key-event 'down key _ _ _)
-             (cond
-               [(= key SDLK_ESCAPE) #f]
-               [(= key SDLK_SPACE)
-                (warp-mouse! window (/ window-width 2) (/ window-height 2))
-                run?]
-               [(= key SDLK_C)
-                (set! auto-capture? (not auto-capture?))
-                (capture-mouse! auto-capture?)
-                run?]
-               [else run?])]
+            [(key-event 'down 'escape _ _ _) #f]
+            [(key-event 'down 'space _ _ _)
+             (warp-mouse! window (/ window-width 2) (/ window-height 2))
+             run?]
+            [(key-event 'down 'c _ _ _)
+             (set! auto-capture? (not auto-capture?))
+             (capture-mouse! auto-capture?)
+             run?]
 
             ;; Mouse button down - start dragging
             [(mouse-button-event 'down 'left x y _)

@@ -90,18 +90,20 @@
           (match ev
             [(or (quit-event) (window-event 'close-requested))
              (values #f scale)]
+            [(key-event 'down 'escape _ _ _) (values #f scale)]
+
+            [(key-event 'down 'r _ _ _)
+             ;; Regenerate the pattern
+             (with-render-target renderer target-texture
+               (draw-pattern! renderer texture-size))
+             (values run? scale)]
+
             [(key-event 'down key _ _ _)
              (cond
-               [(= key SDLK_ESCAPE) (values #f scale)]
-               [(= key SDLK_R)
-                ;; Regenerate the pattern
-                (with-render-target renderer target-texture
-                  (draw-pattern! renderer texture-size))
-                (values run? scale)]
-               [(= key SDLK_1)
+               [(eq? key '1)
                 (texture-set-scale-mode! target-texture 'nearest)
                 (values run? 'nearest)]
-               [(= key SDLK_2)
+               [(eq? key '2)
                 (texture-set-scale-mode! target-texture 'linear)
                 (values run? 'linear)]
                [else (values run? scale)])]

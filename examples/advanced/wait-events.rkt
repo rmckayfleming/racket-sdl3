@@ -90,8 +90,8 @@
            (match ev
              [(or (quit-event) (window-event 'close-requested))
               #f]
-             [(key-event 'down key _ _ _)
-              (not (= key SDLK_ESCAPE))]
+             [(key-event 'down 'escape _ _ _) #f]
+             [(key-event 'down _ _ _ _) #t]
              [_ #t])]))
 
       ;; Render current state

@@ -187,64 +187,63 @@
             [(or (quit-event) (window-event 'close-requested))
              (values #f render?)]
 
-            [(key-event 'down key _ _ _)
-             (cond
-               [(= key SDLK_ESCAPE)
-                (values #f render?)]
+            [(key-event 'down 'escape _ _ _)
+             (values #f render?)]
 
-               ;; Pan with arrow keys
-               [(= key SDLK_LEFT)
-                (define pan-amount (/ 0.2 zoom))
-                (set! center-x (- center-x pan-amount))
-                (values run? #t)]
-               [(= key SDLK_RIGHT)
-                (define pan-amount (/ 0.2 zoom))
-                (set! center-x (+ center-x pan-amount))
-                (values run? #t)]
-               [(= key SDLK_UP)
-                (define pan-amount (/ 0.2 zoom))
-                (set! center-y (- center-y pan-amount))
-                (values run? #t)]
-               [(= key SDLK_DOWN)
-                (define pan-amount (/ 0.2 zoom))
-                (set! center-y (+ center-y pan-amount))
-                (values run? #t)]
+            ;; Pan with arrow keys
+            [(key-event 'down 'left _ _ _)
+             (define pan-amount (/ 0.2 zoom))
+             (set! center-x (- center-x pan-amount))
+             (values run? #t)]
+            [(key-event 'down 'right _ _ _)
+             (define pan-amount (/ 0.2 zoom))
+             (set! center-x (+ center-x pan-amount))
+             (values run? #t)]
+            [(key-event 'down 'up _ _ _)
+             (define pan-amount (/ 0.2 zoom))
+             (set! center-y (- center-y pan-amount))
+             (values run? #t)]
+            [(key-event 'down 'down _ _ _)
+             (define pan-amount (/ 0.2 zoom))
+             (set! center-y (+ center-y pan-amount))
+             (values run? #t)]
 
-               ;; Zoom with +/-
-               [(or (= key SDLK_EQUALS) (= key SDLK_PLUS) (= key SDLK_KP_PLUS))
-                (set! zoom (* zoom 1.5))
-                (values run? #t)]
-               [(or (= key SDLK_MINUS) (= key SDLK_KP_MINUS))
-                (set! zoom (max 0.1 (/ zoom 1.5)))
-                (values run? #t)]
+            ;; Zoom with +/-
+            [(key-event 'down (or 'equals 'kp-plus) _ _ _)
+             (set! zoom (* zoom 1.5))
+             (values run? #t)]
+            [(key-event 'down (or 'minus 'kp-minus) _ _ _)
+             (set! zoom (max 0.1 (/ zoom 1.5)))
+             (values run? #t)]
 
-               ;; Reset view
-               [(= key SDLK_R)
-                (set! center-x default-center-x)
-                (set! center-y default-center-y)
-                (set! zoom default-zoom)
-                (printf "View reset~n")
-                (values run? #t)]
+            ;; Reset view
+            [(key-event 'down 'r _ _ _)
+             (set! center-x default-center-x)
+             (set! center-y default-center-y)
+             (set! zoom default-zoom)
+             (printf "View reset~n")
+             (values run? #t)]
 
-               ;; Cycle palettes
-               [(= key SDLK_C)
-                (set! palette-idx (modulo (+ palette-idx 1) (vector-length palettes)))
-                (printf "Palette: ~a~n" (vector-ref palette-names palette-idx))
-                (values run? #t)]
+            ;; Cycle palettes
+            [(key-event 'down 'c _ _ _)
+             (set! palette-idx (modulo (+ palette-idx 1) (vector-length palettes)))
+             (printf "Palette: ~a~n" (vector-ref palette-names palette-idx))
+             (values run? #t)]
 
-               ;; Toggle info
-               [(= key SDLK_I)
-                (set! show-info? (not show-info?))
-                (values run? render?)]
+            ;; Toggle info
+            [(key-event 'down 'i _ _ _)
+             (set! show-info? (not show-info?))
+             (values run? render?)]
 
-               ;; Save screenshot
-               [(= key SDLK_S)
-                (define filename (format "mandelbrot-~a.png" (current-seconds)))
-                (save-png! surf filename)
-                (printf "Saved: ~a~n" filename)
-                (values run? render?)]
+            ;; Save screenshot
+            [(key-event 'down 's _ _ _)
+             (define filename (format "mandelbrot-~a.png" (current-seconds)))
+             (save-png! surf filename)
+             (printf "Saved: ~a~n" filename)
+             (values run? render?)]
 
-               [else (values run? render?)])]
+            [(key-event 'down _ _ _ _)
+             (values run? render?)]
 
             ;; Click to center on point
             [(mouse-button-event 'down 'left mx my _)

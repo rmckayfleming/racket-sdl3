@@ -95,12 +95,11 @@
           (match ev
             [(or (quit-event) (window-event 'close-requested))
              (values #f #f #f)]
-            [(key-event 'down key _ _ _)
-             (cond
-               [(= key SDLK_ESCAPE) (values #f #f #f)]
-               [(= key SDLK_S) (values run? #t jpg?)]
-               [(= key SDLK_J) (values run? png? #t)]
-               [else (values run? png? jpg?)])]
+            [(key-event 'down 'escape _ _ _) (values #f #f #f)]
+
+            [(key-event 'down 's _ _ _) (values run? #t jpg?)]
+
+            [(key-event 'down 'j _ _ _) (values run? png? #t)]
             [_ (values run? png? jpg?)])))
 
       (when still-running?

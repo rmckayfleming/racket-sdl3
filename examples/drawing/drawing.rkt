@@ -307,16 +307,18 @@
             [(or (quit-event) (window-event 'close-requested))
              (values #f m)]
 
+            [(key-event 'down 'escape _ _ _) (values #f m)]
+
+            [(key-event 'down 'space _ _ _)
+             (when (= m MODE-PARTICLES) (reset-particles!))
+             (values run? m)]
+
             [(key-event 'down key _ _ _)
              (cond
-               [(= key SDLK_ESCAPE) (values #f m)]
-               [(= key SDLK_1) (values run? MODE-PRIMITIVES)]
-               [(= key SDLK_2) (values run? MODE-TRIANGLES)]
-               [(= key SDLK_3) (values run? MODE-INDEXED)]
-               [(= key SDLK_4) (values run? MODE-PARTICLES)]
-               [(= key SDLK_SPACE)
-                (when (= m MODE-PARTICLES) (reset-particles!))
-                (values run? m)]
+               [(eq? key '1) (values run? MODE-PRIMITIVES)]
+               [(eq? key '2) (values run? MODE-TRIANGLES)]
+               [(eq? key '3) (values run? MODE-INDEXED)]
+               [(eq? key '4) (values run? MODE-PARTICLES)]
                [else (values run? m)])]
 
             [_ (values run? m)])))

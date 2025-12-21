@@ -40,18 +40,18 @@
       (for/or ([ev (in-events)])
         (match ev
           [(or (quit-event) (window-event 'close-requested)) #t]
-          [(key-event 'down (== SDLK_ESCAPE) _ _ _) #t]
-          [(key-event 'down (== SDLK_Q) _ _ _) #t]
-          [(key-event 'down (== SDLK_I) _ _ _)
+          [(key-event 'down 'escape _ _ _) #t]
+          [(key-event 'down 'q _ _ _) #t]
+          [(key-event 'down 'i _ _ _)
            (show-info-message (window-ptr window))
            #f]
-          [(key-event 'down (== SDLK_W) _ _ _)
+          [(key-event 'down 'w _ _ _)
            (show-warning-message (window-ptr window))
            #f]
-          [(key-event 'down (== SDLK_E) _ _ _)
+          [(key-event 'down 'e _ _ _)
            (show-error-message (window-ptr window))
            #f]
-          [(key-event 'down (== SDLK_C) _ _ _)
+          [(key-event 'down 'c _ _ _)
            (show-custom-dialog (window-ptr window))
            #f]
           [_ #f])))

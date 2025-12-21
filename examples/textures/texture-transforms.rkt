@@ -78,39 +78,44 @@
             [(or (quit-event) (window-event 'close-requested))
              (values cr cg cb ca a fh fv cont #f)]
 
+            [(key-event 'down 'escape _ _ _)
+             (values cr cg cb ca a fh fv cont #f)]
+
+            [(key-event 'down 'r _ _ _)
+             (values 255 100 100 ca a fh fv cont run?)]
+
+            [(key-event 'down 'g _ _ _)
+             (values 100 255 100 ca a fh fv cont run?)]
+
+            [(key-event 'down 'b _ _ _)
+             (values 100 100 255 ca a fh fv cont run?)]
+
+            [(key-event 'down 'up _ _ _)
+             (values cr cg cb (clamp (+ ca alpha-step) 0 255)
+                     a fh fv cont run?)]
+
+            [(key-event 'down 'down _ _ _)
+             (values cr cg cb (clamp (- ca alpha-step) 0 255)
+                     a fh fv cont run?)]
+
+            [(key-event 'down 'left _ _ _)
+             (values cr cg cb ca (- a rotation-step) fh fv cont run?)]
+
+            [(key-event 'down 'right _ _ _)
+             (values cr cg cb ca (+ a rotation-step) fh fv cont run?)]
+
+            [(key-event 'down 'h _ _ _)
+             (values cr cg cb ca a (not fh) fv cont run?)]
+
+            [(key-event 'down 'v _ _ _)
+             (values cr cg cb ca a fh (not fv) cont run?)]
+
+            [(key-event 'down 'space _ _ _)
+             (values cr cg cb ca a fh fv (not cont) run?)]
+
             [(key-event 'down key _ _ _)
              (cond
-               [(= key SDLK_ESCAPE)
-                (values cr cg cb ca a fh fv cont #f)]
-               ;; Color modulation
-               [(= key SDLK_R)
-                (values 255 100 100 ca a fh fv cont run?)]
-               [(= key SDLK_G)
-                (values 100 255 100 ca a fh fv cont run?)]
-               [(= key SDLK_B)
-                (values 100 100 255 ca a fh fv cont run?)]
-               ;; Alpha modulation
-               [(= key SDLK_UP)
-                (values cr cg cb (clamp (+ ca alpha-step) 0 255)
-                        a fh fv cont run?)]
-               [(= key SDLK_DOWN)
-                (values cr cg cb (clamp (- ca alpha-step) 0 255)
-                        a fh fv cont run?)]
-               ;; Rotation
-               [(= key SDLK_LEFT)
-                (values cr cg cb ca (- a rotation-step) fh fv cont run?)]
-               [(= key SDLK_RIGHT)
-                (values cr cg cb ca (+ a rotation-step) fh fv cont run?)]
-               ;; Flipping
-               [(= key SDLK_H)
-                (values cr cg cb ca a (not fh) fv cont run?)]
-               [(= key SDLK_V)
-                (values cr cg cb ca a fh (not fv) cont run?)]
-               ;; Continuous rotation toggle
-               [(= key SDLK_SPACE)
-                (values cr cg cb ca a fh fv (not cont) run?)]
-               ;; Reset all
-               [(= key SDLK_0)
+               [(eq? key '0)
                 (values 255 255 255 255 0.0 #f #f #f run?)]
                [else
                 (values cr cg cb ca a fh fv cont run?)])]

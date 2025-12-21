@@ -23,40 +23,40 @@
 (define last-mod 0)
 
 ;; Key layout for virtual keyboard display
-;; Each row is a list of (keycode display-label width)
+;; Each row is a list of (key-symbol display-label width)
 (define keyboard-layout
   (list
    ;; Row 1: Escape and Function keys
-   (list (list SDLK_ESCAPE "Esc" 1.5)
+   (list (list 'escape "Esc" 1.5)
          (list #f #f 0.5)  ; gap
-         (list SDLK_F1 "F1" 1) (list SDLK_F2 "F2" 1) (list SDLK_F3 "F3" 1) (list SDLK_F4 "F4" 1)
+         (list 'f1 "F1" 1) (list 'f2 "F2" 1) (list 'f3 "F3" 1) (list 'f4 "F4" 1)
          (list #f #f 0.5)
-         (list SDLK_F5 "F5" 1) (list SDLK_F6 "F6" 1) (list SDLK_F7 "F7" 1) (list SDLK_F8 "F8" 1)
+         (list 'f5 "F5" 1) (list 'f6 "F6" 1) (list 'f7 "F7" 1) (list 'f8 "F8" 1)
          (list #f #f 0.5)
-         (list SDLK_F9 "F9" 1) (list SDLK_F10 "F10" 1) (list SDLK_F11 "F11" 1) (list SDLK_F12 "F12" 1))
+         (list 'f9 "F9" 1) (list 'f10 "F10" 1) (list 'f11 "F11" 1) (list 'f12 "F12" 1))
    ;; Row 2: Numbers
-   (list (list SDLK_1 "1" 1) (list SDLK_2 "2" 1) (list SDLK_3 "3" 1) (list SDLK_4 "4" 1) (list SDLK_5 "5" 1)
-         (list SDLK_6 "6" 1) (list SDLK_7 "7" 1) (list SDLK_8 "8" 1) (list SDLK_9 "9" 1) (list SDLK_0 "0" 1)
-         (list SDLK_BACKSPACE "Back" 2))
+   (list (list '1 "1" 1) (list '2 "2" 1) (list '3 "3" 1) (list '4 "4" 1) (list '5 "5" 1)
+         (list '6 "6" 1) (list '7 "7" 1) (list '8 "8" 1) (list '9 "9" 1) (list '0 "0" 1)
+         (list 'backspace "Back" 2))
    ;; Row 3: QWERTY top row
-   (list (list SDLK_TAB "Tab" 1.5)
-         (list SDLK_Q "Q" 1) (list SDLK_W "W" 1) (list SDLK_E "E" 1) (list SDLK_R "R" 1) (list SDLK_T "T" 1)
-         (list SDLK_Y "Y" 1) (list SDLK_U "U" 1) (list SDLK_I "I" 1) (list SDLK_O "O" 1) (list SDLK_P "P" 1))
+   (list (list 'tab "Tab" 1.5)
+         (list 'q "Q" 1) (list 'w "W" 1) (list 'e "E" 1) (list 'r "R" 1) (list 't "T" 1)
+         (list 'y "Y" 1) (list 'u "U" 1) (list 'i "I" 1) (list 'o "O" 1) (list 'p "P" 1))
    ;; Row 4: ASDF row
    (list (list #f "Caps" 1.75)  ; Caps lock - not tracking
-         (list SDLK_A "A" 1) (list SDLK_S "S" 1) (list SDLK_D "D" 1) (list SDLK_F "F" 1) (list SDLK_G "G" 1)
-         (list SDLK_H "H" 1) (list SDLK_J "J" 1) (list SDLK_K "K" 1) (list SDLK_L "L" 1)
-         (list SDLK_RETURN "Enter" 1.75))
+         (list 'a "A" 1) (list 's "S" 1) (list 'd "D" 1) (list 'f "F" 1) (list 'g "G" 1)
+         (list 'h "H" 1) (list 'j "J" 1) (list 'k "K" 1) (list 'l "L" 1)
+         (list 'return "Enter" 1.75))
    ;; Row 5: ZXCV row
    (list (list #f "Shift" 2.25)  ; Shift - shown in modifier display
-         (list SDLK_Z "Z" 1) (list SDLK_X "X" 1) (list SDLK_C "C" 1) (list SDLK_V "V" 1) (list SDLK_B "B" 1)
-         (list SDLK_N "N" 1) (list SDLK_M "M" 1)
+         (list 'z "Z" 1) (list 'x "X" 1) (list 'c "C" 1) (list 'v "V" 1) (list 'b "B" 1)
+         (list 'n "N" 1) (list 'm "M" 1)
          (list #f "Shift" 2.25))
    ;; Row 6: Space row
    (list (list #f "Ctrl" 1.5) (list #f "Alt" 1.25) (list #f "Cmd" 1.25)
-         (list SDLK_SPACE "Space" 6)
+         (list 'space "Space" 6)
          (list #f "Cmd" 1.25) (list #f "Alt" 1.25)
-         (list SDLK_LEFT "<" 1) (list SDLK_DOWN "v" 1) (list SDLK_UP "^" 1) (list SDLK_RIGHT ">" 1))))
+         (list 'left "<" 1) (list 'down "v" 1) (list 'up "^" 1) (list 'right ">" 1))))
 
 ;; Drawing constants
 (define key-size 45)
@@ -192,7 +192,7 @@
              (set! last-mod mod)
              (printf "DOWN: ~a (keycode=~a, scancode=~a, mod=~a)~n"
                      last-key-name key scancode mod)
-             (if (= key SDLK_ESCAPE) #f run?)]
+             (if (eq? key 'escape) #f run?)]
 
             ;; Key up
             [(key-event 'up key _ mod _)

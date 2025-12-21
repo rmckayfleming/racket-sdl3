@@ -35,7 +35,7 @@
       (for/or ([ev (in-events)])
         (match ev
           [(quit-event) #t]
-          [(key-event 'down (== SDLK_ESCAPE) _ _ _) #t]
+          [(key-event 'down 'escape _ _ _) #t]
           ;; Click to change color
           [(mouse-button-event 'down _ _ _ _)
            (set! r (random 256))
@@ -45,14 +45,14 @@
           [_ #f])))
 
     (unless quit?
-      ;; Move with WASD or arrow keys
-      (when (or (kbd SDL_SCANCODE_W) (kbd SDL_SCANCODE_UP))
+      ;; Move with WASD or arrow keys (using symbol-based keys)
+      (when (or (kbd 'w) (kbd 'up))
         (set! y (max 0 (- y speed))))
-      (when (or (kbd SDL_SCANCODE_S) (kbd SDL_SCANCODE_DOWN))
+      (when (or (kbd 's) (kbd 'down))
         (set! y (min (- 600 size) (+ y speed))))
-      (when (or (kbd SDL_SCANCODE_A) (kbd SDL_SCANCODE_LEFT))
+      (when (or (kbd 'a) (kbd 'left))
         (set! x (max 0 (- x speed))))
-      (when (or (kbd SDL_SCANCODE_D) (kbd SDL_SCANCODE_RIGHT))
+      (when (or (kbd 'd) (kbd 'right))
         (set! x (min (- 800 size) (+ x speed))))
 
       ;; Draw
