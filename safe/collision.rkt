@@ -13,11 +13,13 @@
  rect-y
  rect-w
  rect-h
+ rect->values
  make-frect
  frect-x
  frect-y
  frect-w
  frect-h
+ frect->values
 
  ;; Collision detection
  rects-intersect?
@@ -63,6 +65,16 @@
 (define (frect-y r) (SDL_FRect-y r))
 (define (frect-w r) (SDL_FRect-w r))
 (define (frect-h r) (SDL_FRect-h r))
+
+;; Destructure rect into multiple values for convenient binding
+;; Example: (define-values (x y w h) (rect->values r))
+(define (rect->values r)
+  (values (SDL_Rect-x r) (SDL_Rect-y r) (SDL_Rect-w r) (SDL_Rect-h r)))
+
+;; Destructure floating rect into multiple values
+;; Example: (define-values (x y w h) (frect->values r))
+(define (frect->values r)
+  (values (SDL_FRect-x r) (SDL_FRect-y r) (SDL_FRect-w r) (SDL_FRect-h r)))
 
 ;; ============================================================================
 ;; Internal helpers
@@ -198,17 +210,21 @@
       (and ok? result))))
 
 ;; Clip a line segment to a rectangle
-;; Returns (list x1 y1 x2 y2) or #f if no intersection
+;; Returns (values x1 y1 x2 y2) if intersection exists, #f otherwise
 (define (rect-line-intersection rect x1 y1 x2 y2)
   (define-values (hit? nx1 ny1 nx2 ny2)
     (SDL-GetRectAndLineIntersection rect (_->int x1) (_->int y1) (_->int x2) (_->int y2)))
-  (and hit? (list nx1 ny1 nx2 ny2)))
+  (if hit?
+      (values nx1 ny1 nx2 ny2)
+      #f))
 
 ;; Clip a line segment to a floating rect
-;; Returns (list x1 y1 x2 y2) or #f if no intersection
+;; Returns (values x1 y1 x2 y2) if intersection exists, #f otherwise
 (define (frect-line-intersection rect x1 y1 x2 y2)
   (define-values (hit? nx1 ny1 nx2 ny2)
     (SDL-GetRectAndLineIntersectionFloat rect
                                          (_->float x1) (_->float y1)
                                          (_->float x2) (_->float y2)))
-  (and hit? (list nx1 ny1 nx2 ny2)))
+  (if hit?
+      (values nx1 ny1 nx2 ny2)
+      #f))

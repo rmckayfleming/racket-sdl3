@@ -108,17 +108,17 @@ This is the biggest friction point in examples.
 - [x] All syntax forms support keyword arguments (#:flags, #:window-flags, etc.)
 - [x] Added example: `examples/window/scoped-resources.rkt`
 
-## Phase 5: Geometry Cleanup (Low Priority)
+## Phase 5: Geometry Cleanup (Low Priority) ✅ COMPLETE
 
-### 5.1 Line Intersection
-- [ ] Change `rect-line-intersection` to return `(values x1 y1 x2 y2)` or `#f`
-- [ ] Change `frect-line-intersection` similarly
-- [ ] Update any code using the list return value
+### 5.1 Line Intersection ✅
+- [x] Change `rect-line-intersection` to return `(values x1 y1 x2 y2)` or `#f`
+- [x] Change `frect-line-intersection` similarly
+- [x] Update `examples/advanced/rect-utils.rkt` to use the new return format
 
-### 5.2 Rect Conversion Helpers
-- [ ] Add `rect->values`: `(define-values (x y w h) (rect->values r))`
-- [ ] Add `frect->values` similarly
-- [ ] These supplement existing accessors for convenient destructuring
+### 5.2 Rect Conversion Helpers ✅
+- [x] Add `rect->values`: `(define-values (x y w h) (rect->values r))`
+- [x] Add `frect->values` similarly
+- [x] These supplement existing accessors for convenient destructuring
 
 ## Non-Goals
 

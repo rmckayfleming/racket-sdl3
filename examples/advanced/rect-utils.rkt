@@ -53,10 +53,13 @@
         (define union-rect (rect-union rect-a rect-b))
         (define intersection (rect-intersection rect-a rect-b))
         (define enclosing (rect-enclosing-points points))
+        ;; rect-line-intersection returns (values x1 y1 x2 y2) or #f
         (define clipped-line
-          (rect-line-intersection rect-a
-                                  (point-x line-start) (point-y line-start)
-                                  (point-x line-end) (point-y line-end)))
+          (call-with-values
+           (λ () (rect-line-intersection rect-a
+                                         (point-x line-start) (point-y line-start)
+                                         (point-x line-end) (point-y line-end)))
+           (λ vals (and (car vals) vals))))
 
         (set-draw-color! renderer 25 25 35)
         (render-clear! renderer)
