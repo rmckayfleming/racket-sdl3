@@ -32,6 +32,12 @@
          _SDL_IOStream-pointer/null
          _SDL_Cursor-pointer
          _SDL_Cursor-pointer/null
+         _SDL_Tray-pointer
+         _SDL_Tray-pointer/null
+         _SDL_TrayMenu-pointer
+         _SDL_TrayMenu-pointer/null
+         _SDL_TrayEntry-pointer
+         _SDL_TrayEntry-pointer/null
          _SDL_Camera-pointer
          _SDL_Camera-pointer/null
          _SDL_GPUDevice-pointer
@@ -400,6 +406,8 @@
          _SDL_PixelFormat
          ;; Colorspace type
          _SDL_Colorspace
+         ;; Tray entry flags type
+         _SDL_TrayEntryFlags
          ;; System cursor type
          _SDL_SystemCursor
          ;; Audio types
@@ -494,6 +502,7 @@
          SDL_DialogFileFilter-name
          SDL_DialogFileFilter-pattern
          _SDL_DialogFileCallback
+         _SDL_TrayCallback
          ;; Joystick types
          _SDL_Joystick-pointer
          _SDL_Joystick-pointer/null
@@ -702,6 +711,9 @@
 (define-cpointer-type _SDL_Texture-pointer)
 (define-cpointer-type _SDL_IOStream-pointer)
 (define-cpointer-type _SDL_Cursor-pointer)
+(define-cpointer-type _SDL_Tray-pointer)
+(define-cpointer-type _SDL_TrayMenu-pointer)
+(define-cpointer-type _SDL_TrayEntry-pointer)
 (define-cpointer-type _SDL_Camera-pointer)
 (define-cpointer-type _SDL_GPUDevice-pointer)
 (define-cpointer-type _SDL_GPUTexture-pointer)
@@ -961,6 +973,9 @@
 ;; SDL_Colorspace - colorspace values
 (define _SDL_Colorspace _uint32)
 
+;; SDL_TrayEntryFlags - tray entry flag bitfield
+(define _SDL_TrayEntryFlags _uint32)
+
 ;; SDL_SystemCursor - predefined system cursor types
 (define _SDL_SystemCursor _int)
 
@@ -1096,6 +1111,14 @@
         _pointer           ; userdata
         _pointer           ; const char * const * filelist
         _int               ; filter index
+        -> _void))
+
+;; SDL_TrayCallback - callback invoked when tray entry is selected
+;; (userdata entry) -> void
+(define _SDL_TrayCallback
+  (_fun #:async-apply (lambda (thunk) (thunk))
+        _pointer           ; userdata
+        _SDL_TrayEntry-pointer
         -> _void))
 
 ;; ============================================================================

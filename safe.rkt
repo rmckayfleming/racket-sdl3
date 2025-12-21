@@ -28,6 +28,7 @@
          "safe/dialog.rkt"
          "safe/collision.rkt"
          "safe/hints.rkt"
+         "safe/tray.rkt"
          "safe/properties.rkt"
          "safe/gl.rkt"
          "safe/vulkan.rkt"
@@ -51,6 +52,7 @@
          (all-from-out "safe/dialog.rkt")
          (all-from-out "safe/collision.rkt")
          (all-from-out "safe/hints.rkt")
+         (all-from-out "safe/tray.rkt")
          (all-from-out "safe/properties.rkt")
          (all-from-out "safe/gl.rkt")
          (all-from-out "safe/vulkan.rkt")

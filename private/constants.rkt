@@ -58,6 +58,12 @@
  SDL_EVENT_CAMERA_DEVICE_REMOVED
  SDL_EVENT_CAMERA_DEVICE_APPROVED
  SDL_EVENT_CAMERA_DEVICE_DENIED
+ ;; Tray entry flags
+ SDL_TRAYENTRY_BUTTON
+ SDL_TRAYENTRY_CHECKBOX
+ SDL_TRAYENTRY_SUBMENU
+ SDL_TRAYENTRY_DISABLED
+ SDL_TRAYENTRY_CHECKED
  ;; Camera positions
  SDL_CAMERA_POSITION_UNKNOWN
  SDL_CAMERA_POSITION_FRONT_FACING
@@ -676,6 +682,15 @@
 (define SDL_EVENT_CAMERA_DEVICE_REMOVED #x1401)
 (define SDL_EVENT_CAMERA_DEVICE_APPROVED #x1402)
 (define SDL_EVENT_CAMERA_DEVICE_DENIED #x1403)
+
+;; ============================================================================
+;; Tray Entry Flags
+;; ============================================================================
+(define SDL_TRAYENTRY_BUTTON #x00000001)
+(define SDL_TRAYENTRY_CHECKBOX #x00000002)
+(define SDL_TRAYENTRY_SUBMENU #x00000004)
+(define SDL_TRAYENTRY_DISABLED #x80000000)
+(define SDL_TRAYENTRY_CHECKED #x40000000)
 
 ;; ============================================================================
 ;; Camera Positions

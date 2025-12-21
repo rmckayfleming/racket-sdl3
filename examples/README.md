@@ -15,6 +15,7 @@ A collection of examples demonstrating the sdl3 Racket library, organized from s
 7. **video/** - Camera capture and video input
 8. **advanced/** - Virtual cameras, viewports, collision
 9. **graphics/** - OpenGL, Vulkan, and GPU API examples
+10. **system/** - Tray menus and system integration
 
 ## Running Examples
 
@@ -149,6 +150,14 @@ System dialogs.
 | Example | Concepts |
 |---------|----------|
 | `message-box.rkt` | Show system message boxes |
+
+### system/
+
+System tray integration.
+
+| Example | Concepts |
+|---------|----------|
+| `tray-menu.rkt` | Tray icon, menus, callbacks |
 
 ## Demos
 

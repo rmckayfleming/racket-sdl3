@@ -33,7 +33,6 @@
 - [x] Add `safe/camera.rkt` for idiomatic camera usage.
 - [x] **Example:** Add `examples/video/camera-preview.rkt` to show a live camera feed.
 
-## Phase 6: System Integration & Storage
-- [ ] Implement `SDL_tray.h` bindings for system tray icons and menus.
-- [ ] Implement `SDL_storage.h` for abstract file storage access.
-- [ ] **Example:** Add `examples/system/tray-menu.rkt` and `examples/system/storage-access.rkt`.
+## Phase 6: System Tray Integration [DONE]
+- [x] Implement `SDL_tray.h` bindings for system tray icons and menus.
+- [x] **Example:** Add `examples/system/tray-menu.rkt`.

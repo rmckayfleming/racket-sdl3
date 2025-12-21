@@ -11,7 +11,7 @@ A complete idiomatic Racket layer on top of the raw bindings, providing:
 - Simpler APIs (fewer pointer manipulations)
 - Drawing helpers, texture management, font/text rendering, mouse state
 
-Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rkt`, `safe/ttf.rkt`, `safe/mouse.rkt`, `safe/keyboard.rkt`, `safe/clipboard.rkt`, `safe/timer.rkt`, `safe/audio.rkt`, `safe/camera.rkt`, `safe/display.rkt`, `safe/dialog.rkt`, `safe/hints.rkt`, `safe/joystick.rkt`, `safe/gamepad.rkt`, `safe/image.rkt`, `safe/collision.rkt`, `safe/gl.rkt`, `safe/vulkan.rkt`, `safe/gpu.rkt`
+Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rkt`, `safe/ttf.rkt`, `safe/mouse.rkt`, `safe/keyboard.rkt`, `safe/clipboard.rkt`, `safe/timer.rkt`, `safe/audio.rkt`, `safe/camera.rkt`, `safe/display.rkt`, `safe/dialog.rkt`, `safe/hints.rkt`, `safe/tray.rkt`, `safe/joystick.rkt`, `safe/gamepad.rkt`, `safe/image.rkt`, `safe/collision.rkt`, `safe/gl.rkt`, `safe/vulkan.rkt`, `safe/gpu.rkt`
 
 ### SDL3 Core (`raw/`)
 
@@ -168,6 +168,19 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 - [x] `SDL_OpenCamera`, `SDL_CloseCamera`
 - [x] `SDL_GetCameraPermissionState`, `SDL_GetCameraID`, `SDL_GetCameraProperties`, `SDL_GetCameraFormat`
 - [x] `SDL_AcquireCameraFrame`, `SDL_ReleaseCameraFrame`
+
+#### System Tray (`raw/tray.rkt`)
+- [x] `SDL_CreateTray`, `SDL_DestroyTray`
+- [x] `SDL_SetTrayIcon`, `SDL_SetTrayTooltip`
+- [x] `SDL_CreateTrayMenu`, `SDL_CreateTraySubmenu`
+- [x] `SDL_GetTrayMenu`, `SDL_GetTraySubmenu`
+- [x] `SDL_GetTrayEntries`, `SDL_InsertTrayEntryAt`, `SDL_RemoveTrayEntry`
+- [x] `SDL_SetTrayEntryLabel`, `SDL_GetTrayEntryLabel`
+- [x] `SDL_SetTrayEntryChecked`, `SDL_GetTrayEntryChecked`
+- [x] `SDL_SetTrayEntryEnabled`, `SDL_GetTrayEntryEnabled`
+- [x] `SDL_SetTrayEntryCallback`, `SDL_ClickTrayEntry`
+- [x] `SDL_GetTrayEntryParent`, `SDL_GetTrayMenuParentEntry`, `SDL_GetTrayMenuParentTray`
+- [x] `SDL_UpdateTrays`
 
 #### Joystick (`raw/joystick.rkt`)
 - [x] `SDL_HasJoystick`, `SDL_GetJoysticks`
@@ -395,20 +408,15 @@ Advanced features that may still be needed:
 - [ ] GPU debug label functions (`SDL_InsertGPUDebugLabel`, etc.)
 - [ ] Additional texture format queries
 
-#### Filesystem & IO (`SDL_filesystem.h`, `SDL_storage.h`, `SDL_asyncio.h`)
+#### Filesystem & IO (`SDL_filesystem.h`, `SDL_asyncio.h`)
 - [ ] `SDL_GetBasePath`, `SDL_GetPrefPath`, `SDL_GetUserFolder`
 - [ ] `SDL_GlobDirectory`, `SDL_GetCurrentDirectory`
 - [ ] Async I/O: `SDL_AsyncIOFromFile`, `SDL_ReadAsyncIO`, `SDL_WriteAsyncIO`, `SDL_CreateAsyncIOQueue`
-- [ ] Storage API: `SDL_OpenTitleStorage`, `SDL_OpenUserStorage`, `SDL_OpenFileStorage`
 
 #### Time & Locale (`SDL_time.h`, `SDL_locale.h`)
 - [ ] `SDL_GetCurrentTime`, `SDL_TimeToDateTime`, `SDL_DateTimeToTime`
 - [ ] `SDL_GetDateTimeLocalePreferences`, `SDL_GetDaysInMonth`, `SDL_GetDayOfWeek`
 - [ ] `SDL_GetPreferredLocales`
-
-#### System Tray (`SDL_tray.h`) - *New in SDL3*
-- [ ] `SDL_CreateTray`, `SDL_SetTrayIcon`, `SDL_SetTrayTooltip`
-- [ ] Tray menus and menu entries, callbacks
 
 #### Haptic & Sensors (`SDL_haptic.h`, `SDL_sensor.h`)
 - [ ] Full haptic/force-feedback subsystem
@@ -453,6 +461,10 @@ These subsystems are intentionally skipped because Racket provides superior, saf
 - **Alternative:** Use `racket/file` (`copy-file`, `delete-file`, `directory-list`).
 - **Note:** `SDL_GetBasePath` and `SDL_GetPrefPath` *are* implemented as they provide valuable cross-platform path logic.
 
+### Storage API (`SDL_storage.h`)
+- **Reason:** Racket applications run primarily on desktop platforms where direct filesystem access is available and simpler.
+- **Alternative:** Use `racket/file`, `racket/path`, and `racket/system` for storage needs.
+
 ### Logging (`SDL_log.h`)
 - **Reason:** Racket has a built-in logging facility.
 - **Alternative:** Use `racket/logging`.
@@ -474,12 +486,3 @@ These subsystems are intentionally skipped because Racket provides superior, saf
 | SDL3_ttf | ~110 | ~120 | ~92% |
 
 **Note:** While many advanced/new subsystems are not yet implemented, all core functionality required for traditional 2D games (Window, Render, Surface, Events, Input, Audio, Texture) is 100% or nearly 100% complete.
-
----
-
-## Suggested Next Steps
-
-1. ~~**SDL_gpu** - The most significant new feature in SDL3.~~ [DONE - Core API implemented]
-2. ~~**SDL_camera** - Support for video input devices.~~ [DONE - Camera API implemented]
-3. **SDL_filesystem/storage** - Improved path and file management.
-4. **SDL_tray** - Native system tray support.
