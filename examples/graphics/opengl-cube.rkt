@@ -43,7 +43,7 @@
                      (printf "Please install it with: raco pkg install opengl~n")
                      (printf "Details: ~a~n" (exn-message e))
                      (exit 0))])
-    (glClearColor 0.0 0.0 0.0 1.0))
+    (dynamic-require 'opengl #f))
 
   (sdl-init!)
 

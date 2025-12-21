@@ -46,7 +46,7 @@
                      (printf "Details: ~a~n" (exn-message e))
                      (exit 0))])
     ;; Trigger a load to see if it exists
-    (glClearColor 0.0 0.0 0.0 1.0))
+    (dynamic-require 'opengl #f))
 
   (sdl-init!)
 
