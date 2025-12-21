@@ -17,6 +17,8 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 
 #### Initialization (`raw/init.rkt`)
 - [x] `SDL_Init`, `SDL_Quit`, `SDL_GetError`, `SDL_free`
+- [x] `SDL_InitSubSystem`, `SDL_QuitSubSystem`, `SDL_WasInit`
+- [x] `SDL_SetAppMetadata`, `SDL_SetAppMetadataProperty`, `SDL_GetAppMetadataProperty`
 
 #### Window Management (`raw/window.rkt`)
 - [x] `SDL_CreateWindow`, `SDL_CreateWindowAndRenderer`, `SDL_DestroyWindow`
@@ -55,6 +57,9 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 - [x] `SDL_RenderReadPixels`
 - [x] `SDL_HasRectIntersection`, `SDL_GetRectIntersection`
 - [x] `SDL_HasRectIntersectionFloat`, `SDL_GetRectIntersectionFloat`
+- [x] `SDL_GetRectUnion`, `SDL_GetRectUnionFloat`
+- [x] `SDL_GetRectEnclosingPoints`, `SDL_GetRectEnclosingPointsFloat`
+- [x] `SDL_GetRectAndLineIntersection`, `SDL_GetRectAndLineIntersectionFloat`
 
 #### Texture (`raw/texture.rkt`)
 - [x] `SDL_CreateTexture`, `SDL_CreateTextureFromSurface`, `SDL_DestroyTexture`
@@ -66,6 +71,10 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 - [x] `SDL_SetTextureBlendMode`, `SDL_GetTextureBlendMode`
 - [x] `SDL_SetTextureColorMod`, `SDL_GetTextureColorMod`
 - [x] `SDL_SetTextureAlphaMod`, `SDL_GetTextureAlphaMod`
+- [x] `SDL_SetTextureColorModFloat`, `SDL_GetTextureColorModFloat`
+- [x] `SDL_SetTextureAlphaModFloat`, `SDL_GetTextureAlphaModFloat`
+- [x] `SDL_UpdateTexture`, `SDL_UpdateYUVTexture`, `SDL_UpdateNVTexture`
+- [x] `SDL_LockTexture`, `SDL_LockTextureToSurface`, `SDL_UnlockTexture`
 
 #### Surface (`raw/surface.rkt`)
 - [x] `SDL_CreateSurface`, `SDL_CreateSurfaceFrom`, `SDL_DestroySurface`
@@ -94,6 +103,8 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 - [x] `SDL_GetScancodeName`, `SDL_GetScancodeFromName`
 - [x] `SDL_GetKeyName`, `SDL_GetKeyFromName`
 - [x] `SDL_StartTextInput`, `SDL_StopTextInput`
+- [x] `SDL_HasKeyboard`, `SDL_GetKeyboards`, `SDL_GetKeyboardNameForID`
+- [x] `SDL_GetKeyboardFocus`
 
 #### Mouse (`raw/mouse.rkt`)
 - [x] `SDL_GetMouseState`, `SDL_GetRelativeMouseState`, `SDL_GetGlobalMouseState`
@@ -102,11 +113,13 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 - [x] `SDL_CaptureMouse`
 - [x] `SDL_CreateSystemCursor`, `SDL_SetCursor`, `SDL_GetCursor`, `SDL_DestroyCursor`
 - [x] `SDL_ShowCursor`, `SDL_HideCursor`, `SDL_CursorVisible`
+- [x] `SDL_HasMouse`, `SDL_GetMice`, `SDL_GetMouseNameForID`, `SDL_GetMouseFocus`
 
 #### Timer (`raw/timer.rkt`)
 - [x] `SDL_GetTicks`, `SDL_GetTicksNS`
 - [x] `SDL_GetPerformanceCounter`, `SDL_GetPerformanceFrequency`
 - [x] `SDL_Delay`, `SDL_DelayNS`, `SDL_DelayPrecise`
+- [x] `SDL_AddTimer`, `SDL_AddTimerNS`, `SDL_RemoveTimer`
 
 #### Clipboard (`raw/clipboard.rkt`)
 - [x] `SDL_SetClipboardText`, `SDL_GetClipboardText`, `SDL_HasClipboardText`
@@ -140,6 +153,13 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 - [x] `SDL_FlushAudioStream`, `SDL_ClearAudioStream`
 - [x] `SDL_BindAudioStream`, `SDL_UnbindAudioStream`
 - [x] `SDL_LoadWAV`
+- [x] `SDL_GetAudioDeviceFormat`
+- [x] `SDL_SetAudioDeviceGain`, `SDL_GetAudioDeviceGain`
+- [x] `SDL_OpenAudioDeviceStream`
+- [x] `SDL_GetAudioStreamDevice`, `SDL_PauseAudioStreamDevice`, `SDL_ResumeAudioStreamDevice`, `SDL_AudioStreamDevicePaused`
+- [x] `SDL_LoadWAV_IO`
+- [x] `SDL_MixAudio`, `SDL_ConvertAudioSamples`
+- [x] `SDL_GetAudioFormatName`
 
 #### Joystick (`raw/joystick.rkt`)
 - [x] `SDL_HasJoystick`, `SDL_GetJoysticks`
@@ -163,6 +183,7 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 - [x] `SDL_SetJoystickEventsEnabled`, `SDL_JoystickEventsEnabled`
 - [x] `SDL_UpdateJoysticks`
 - [x] `SDL_LockJoysticks`, `SDL_UnlockJoysticks`
+- [x] `SDL_SendJoystickEffect`, `SDL_SendJoystickVirtualSensorData`
 
 #### Gamepad (`raw/gamepad.rkt`)
 - [x] `SDL_HasGamepad`, `SDL_GetGamepads`, `SDL_IsGamepad`
@@ -194,11 +215,26 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 - [x] `SDL_SetGamepadEventsEnabled`, `SDL_GamepadEventsEnabled`
 - [x] `SDL_UpdateGamepads`
 - [x] `SDL_GetGamepadMapping`, `SDL_GetGamepadMappingForID`
+- [x] `SDL_SendGamepadEffect`
+- [x] `SDL_AddGamepadMapping`, `SDL_SetGamepadMapping`, `SDL_GetGamepadMappingForGUID`
+- [x] `SDL_GetGamepadMappings`, `SDL_AddGamepadMappingsFromIO`, `SDL_AddGamepadMappingsFromFile`
+- [x] `SDL_ReloadGamepadMappings`
+
+#### IOStream (`raw/iostream.rkt`)
+- [x] `SDL_IOFromFile`, `SDL_IOFromMem`, `SDL_IOFromConstMem`, `SDL_CloseIO`
+
+#### Properties (`raw/properties.rkt`)
+- [x] `SDL_CreateProperties`, `SDL_DestroyProperties`
+- [x] `SDL_SetPointerProperty`, `SDL_SetStringProperty`, `SDL_SetNumberProperty`, `SDL_SetFloatProperty`, `SDL_SetBooleanProperty`
+- [x] `SDL_GetPointerProperty`, `SDL_GetStringProperty`, `SDL_GetNumberProperty`, `SDL_GetFloatProperty`, `SDL_GetBooleanProperty`
 
 ### SDL3_image (`raw/image.rkt`)
 - [x] `IMG_Version`
 - [x] `IMG_LoadTexture`, `IMG_Load`
 - [x] `IMG_SavePNG`, `IMG_SaveJPG`
+- [x] `IMG_Load_IO`, `IMG_LoadTyped_IO`
+- [x] `IMG_LoadTexture_IO`, `IMG_LoadTextureTyped_IO`
+- [x] `IMG_isAVIF`, `IMG_isBMP`, `IMG_isGIF`, `IMG_isJPG`, `IMG_isJXL`, `IMG_isLBM`, `IMG_isPCX`, `IMG_isPNG`, `IMG_isPNM`, `IMG_isSVG`, `IMG_isTIF`, `IMG_isWEBP`, `IMG_isXPM`
 
 ### SDL3_ttf (`raw/ttf.rkt`)
 
@@ -208,6 +244,8 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 #### Font Loading
 - [x] `TTF_OpenFont`, `TTF_CloseFont`, `TTF_CopyFont`
 - [x] `TTF_AddFallbackFont`, `TTF_RemoveFallbackFont`, `TTF_ClearFallbackFonts`
+- [x] `TTF_OpenFontIO`, `TTF_OpenFontWithProperties`
+- [x] `TTF_GetFontProperties`, `TTF_GetFontGeneration`
 
 #### Font Properties
 - [x] `TTF_GetFontSize`, `TTF_SetFontSize`, `TTF_SetFontSizeDPI`, `TTF_GetFontDPI`
@@ -261,201 +299,6 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 - [x] `TTF_SetTextPosition`, `TTF_GetTextPosition`
 - [x] `TTF_SetTextWrapWidth`, `TTF_GetTextWrapWidth`
 - [x] `TTF_UpdateText`
-
-### Types & Constants (`private/`)
-
-#### Init Flags
-- [x] `SDL_INIT_AUDIO`, `SDL_INIT_VIDEO`, `SDL_INIT_JOYSTICK`, `SDL_INIT_GAMEPAD`, `SDL_INIT_EVENTS`
-
-#### Window Flags
-- [x] `SDL_WINDOW_FULLSCREEN`, `SDL_WINDOW_RESIZABLE`, `SDL_WINDOW_HIGH_PIXEL_DENSITY`
-
-#### Event Types & Structs
-- [x] All core events: quit, window, keyboard, mouse (motion, button, wheel), text input
-- [x] Joystick events: axis, ball, hat, button, added/removed
-- [x] Gamepad events: axis, button, added/removed/remapped, touchpad, sensor
-
-#### Input Constants
-- [x] Full scancode enum (`SDL_SCANCODE_*`)
-- [x] Full keycode constants (`SDLK_*`)
-- [x] Modifier key constants (`SDL_KMOD_*`)
-- [x] Mouse button constants (`SDL_BUTTON_*`)
-- [x] System cursor types (all 20)
-- [x] Joystick hat constants, type constants, connection states
-- [x] Gamepad type, button, axis, and label constants
-
-#### Graphics Constants
-- [x] Blend modes (none, blend, add, mod, mul, premultiplied variants)
-- [x] Flip modes (none, horizontal, vertical)
-- [x] Texture access modes (static, streaming, target)
-- [x] Scale modes (nearest, linear)
-- [x] Common pixel formats (RGBA8888, ARGB8888, ABGR8888, BGRA8888, RGB24, RGBA32)
-
-#### Audio Constants
-- [x] Audio formats (U8, S8, S16, S32, F32, with endian variants)
-- [x] Default device constants
-
-#### TTF Constants
-- [x] Font style flags (normal, bold, italic, underline, strikethrough)
-- [x] Hinting modes (normal, light, mono, none, light_subpixel)
-- [x] Horizontal alignment (left, center, right)
-- [x] Text direction (LTR, RTL, TTB, BTT)
-- [x] Glyph image types (alpha, color, SDF)
-- [x] Font weight constants (thin through extra-black)
-
----
-
-## Not Yet Implemented
-
-### SDL3 Core
-
-#### Initialization
-- [x] `SDL_InitSubSystem`, `SDL_QuitSubSystem`, `SDL_WasInit`
-- [x] `SDL_SetAppMetadata`, `SDL_SetAppMetadataProperty`, `SDL_GetAppMetadataProperty`
-
-#### Texture (Advanced)
-- [ ] `SDL_CreateTextureWithProperties`, `SDL_GetTextureProperties`
-- [x] `SDL_SetTextureColorModFloat`, `SDL_GetTextureColorModFloat`
-- [x] `SDL_SetTextureAlphaModFloat`, `SDL_GetTextureAlphaModFloat`
-- [x] `SDL_UpdateTexture`, `SDL_UpdateYUVTexture`, `SDL_UpdateNVTexture`
-- [x] `SDL_LockTexture`, `SDL_LockTextureToSurface`, `SDL_UnlockTexture`
-
-#### Surface (Advanced)
-- [ ] `SDL_GetSurfaceProperties`
-- [ ] `SDL_LoadBMP_IO`, `SDL_SaveBMP_IO`
-- [ ] `SDL_BlitSurfaceUnchecked`, `SDL_BlitSurfaceUncheckedScaled`
-- [ ] `SDL_BlitSurfaceTiled`, `SDL_BlitSurface9Grid`
-- [ ] `SDL_ConvertSurfaceAndColorspace`
-
-#### Renderer (Advanced)
-- [ ] `SDL_RenderGeometryRaw`
-- [ ] `SDL_RenderDebugTextFormat`
-
-#### Events (Advanced)
-- [ ] `SDL_PushEvent`, `SDL_PeepEvents`
-- [ ] `SDL_HasEvent`, `SDL_HasEvents`
-- [ ] `SDL_FlushEvent`, `SDL_FlushEvents`
-- [ ] `SDL_RegisterEvents`
-- [ ] `SDL_SetEventFilter`, `SDL_GetEventFilter`
-- [ ] `SDL_AddEventWatch`, `SDL_RemoveEventWatch`, `SDL_FilterEvents`
-- [ ] `SDL_SetEventEnabled`, `SDL_EventEnabled`
-- [ ] `SDL_GetWindowFromEvent`
-
-#### Keyboard (Advanced)
-- [x] `SDL_HasKeyboard`, `SDL_GetKeyboards`, `SDL_GetKeyboardNameForID`
-- [x] `SDL_GetKeyboardFocus`
-- [ ] `SDL_SetModState`, `SDL_SetScancodeName`
-- [ ] `SDL_StartTextInputWithProperties`, `SDL_TextInputActive`
-- [ ] `SDL_ClearComposition`, `SDL_SetTextInputArea`, `SDL_GetTextInputArea`
-- [ ] `SDL_HasScreenKeyboardSupport`, `SDL_ScreenKeyboardShown`
-
-#### Mouse (Advanced)
-- [x] `SDL_HasMouse`, `SDL_GetMice`, `SDL_GetMouseNameForID`, `SDL_GetMouseFocus`
-- [ ] `SDL_CreateCursor`, `SDL_CreateColorCursor`, `SDL_GetDefaultCursor`
-
-#### Rectangle Utilities
-- [x] `SDL_GetRectUnion`, `SDL_GetRectUnionFloat`
-- [x] `SDL_GetRectEnclosingPoints`, `SDL_GetRectEnclosingPointsFloat`
-- [x] `SDL_GetRectAndLineIntersection`, `SDL_GetRectAndLineIntersectionFloat`
-
-#### Timer (Advanced)
-- [x] `SDL_AddTimer`, `SDL_AddTimerNS`, `SDL_RemoveTimer`
-
-#### Audio (Advanced)
-- [x] `SDL_GetAudioDeviceFormat`
-- [x] `SDL_SetAudioDeviceGain`, `SDL_GetAudioDeviceGain`
-- [x] `SDL_OpenAudioDeviceStream`
-- [x] `SDL_GetAudioStreamDevice`, `SDL_PauseAudioStreamDevice`, `SDL_ResumeAudioStreamDevice`, `SDL_AudioStreamDevicePaused`
-- [x] `SDL_LoadWAV_IO`
-- [x] `SDL_MixAudio`, `SDL_ConvertAudioSamples`
-- [x] `SDL_GetAudioFormatName`
-
-#### Clipboard (Advanced)
-- [ ] `SDL_SetPrimarySelectionText`, `SDL_GetPrimarySelectionText`, `SDL_HasPrimarySelectionText`
-
-#### Joystick (Advanced)
-- [x] `SDL_SendJoystickEffect`, `SDL_SendJoystickVirtualSensorData`
-
-#### Gamepad (Advanced)
-- [x] `SDL_SendGamepadEffect`
-- [x] `SDL_AddGamepadMapping`, `SDL_SetGamepadMapping`, `SDL_GetGamepadMappingForGUID`
-- [x] `SDL_GetGamepadMappings`, `SDL_AddGamepadMappingsFromIO`, `SDL_AddGamepadMappingsFromFile`
-- [x] `SDL_ReloadGamepadMappings`
-
-#### OpenGL Support
-- [ ] `SDL_GL_LoadLibrary`, `SDL_GL_GetProcAddress`, `SDL_GL_UnloadLibrary`
-- [ ] `SDL_GL_ExtensionSupported`
-- [ ] `SDL_GL_SetAttribute`, `SDL_GL_GetAttribute`
-- [ ] `SDL_GL_CreateContext`, `SDL_GL_MakeCurrent`
-- [ ] `SDL_GL_GetCurrentContext`, `SDL_GL_GetCurrentWindow`
-- [ ] `SDL_GL_SetSwapInterval`, `SDL_GL_GetSwapInterval`
-- [ ] `SDL_GL_SwapWindow`, `SDL_GL_DestroyContext`
-
-#### Vulkan Support
-- [ ] `SDL_Vulkan_LoadLibrary`, `SDL_Vulkan_GetVkGetInstanceProcAddr`, `SDL_Vulkan_UnloadLibrary`
-- [ ] `SDL_Vulkan_GetInstanceExtensions`
-- [ ] `SDL_Vulkan_CreateSurface`, `SDL_Vulkan_GetPresentationSupport`
-
-#### Haptic/Force Feedback
-- [ ] Full haptic subsystem
-
-#### Miscellaneous
-- [ ] `SDL_OpenURL`
-- [ ] `SDL_GetPlatform`, `SDL_GetVersion`, `SDL_GetRevision`
-
-#### Additional Window Flags
-- [ ] `SDL_WINDOW_OPENGL`, `SDL_WINDOW_VULKAN`, `SDL_WINDOW_METAL`
-- [ ] `SDL_WINDOW_HIDDEN`, `SDL_WINDOW_BORDERLESS`
-- [ ] `SDL_WINDOW_MINIMIZED`, `SDL_WINDOW_MAXIMIZED`
-- [ ] `SDL_WINDOW_MOUSE_GRABBED`, `SDL_WINDOW_KEYBOARD_GRABBED`
-- [ ] `SDL_WINDOW_INPUT_FOCUS`, `SDL_WINDOW_MOUSE_FOCUS`
-- [ ] `SDL_WINDOW_ALWAYS_ON_TOP`, `SDL_WINDOW_TRANSPARENT`
-- [ ] `SDL_WINDOW_UTILITY`, `SDL_WINDOW_TOOLTIP`, `SDL_WINDOW_POPUP_MENU`
-- [ ] And others...
-
-#### Additional Event Types
-- [x] `SDL_EVENT_DROP_FILE`, `SDL_EVENT_DROP_TEXT`, `SDL_EVENT_DROP_BEGIN`, `SDL_EVENT_DROP_COMPLETE`, `SDL_EVENT_DROP_POSITION`
-- [x] `SDL_EVENT_AUDIO_DEVICE_ADDED`, `SDL_EVENT_AUDIO_DEVICE_REMOVED`, `SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED`
-- [x] `SDL_EVENT_CLIPBOARD_UPDATE`
-- [x] Touch/pen events
-
-#### Additional Event Structs
-- [x] `SDL_DropEvent`, `SDL_ClipboardEvent`
-- [x] `SDL_TouchFingerEvent`
-- [x] `SDL_PenMotionEvent`, `SDL_PenButtonEvent`, `SDL_PenTouchEvent`, `SDL_PenAxisEvent`, `SDL_PenProximityEvent`
-
-### SDL3_image
-
-#### Loading (IOStream)
-- [x] `IMG_Load_IO`, `IMG_LoadTyped_IO`
-- [x] `IMG_LoadTexture_IO`, `IMG_LoadTextureTyped_IO`
-
-#### Format-specific Loaders
-- [ ] All `IMG_Load*_IO` variants (AVIF, BMP, GIF, JPG, PNG, WebP, etc.)
-
-#### Format Detection
-- [x] All `IMG_is*` functions
-
-#### Saving (Advanced)
-- [ ] `IMG_SavePNG_IO`, `IMG_SaveJPG_IO`
-- [ ] `IMG_SaveAVIF`, `IMG_SaveAVIF_IO`
-
-#### Animation
-- [ ] `IMG_LoadAnimation`, `IMG_LoadAnimation_IO`, `IMG_LoadAnimationTyped_IO`
-- [ ] `IMG_FreeAnimation`
-- [ ] `IMG_LoadGIFAnimation_IO`, `IMG_LoadWEBPAnimation_IO`
-
-#### SVG/XPM Special
-- [ ] `IMG_LoadSizedSVG_IO`
-- [ ] `IMG_ReadXPMFromArray`, `IMG_ReadXPMFromArrayToRGB888`
-
-### SDL3_ttf
-
-#### Font Loading (Advanced)
-- [x] `TTF_OpenFontIO`, `TTF_OpenFontWithProperties`
-- [x] `TTF_GetFontProperties`, `TTF_GetFontGeneration`
-
-#### Text Engine API (Advanced)
 - [x] `TTF_CreateRendererTextEngineWithProperties`
 - [x] `TTF_CreateGPUTextEngine`, `TTF_CreateGPUTextEngineWithProperties`
 - [x] `TTF_GetGPUTextDrawData`, `TTF_DestroyGPUTextEngine`
@@ -473,19 +316,139 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 
 ---
 
+## Not Yet Implemented (Comprehensive List)
+
+### SDL3 Core Subsystems
+
+#### Window Management (Advanced)
+- [ ] `SDL_CreateWindowWithProperties`, `SDL_CreatePopupWindow`
+- [ ] `SDL_GetWindowProperties`, `SDL_GetWindowParent`, `SDL_SetWindowParent`
+- [ ] `SDL_GetWindowPixelFormat`, `SDL_GetWindows`, `SDL_GetWindowICCProfile`
+- [ ] `SDL_SetWindowAspectRatio`, `SDL_GetWindowAspectRatio`
+- [ ] `SDL_GetWindowSafeArea`, `SDL_GetWindowBordersSize`, `SDL_GetWindowSizeInPixels`
+- [ ] `SDL_SetWindowAlwaysOnTop`, `SDL_SyncWindow`, `SDL_WindowHasSurface`
+- [ ] `SDL_SetWindowSurfaceVSync`, `SDL_GetWindowSurfaceVSync`, `SDL_UpdateWindowSurfaceRects`, `SDL_DestroyWindowSurface`
+- [ ] `SDL_SetWindowKeyboardGrab`, `SDL_SetWindowMouseGrab`, `SDL_GetWindowKeyboardGrab`, `SDL_GetWindowMouseGrab`, `SDL_GetGrabbedWindow`
+- [ ] `SDL_SetWindowMouseRect`, `SDL_GetWindowMouseRect`, `SDL_SetWindowModal`, `SDL_SetWindowFocusable`
+- [ ] `SDL_ShowWindowSystemMenu`, `SDL_SetWindowHitTest`, `SDL_SetWindowShape`
+- [ ] `SDL_GetNumVideoDrivers`, `SDL_GetVideoDriver`, `SDL_GetCurrentVideoDriver`, `SDL_GetSystemTheme`
+- [ ] `SDL_GetDisplayProperties`, `SDL_GetNaturalDisplayOrientation`, `SDL_GetCurrentDisplayOrientation`, `SDL_GetClosestFullscreenDisplayMode`
+- [ ] `SDL_ScreenSaverEnabled`, `SDL_EnableScreenSaver`, `SDL_DisableScreenSaver`
+
+#### Renderer (Advanced)
+- [ ] `SDL_CreateRendererWithProperties`, `SDL_CreateSoftwareRenderer`, `SDL_GetRendererProperties`
+- [ ] `SDL_SetRenderLogicalPresentation`, `SDL_GetRenderLogicalPresentation`, `SDL_GetRenderLogicalPresentationRect`
+- [ ] `SDL_RenderCoordinatesFromWindow`, `SDL_RenderCoordinatesToWindow`, `SDL_ConvertEventToRenderCoordinates`
+- [ ] `SDL_RenderViewportSet`, `SDL_GetRenderSafeArea`, `SDL_SetRenderColorScale`, `SDL_GetRenderColorScale`
+- [ ] `SDL_FlushRenderer`, `SDL_RenderGeometryRaw`, `SDL_RenderDebugTextFormat`
+- [ ] `SDL_GetRenderMetalLayer`, `SDL_GetRenderMetalCommandEncoder`, `SDL_AddVulkanRenderSemaphores`
+
+#### Texture & Surface (Advanced)
+- [ ] `SDL_CreateTextureWithProperties`, `SDL_GetTextureProperties`, `SDL_GetRendererFromTexture`
+- [ ] `SDL_GetSurfaceProperties`, `SDL_ConvertSurfaceAndColorspace`
+- [ ] `SDL_LoadBMP_IO`, `SDL_SaveBMP_IO`, `SDL_BlitSurfaceUnchecked`, `SDL_BlitSurfaceUncheckedScaled`, `SDL_BlitSurfaceTiled`, `SDL_BlitSurface9Grid`
+
+#### GPU API (`SDL_gpu.h`) - *New in SDL3*
+- [ ] Full GPU device management (Create/Destroy device, etc.)
+- [ ] Pipeline management (Graphics/Compute pipelines, Shaders, Samplers)
+- [ ] Resource management (Buffers, Textures, Transfer Buffers)
+- [ ] Command Buffers & Passes (Render/Compute/Copy passes)
+- [ ] Swapchain management & Window claiming
+
+#### Camera API (`SDL_camera.h`) - *New in SDL3*
+- [ ] Camera enumeration and driver info
+- [ ] Opening/Closing cameras, permission state
+- [ ] Acquiring/Releasing frames, format management
+
+#### Filesystem & IO (`SDL_filesystem.h`, `SDL_storage.h`, `SDL_asyncio.h`)
+- [ ] `SDL_GetBasePath`, `SDL_GetPrefPath`, `SDL_GetUserFolder`
+- [ ] `SDL_GlobDirectory`, `SDL_GetCurrentDirectory`
+- [ ] Async I/O: `SDL_AsyncIOFromFile`, `SDL_ReadAsyncIO`, `SDL_WriteAsyncIO`, `SDL_CreateAsyncIOQueue`
+- [ ] Storage API: `SDL_OpenTitleStorage`, `SDL_OpenUserStorage`, `SDL_OpenFileStorage`
+
+#### Time & Locale (`SDL_time.h`, `SDL_locale.h`)
+- [ ] `SDL_GetCurrentTime`, `SDL_TimeToDateTime`, `SDL_DateTimeToTime`
+- [ ] `SDL_GetDateTimeLocalePreferences`, `SDL_GetDaysInMonth`, `SDL_GetDayOfWeek`
+- [ ] `SDL_GetPreferredLocales`
+
+#### System Tray (`SDL_tray.h`) - *New in SDL3*
+- [ ] `SDL_CreateTray`, `SDL_SetTrayIcon`, `SDL_SetTrayTooltip`
+- [ ] Tray menus and menu entries, callbacks
+
+#### OpenGL & Vulkan Support
+- [ ] `SDL_GL_LoadLibrary`, `SDL_GL_CreateContext`, `SDL_GL_SwapWindow`, etc.
+- [ ] `SDL_Vulkan_LoadLibrary`, `SDL_Vulkan_CreateSurface`, etc.
+
+#### Haptic & Sensors (`SDL_haptic.h`, `SDL_sensor.h`)
+- [ ] Full haptic/force-feedback subsystem
+- [ ] Standalone sensor management (accelerometers, gyroscopes)
+
+#### Miscellaneous
+- [ ] `SDL_OpenURL`, `SDL_GetPlatform`, `SDL_GetVersion`, `SDL_GetRevision`
+- [ ] `SDL_GetPixelFormatName`, `SDL_GetPixelFormatDetails`, `SDL_CreatePalette`, `SDL_GetRGB`, `SDL_GetRGBA`
+- [ ] `SDL_SetModState`, `SDL_SetScancodeName`, `SDL_StartTextInputWithProperties`, `SDL_ClearComposition`
+- [ ] `SDL_CreateCursor`, `SDL_CreateColorCursor`, `SDL_GetDefaultCursor`
+- [ ] `SDL_SetPrimarySelectionText`, `SDL_GetPrimarySelectionText`
+- [ ] `SDL_PushEvent`, `SDL_PeepEvents`, `SDL_SetEventFilter`, etc.
+
+### SDL3_image
+- [ ] Animation API: `IMG_LoadAnimation`, `IMG_FreeAnimation`, etc.
+- [ ] Advanced saving: `IMG_SavePNG_IO`, `IMG_SaveJPG_IO`, `IMG_SaveAVIF`
+- [ ] Special loaders: `IMG_LoadSizedSVG_IO`, `IMG_ReadXPMFromArray`
+
+### SDL3_ttf
+- [ ] Note: Basic and TextEngine APIs are largely complete (~100% of standard usage).
+
+---
+
+## Redundant / Will Not Implement
+
+These subsystems are intentionally skipped because Racket provides superior, safer, or more idiomatic native alternatives.
+
+### Threading & Synchronization (`SDL_thread.h`, `SDL_mutex.h`, `SDL_atomic.h`)
+- **Reason:** Racket has a sophisticated concurrency model (green threads, places, futures). Using C threads breaks the Racket runtime's memory management and safety guarantees.
+- **Alternative:** Use `racket/thread`, `racket/place`, and `racket/future`.
+
+### Process Management (`SDL_process.h`)
+- **Reason:** Racket has a comprehensive system API for spawning and managing subprocesses.
+- **Alternative:** Use `racket/system`, `process`, or `process*`.
+
+### Shared Object Loading (`SDL_loadso.h`)
+- **Reason:** Racket's `ffi/unsafe` already handles dynamic library loading.
+- **Alternative:** Use `ffi-lib`.
+
+### Basic Filesystem (`SDL_filesystem.h` subset)
+- **Reason:** Standard file operations (`SDL_CopyFile`, `SDL_RemovePath`, etc.) are covered by Racket's standard library.
+- **Alternative:** Use `racket/file` (`copy-file`, `delete-file`, `directory-list`).
+- **Note:** `SDL_GetBasePath` and `SDL_GetPrefPath` *are* implemented as they provide valuable cross-platform path logic.
+
+### Logging (`SDL_log.h`)
+- **Reason:** Racket has a built-in logging facility.
+- **Alternative:** Use `racket/logging`.
+
+### Standard Library Wrappers (`SDL_stdinc.h`)
+- **Reason:** Functions like `SDL_malloc`, `SDL_memcpy`, `SDL_snprintf` are for C environments lacking a standard library. Racket handles memory and strings automatically.
+
+### Assertions & Main (`SDL_assert.h`, `SDL_main.h`)
+- **Reason:** Racket controls the entry point and has its own error/contract system.
+
+---
+
 ## Implementation Statistics
 
 | Library | Functions Implemented | Estimated Total | Coverage |
 |---------|----------------------|-----------------|----------|
-| SDL3 Core | ~200 | ~350 | ~57% |
-| SDL3_image | ~27 | ~60 | ~45% |
-| SDL3_ttf | ~70 | ~100 | ~70% |
+| SDL3 Core | ~280 | ~650 | ~43% |
+| SDL3_image | ~45 | ~80 | ~56% |
+| SDL3_ttf | ~110 | ~120 | ~92% |
 
-**Note:** All essential (P0) features for building games and applications are complete. The remaining functions are primarily advanced features, alternative APIs (IOStream variants), and specialized subsystems (OpenGL, Vulkan, haptics).
+**Note:** While many advanced/new subsystems are not yet implemented, all core functionality required for traditional 2D games (Window, Render, Surface, Events, Input, Audio, Texture) is 100% or nearly 100% complete.
 
 ---
 
 ## Suggested Next Steps
 
-1. **SDL_image Animation** - GIF/WebP animation loading and playback
-2. **Additional Event APIs** - SDL_PushEvent, SDL_PeepEvents, etc.
+1. **SDL_gpu** - The most significant new feature in SDL3.
+2. **SDL_filesystem/storage** - Improved path and file management.
+3. **SDL_camera** - Support for video input devices.
+4. **SDL_tray** - Native system tray support.
