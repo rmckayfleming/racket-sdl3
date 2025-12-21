@@ -43,16 +43,16 @@
           [(key-event 'down 'escape _ _ _) #t]
           [(key-event 'down 'q _ _ _) #t]
           [(key-event 'down 'i _ _ _)
-           (show-info-message (window-ptr window))
+           (show-info-message window)
            #f]
           [(key-event 'down 'w _ _ _)
-           (show-warning-message (window-ptr window))
+           (show-warning-message window)
            #f]
           [(key-event 'down 'e _ _ _)
-           (show-error-message (window-ptr window))
+           (show-error-message window)
            #f]
           [(key-event 'down 'c _ _ _)
-           (show-custom-dialog (window-ptr window))
+           (show-custom-dialog window)
            #f]
           [_ #f])))
 

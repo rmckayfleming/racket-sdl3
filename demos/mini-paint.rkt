@@ -220,7 +220,7 @@
                 (define files (open-file-dialog
                                #:filters image-filters
                                #:allow-multiple? #t
-                               #:window (window-ptr window)))
+                               #:window window))
                 (raise-window! window)  ; Restore focus after dialog
                 (cond
                   [(not files)
@@ -256,7 +256,7 @@
                 (define file (save-file-dialog
                               #:filters save-filters
                               #:default-path "drawing.png"
-                              #:window (window-ptr window)))
+                              #:window window))
                 (raise-window! window)  ; Restore focus after dialog
                 (cond
                   [(not file)

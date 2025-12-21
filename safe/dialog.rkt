@@ -4,7 +4,8 @@
 
 (require ffi/unsafe
          racket/match
-         "../raw.rkt")
+         "../raw.rkt"
+         "window.rkt")
 
 (provide
  ;; Simple message boxes
@@ -19,6 +20,18 @@
  open-folder-dialog)
 
 ;; ============================================================================
+;; Helper: extract window pointer
+;; ============================================================================
+
+;; Accepts window struct, raw pointer, or #f
+;; Returns the raw pointer for passing to SDL functions
+(define (extract-window-ptr w)
+  (cond
+    [(not w) #f]
+    [(window? w) (window-ptr w)]
+    [else w]))  ; assume it's already a raw pointer
+
+;; ============================================================================
 ;; Simple Message Boxes
 ;; ============================================================================
 
@@ -26,7 +39,7 @@
 ;; title: the dialog title
 ;; message: the message text
 ;; #:type: 'info, 'warning, or 'error (default: 'info)
-;; #:window: optional parent window (raw pointer or #f)
+;; #:window: optional parent window (window struct or #f)
 ;; Returns: #t on success, #f on failure
 (define (show-message-box title message
                           #:type [type 'info]
@@ -39,7 +52,7 @@
       [else (error 'show-message-box
                    "invalid type: ~a (expected 'info, 'warning, or 'error)"
                    type)]))
-  (SDL-ShowSimpleMessageBox flags title message window))
+  (SDL-ShowSimpleMessageBox flags title message (extract-window-ptr window)))
 
 ;; ============================================================================
 ;; Confirmation Dialogs
@@ -54,7 +67,7 @@
 ;;   'ok-cancel      -> OK/Cancel buttons, returns 'ok or 'cancel
 ;;   'ok             -> Single OK button, returns 'ok
 ;; #:type: 'info, 'warning, or 'error (default: 'info)
-;; #:window: optional parent window (raw pointer or #f)
+;; #:window: optional parent window (window struct or #f)
 ;; Returns: symbol indicating which button was clicked, or #f on failure
 (define (show-confirm-dialog title message
                              #:buttons [buttons 'yes-no]
@@ -108,7 +121,7 @@
   (define msgbox-data
     (make-SDL_MessageBoxData
      flags
-     window
+     (extract-window-ptr window)
      title
      message
      num-buttons
@@ -187,7 +200,7 @@
 ;; #:filters: list of (name . pattern) pairs, e.g., '(("Images" . "png;jpg;gif"))
 ;; #:default-path: starting folder/file path
 ;; #:allow-multiple?: if #t, allow selecting multiple files
-;; #:window: parent window (raw pointer or #f)
+;; #:window: parent window (window struct or #f)
 ;; Returns: path-string, (listof path-string), or #f if canceled/error
 (define (open-file-dialog #:filters [filters '()]
                           #:default-path [default-path #f]
@@ -208,7 +221,7 @@
   ;; Show dialog (async)
   (SDL-ShowOpenFileDialog callback
                           #f              ; userdata
-                          window
+                          (extract-window-ptr window)
                           filter-ptr
                           filter-count
                           default-path
@@ -229,7 +242,7 @@
 ;; save-file-dialog: Display a file save dialog
 ;; #:filters: list of (name . pattern) pairs
 ;; #:default-path: starting folder/file path
-;; #:window: parent window (raw pointer or #f)
+;; #:window: parent window (window struct or #f)
 ;; Returns: path-string or #f if canceled/error
 (define (save-file-dialog #:filters [filters '()]
                           #:default-path [default-path #f]
@@ -249,7 +262,7 @@
   ;; Show dialog (async)
   (SDL-ShowSaveFileDialog callback
                           #f              ; userdata
-                          window
+                          (extract-window-ptr window)
                           filter-ptr
                           filter-count
                           default-path)
@@ -267,7 +280,7 @@
 ;; open-folder-dialog: Display a folder selection dialog
 ;; #:default-path: starting folder path
 ;; #:allow-multiple?: if #t, allow selecting multiple folders
-;; #:window: parent window (raw pointer or #f)
+;; #:window: parent window (window struct or #f)
 ;; Returns: path-string, (listof path-string), or #f if canceled/error
 (define (open-folder-dialog #:default-path [default-path #f]
                             #:allow-multiple? [allow-multiple? #f]
@@ -284,7 +297,7 @@
   ;; Show dialog (async)
   (SDL-ShowOpenFolderDialog callback
                             #f              ; userdata
-                            window
+                            (extract-window-ptr window)
                             default-path
                             allow-multiple?)
 

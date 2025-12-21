@@ -77,17 +77,20 @@ This is the biggest friction point in examples.
 - [x] All 3 demos verified (already used simple forms)
 - [x] OpenGL examples use `'(resizable opengl)` for combined flags
 
-## Phase 3: Object-Based Parameters (Medium Priority)
+## Phase 3: Object-Based Parameters (Medium Priority) ✅ COMPLETE
 
-### 3.1 Dialog Window Parameter
-- [ ] Update `show-message-box` to accept `window` struct directly
-- [ ] Update `show-confirm-dialog` similarly
-- [ ] Update `open-file-dialog`, `save-file-dialog`, `open-folder-dialog`
-- [ ] Extract pointer internally: `(if (window? w) (window-ptr w) w)`
+### 3.1 Dialog Window Parameter ✅
+- [x] Update `show-message-box` to accept `window` struct directly
+- [x] Update `show-confirm-dialog` similarly
+- [x] Update `open-file-dialog`, `save-file-dialog`, `open-folder-dialog`
+- [x] Extract pointer internally: `(if (window? w) (window-ptr w) w)`
+- [x] Updated `examples/dialogs/message-box.rkt` to use window struct directly
+- [x] Updated `demos/mini-paint.rkt` to use window struct directly
 
-### 3.2 Other Pointer Parameters
-- [ ] Audit all safe APIs for raw pointer parameters
-- [ ] Update to accept wrapper structs where applicable
+### 3.2 Other Pointer Parameters ✅
+- [x] Audited all safe APIs for raw pointer parameters
+- [x] Image save functions (`save-png!`, `save-jpg!`, `save-bmp!`) already accept either surface struct or raw pointer
+- [x] No other public safe APIs required updates
 
 ## Phase 4: Scoped Resource Helpers (Medium Priority)
 
