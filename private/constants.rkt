@@ -281,6 +281,42 @@
  SDL_GAMEPAD_BUTTON_LABEL_CIRCLE
  SDL_GAMEPAD_BUTTON_LABEL_SQUARE
  SDL_GAMEPAD_BUTTON_LABEL_TRIANGLE
+ ;; Touch event constants
+ SDL_EVENT_FINGER_DOWN
+ SDL_EVENT_FINGER_UP
+ SDL_EVENT_FINGER_MOTION
+ SDL_EVENT_FINGER_CANCELED
+ ;; Pen event constants
+ SDL_EVENT_PEN_PROXIMITY_IN
+ SDL_EVENT_PEN_PROXIMITY_OUT
+ SDL_EVENT_PEN_DOWN
+ SDL_EVENT_PEN_UP
+ SDL_EVENT_PEN_BUTTON_DOWN
+ SDL_EVENT_PEN_BUTTON_UP
+ SDL_EVENT_PEN_MOTION
+ SDL_EVENT_PEN_AXIS
+ ;; Pen input flags
+ SDL_PEN_INPUT_DOWN
+ SDL_PEN_INPUT_BUTTON_1
+ SDL_PEN_INPUT_BUTTON_2
+ SDL_PEN_INPUT_BUTTON_3
+ SDL_PEN_INPUT_BUTTON_4
+ SDL_PEN_INPUT_BUTTON_5
+ SDL_PEN_INPUT_ERASER_TIP
+ ;; Pen axis constants
+ SDL_PEN_AXIS_PRESSURE
+ SDL_PEN_AXIS_XTILT
+ SDL_PEN_AXIS_YTILT
+ SDL_PEN_AXIS_DISTANCE
+ SDL_PEN_AXIS_ROTATION
+ SDL_PEN_AXIS_SLIDER
+ SDL_PEN_AXIS_TANGENTIAL_PRESSURE
+ SDL_PEN_AXIS_COUNT
+ ;; Touch device types
+ SDL_TOUCH_DEVICE_INVALID
+ SDL_TOUCH_DEVICE_DIRECT
+ SDL_TOUCH_DEVICE_INDIRECT_ABSOLUTE
+ SDL_TOUCH_DEVICE_INDIRECT_RELATIVE
  ;; TTF font style flags
  TTF_STYLE_NORMAL
  TTF_STYLE_BOLD
@@ -817,3 +853,54 @@
 (define TTF_GPU_TEXTENGINE_WINDING_INVALID          -1)
 (define TTF_GPU_TEXTENGINE_WINDING_CLOCKWISE         0)
 (define TTF_GPU_TEXTENGINE_WINDING_COUNTER_CLOCKWISE 1)
+
+;; ============================================================================
+;; Touch Event Constants
+;; ============================================================================
+(define SDL_EVENT_FINGER_DOWN     #x700)
+(define SDL_EVENT_FINGER_UP       #x701)
+(define SDL_EVENT_FINGER_MOTION   #x702)
+(define SDL_EVENT_FINGER_CANCELED #x703)
+
+;; ============================================================================
+;; Pen Event Constants
+;; ============================================================================
+(define SDL_EVENT_PEN_PROXIMITY_IN  #x1300)
+(define SDL_EVENT_PEN_PROXIMITY_OUT #x1301)
+(define SDL_EVENT_PEN_DOWN          #x1302)
+(define SDL_EVENT_PEN_UP            #x1303)
+(define SDL_EVENT_PEN_BUTTON_DOWN   #x1304)
+(define SDL_EVENT_PEN_BUTTON_UP     #x1305)
+(define SDL_EVENT_PEN_MOTION        #x1306)
+(define SDL_EVENT_PEN_AXIS          #x1307)
+
+;; ============================================================================
+;; Pen Input Flags (SDL_PenInputFlags)
+;; ============================================================================
+(define SDL_PEN_INPUT_DOWN       (arithmetic-shift 1 0))  ; pen is pressed down
+(define SDL_PEN_INPUT_BUTTON_1   (arithmetic-shift 1 1))  ; button 1 is pressed
+(define SDL_PEN_INPUT_BUTTON_2   (arithmetic-shift 1 2))  ; button 2 is pressed
+(define SDL_PEN_INPUT_BUTTON_3   (arithmetic-shift 1 3))  ; button 3 is pressed
+(define SDL_PEN_INPUT_BUTTON_4   (arithmetic-shift 1 4))  ; button 4 is pressed
+(define SDL_PEN_INPUT_BUTTON_5   (arithmetic-shift 1 5))  ; button 5 is pressed
+(define SDL_PEN_INPUT_ERASER_TIP (arithmetic-shift 1 30)) ; eraser tip is used
+
+;; ============================================================================
+;; Pen Axis Constants (SDL_PenAxis)
+;; ============================================================================
+(define SDL_PEN_AXIS_PRESSURE             0)  ; Pen pressure (0 to 1.0)
+(define SDL_PEN_AXIS_XTILT                1)  ; Horizontal tilt angle (-90 to 90 degrees)
+(define SDL_PEN_AXIS_YTILT                2)  ; Vertical tilt angle (-90 to 90 degrees)
+(define SDL_PEN_AXIS_DISTANCE             3)  ; Distance to surface (0 to 1.0)
+(define SDL_PEN_AXIS_ROTATION             4)  ; Barrel rotation (-180 to 179.9 degrees)
+(define SDL_PEN_AXIS_SLIDER               5)  ; Finger wheel/slider (0 to 1.0)
+(define SDL_PEN_AXIS_TANGENTIAL_PRESSURE  6)  ; Barrel pressure (squeeze)
+(define SDL_PEN_AXIS_COUNT                7)  ; Number of known axis types
+
+;; ============================================================================
+;; Touch Device Type Constants
+;; ============================================================================
+(define SDL_TOUCH_DEVICE_INVALID          -1)
+(define SDL_TOUCH_DEVICE_DIRECT            0)  ; touch screen with window-relative coords
+(define SDL_TOUCH_DEVICE_INDIRECT_ABSOLUTE 1)  ; trackpad with absolute device coords
+(define SDL_TOUCH_DEVICE_INDIRECT_RELATIVE 2)  ; trackpad with screen cursor-relative coords

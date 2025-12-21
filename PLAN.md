@@ -64,7 +64,7 @@ bindings, safe wrappers, constants/types, and example coverage.
     - Add send effect + mapping APIs.
     - Add `examples/input/gamepad-advanced.rkt`.
 
-[ ] Phase 9: Touch + pen events
+[x] Phase 9: Touch + pen events
     - Add touch/pen event structs and constants.
     - Add parsing in `safe/events.rkt`.
     - Add `examples/input/touch-pen-events.rkt`.

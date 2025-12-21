@@ -417,12 +417,12 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 - [x] `SDL_EVENT_DROP_FILE`, `SDL_EVENT_DROP_TEXT`, `SDL_EVENT_DROP_BEGIN`, `SDL_EVENT_DROP_COMPLETE`, `SDL_EVENT_DROP_POSITION`
 - [x] `SDL_EVENT_AUDIO_DEVICE_ADDED`, `SDL_EVENT_AUDIO_DEVICE_REMOVED`, `SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED`
 - [x] `SDL_EVENT_CLIPBOARD_UPDATE`
-- [ ] Touch/pen events
+- [x] Touch/pen events
 
 #### Additional Event Structs
 - [x] `SDL_DropEvent`, `SDL_ClipboardEvent`
-- [ ] `SDL_TouchFingerEvent`
-- [ ] `SDL_PenMotionEvent`, `SDL_PenButtonEvent`
+- [x] `SDL_TouchFingerEvent`
+- [x] `SDL_PenMotionEvent`, `SDL_PenButtonEvent`, `SDL_PenTouchEvent`, `SDL_PenAxisEvent`, `SDL_PenProximityEvent`
 
 ### SDL3_image
 
@@ -487,5 +487,5 @@ Modules: `safe/window.rkt`, `safe/events.rkt`, `safe/draw.rkt`, `safe/texture.rk
 
 ## Suggested Next Steps
 
-1. **Touch + Pen Events** - touch/pen event structs and parsing
-2. **SDL_image Animation** - GIF/WebP animation loading and playback
+1. **SDL_image Animation** - GIF/WebP animation loading and playback
+2. **Additional Event APIs** - SDL_PushEvent, SDL_PeepEvents, etc.

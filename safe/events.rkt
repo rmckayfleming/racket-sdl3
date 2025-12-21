@@ -66,6 +66,43 @@
  gamepad-device-event gamepad-device-event?
  gamepad-device-event-type gamepad-device-event-which
 
+ ;; Touch events
+ touch-finger-event touch-finger-event?
+ touch-finger-event-type touch-finger-event-touch-id touch-finger-event-finger-id
+ touch-finger-event-x touch-finger-event-y
+ touch-finger-event-dx touch-finger-event-dy
+ touch-finger-event-pressure
+
+ ;; Pen events
+ pen-proximity-event pen-proximity-event?
+ pen-proximity-event-type pen-proximity-event-which
+
+ pen-motion-event pen-motion-event?
+ pen-motion-event-which pen-motion-event-pen-state
+ pen-motion-event-x pen-motion-event-y
+
+ pen-touch-event pen-touch-event?
+ pen-touch-event-type pen-touch-event-which pen-touch-event-pen-state
+ pen-touch-event-x pen-touch-event-y
+ pen-touch-event-eraser?
+
+ pen-button-event pen-button-event?
+ pen-button-event-type pen-button-event-which pen-button-event-pen-state
+ pen-button-event-x pen-button-event-y pen-button-event-button
+
+ pen-axis-event pen-axis-event?
+ pen-axis-event-which pen-axis-event-pen-state
+ pen-axis-event-x pen-axis-event-y
+ pen-axis-event-axis pen-axis-event-value
+
+ ;; Pen state predicates
+ pen-state-down?
+ pen-state-button?
+ pen-state-eraser?
+
+ ;; Pen axis symbols
+ pen-axis->symbol
+
  unknown-event unknown-event? unknown-event-type
 
  ;; Polling functions
@@ -249,6 +286,50 @@
 ;; type is 'added, 'removed, or 'remapped
 ;; which is the joystick instance ID
 
+;; Touch finger events
+(struct touch-finger-event sdl-event (type touch-id finger-id x y dx dy pressure) #:transparent)
+;; type is 'down, 'up, 'motion, or 'canceled
+;; touch-id is the touch device ID
+;; finger-id is the finger ID within the device
+;; x, y are normalized 0...1 (relative to window)
+;; dx, dy are normalized -1...1 (movement delta)
+;; pressure is normalized 0...1
+
+;; Pen proximity events
+(struct pen-proximity-event sdl-event (type which) #:transparent)
+;; type is 'in or 'out
+;; which is the pen instance ID
+
+;; Pen motion events
+(struct pen-motion-event sdl-event (which pen-state x y) #:transparent)
+;; which is the pen instance ID
+;; pen-state is the pen input flags (use pen-state-down?, pen-state-button?, etc.)
+;; x, y are position relative to window
+
+;; Pen touch events (pen touches/lifts from surface)
+(struct pen-touch-event sdl-event (type which pen-state x y eraser?) #:transparent)
+;; type is 'down or 'up
+;; which is the pen instance ID
+;; pen-state is the pen input flags
+;; x, y are position relative to window
+;; eraser? is #t if the eraser tip is used
+
+;; Pen button events
+(struct pen-button-event sdl-event (type which pen-state x y button) #:transparent)
+;; type is 'down or 'up
+;; which is the pen instance ID
+;; pen-state is the pen input flags
+;; x, y are position relative to window
+;; button is the button index (1-5)
+
+;; Pen axis events
+(struct pen-axis-event sdl-event (which pen-state x y axis value) #:transparent)
+;; which is the pen instance ID
+;; pen-state is the pen input flags
+;; x, y are position relative to window
+;; axis is a symbol: 'pressure, 'xtilt, 'ytilt, 'distance, 'rotation, 'slider, 'tangential-pressure
+;; value is the axis value (normalized or in degrees depending on axis)
+
 ;; Unknown/unhandled event type
 (struct unknown-event sdl-event (type) #:transparent)
 ;; type is the raw event type integer
@@ -384,6 +465,44 @@
     [(4) 'left-trigger]
     [(5) 'right-trigger]
     [else ax]))
+
+;; ============================================================================
+;; Pen Axis Mapping
+;; ============================================================================
+
+(define (pen-axis->symbol ax)
+  (case ax
+    [(0) 'pressure]
+    [(1) 'xtilt]
+    [(2) 'ytilt]
+    [(3) 'distance]
+    [(4) 'rotation]
+    [(5) 'slider]
+    [(6) 'tangential-pressure]
+    [else ax]))
+
+;; ============================================================================
+;; Pen State Predicates
+;; ============================================================================
+
+;; Check if pen is pressed down
+(define (pen-state-down? state)
+  (not (zero? (bitwise-and state SDL_PEN_INPUT_DOWN))))
+
+;; Check if a pen button is pressed (button 1-5)
+(define (pen-state-button? state button)
+  (define mask (case button
+                 [(1) SDL_PEN_INPUT_BUTTON_1]
+                 [(2) SDL_PEN_INPUT_BUTTON_2]
+                 [(3) SDL_PEN_INPUT_BUTTON_3]
+                 [(4) SDL_PEN_INPUT_BUTTON_4]
+                 [(5) SDL_PEN_INPUT_BUTTON_5]
+                 [else 0]))
+  (not (zero? (bitwise-and state mask))))
+
+;; Check if eraser tip is being used
+(define (pen-state-eraser? state)
+  (not (zero? (bitwise-and state SDL_PEN_INPUT_ERASER_TIP))))
 
 ;; ============================================================================
 ;; Event Parsing
@@ -532,6 +651,71 @@
                                  [(= type SDL_EVENT_GAMEPAD_REMOVED) 'removed]
                                  [else 'remapped])
                            (SDL_GamepadDeviceEvent-which gd))]
+
+    ;; Touch finger events
+    [(or (= type SDL_EVENT_FINGER_DOWN)
+         (= type SDL_EVENT_FINGER_UP)
+         (= type SDL_EVENT_FINGER_MOTION)
+         (= type SDL_EVENT_FINGER_CANCELED))
+     (define tf (event->touch-finger buf))
+     (touch-finger-event (cond [(= type SDL_EVENT_FINGER_DOWN) 'down]
+                               [(= type SDL_EVENT_FINGER_UP) 'up]
+                               [(= type SDL_EVENT_FINGER_MOTION) 'motion]
+                               [else 'canceled])
+                         (SDL_TouchFingerEvent-touchID tf)
+                         (SDL_TouchFingerEvent-fingerID tf)
+                         (SDL_TouchFingerEvent-x tf)
+                         (SDL_TouchFingerEvent-y tf)
+                         (SDL_TouchFingerEvent-dx tf)
+                         (SDL_TouchFingerEvent-dy tf)
+                         (SDL_TouchFingerEvent-pressure tf))]
+
+    ;; Pen proximity events
+    [(or (= type SDL_EVENT_PEN_PROXIMITY_IN)
+         (= type SDL_EVENT_PEN_PROXIMITY_OUT))
+     (define pp (event->pen-proximity buf))
+     (pen-proximity-event (if (= type SDL_EVENT_PEN_PROXIMITY_IN) 'in 'out)
+                          (SDL_PenProximityEvent-which pp))]
+
+    ;; Pen motion events
+    [(= type SDL_EVENT_PEN_MOTION)
+     (define pm (event->pen-motion buf))
+     (pen-motion-event (SDL_PenMotionEvent-which pm)
+                       (SDL_PenMotionEvent-pen_state pm)
+                       (SDL_PenMotionEvent-x pm)
+                       (SDL_PenMotionEvent-y pm))]
+
+    ;; Pen touch events (pen down/up on surface)
+    [(or (= type SDL_EVENT_PEN_DOWN)
+         (= type SDL_EVENT_PEN_UP))
+     (define pt (event->pen-touch buf))
+     (pen-touch-event (if (= type SDL_EVENT_PEN_DOWN) 'down 'up)
+                      (SDL_PenTouchEvent-which pt)
+                      (SDL_PenTouchEvent-pen_state pt)
+                      (SDL_PenTouchEvent-x pt)
+                      (SDL_PenTouchEvent-y pt)
+                      (SDL_PenTouchEvent-eraser pt))]
+
+    ;; Pen button events
+    [(or (= type SDL_EVENT_PEN_BUTTON_DOWN)
+         (= type SDL_EVENT_PEN_BUTTON_UP))
+     (define pb (event->pen-button buf))
+     (pen-button-event (if (= type SDL_EVENT_PEN_BUTTON_DOWN) 'down 'up)
+                       (SDL_PenButtonEvent-which pb)
+                       (SDL_PenButtonEvent-pen_state pb)
+                       (SDL_PenButtonEvent-x pb)
+                       (SDL_PenButtonEvent-y pb)
+                       (SDL_PenButtonEvent-button pb))]
+
+    ;; Pen axis events
+    [(= type SDL_EVENT_PEN_AXIS)
+     (define pa (event->pen-axis buf))
+     (pen-axis-event (SDL_PenAxisEvent-which pa)
+                     (SDL_PenAxisEvent-pen_state pa)
+                     (SDL_PenAxisEvent-x pa)
+                     (SDL_PenAxisEvent-y pa)
+                     (pen-axis->symbol (SDL_PenAxisEvent-axis pa))
+                     (SDL_PenAxisEvent-value pa))]
 
     ;; Unknown
     [else

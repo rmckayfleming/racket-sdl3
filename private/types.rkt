@@ -344,6 +344,75 @@
          SDL_GamepadDeviceEvent-type
          SDL_GamepadDeviceEvent-timestamp
          SDL_GamepadDeviceEvent-which
+         ;; Touch event structs
+         _SDL_TouchFingerEvent
+         _SDL_TouchFingerEvent-pointer
+         SDL_TouchFingerEvent-type
+         SDL_TouchFingerEvent-timestamp
+         SDL_TouchFingerEvent-touchID
+         SDL_TouchFingerEvent-fingerID
+         SDL_TouchFingerEvent-x
+         SDL_TouchFingerEvent-y
+         SDL_TouchFingerEvent-dx
+         SDL_TouchFingerEvent-dy
+         SDL_TouchFingerEvent-pressure
+         SDL_TouchFingerEvent-windowID
+         ;; Pen event structs
+         _SDL_PenProximityEvent
+         _SDL_PenProximityEvent-pointer
+         SDL_PenProximityEvent-type
+         SDL_PenProximityEvent-timestamp
+         SDL_PenProximityEvent-windowID
+         SDL_PenProximityEvent-which
+         _SDL_PenMotionEvent
+         _SDL_PenMotionEvent-pointer
+         SDL_PenMotionEvent-type
+         SDL_PenMotionEvent-timestamp
+         SDL_PenMotionEvent-windowID
+         SDL_PenMotionEvent-which
+         SDL_PenMotionEvent-pen_state
+         SDL_PenMotionEvent-x
+         SDL_PenMotionEvent-y
+         _SDL_PenTouchEvent
+         _SDL_PenTouchEvent-pointer
+         SDL_PenTouchEvent-type
+         SDL_PenTouchEvent-timestamp
+         SDL_PenTouchEvent-windowID
+         SDL_PenTouchEvent-which
+         SDL_PenTouchEvent-pen_state
+         SDL_PenTouchEvent-x
+         SDL_PenTouchEvent-y
+         SDL_PenTouchEvent-eraser
+         SDL_PenTouchEvent-down
+         _SDL_PenButtonEvent
+         _SDL_PenButtonEvent-pointer
+         SDL_PenButtonEvent-type
+         SDL_PenButtonEvent-timestamp
+         SDL_PenButtonEvent-windowID
+         SDL_PenButtonEvent-which
+         SDL_PenButtonEvent-pen_state
+         SDL_PenButtonEvent-x
+         SDL_PenButtonEvent-y
+         SDL_PenButtonEvent-button
+         SDL_PenButtonEvent-down
+         _SDL_PenAxisEvent
+         _SDL_PenAxisEvent-pointer
+         SDL_PenAxisEvent-type
+         SDL_PenAxisEvent-timestamp
+         SDL_PenAxisEvent-windowID
+         SDL_PenAxisEvent-which
+         SDL_PenAxisEvent-pen_state
+         SDL_PenAxisEvent-x
+         SDL_PenAxisEvent-y
+         SDL_PenAxisEvent-axis
+         SDL_PenAxisEvent-value
+         ;; Touch/Pen type aliases
+         _SDL_TouchID
+         _SDL_FingerID
+         _SDL_PenID
+         _SDL_PenInputFlags
+         _SDL_PenAxis
+         _SDL_TouchDeviceType
          ;; Event conversion helpers
          event->joy-axis
          event->joy-button
@@ -352,6 +421,12 @@
          event->gamepad-axis
          event->gamepad-button
          event->gamepad-device
+         event->touch-finger
+         event->pen-proximity
+         event->pen-motion
+         event->pen-touch
+         event->pen-button
+         event->pen-axis
          ;; Error handling forward reference
          sdl-get-error-proc)
 
@@ -911,6 +986,130 @@
 
 (define (event->gamepad-device event-ptr)
   (cast event-ptr _pointer _SDL_GamepadDeviceEvent-pointer))
+
+;; ============================================================================
+;; Touch/Pen Type Aliases
+;; ============================================================================
+
+;; SDL_TouchID - touch device identifier (Uint64)
+(define _SDL_TouchID _uint64)
+
+;; SDL_FingerID - finger identifier within a touch device (Uint64)
+(define _SDL_FingerID _uint64)
+
+;; SDL_PenID - pen instance identifier (Uint32)
+(define _SDL_PenID _uint32)
+
+;; SDL_PenInputFlags - pen input state flags (Uint32)
+(define _SDL_PenInputFlags _uint32)
+
+;; SDL_PenAxis - pen axis type enum
+(define _SDL_PenAxis _int)
+
+;; SDL_TouchDeviceType - type of touch device
+(define _SDL_TouchDeviceType _int)
+
+;; ============================================================================
+;; Touch Event Structs
+;; ============================================================================
+
+;; SDL_TouchFingerEvent - touch finger event (down, up, motion, canceled)
+(define-cstruct _SDL_TouchFingerEvent
+  ([type _uint32]
+   [reserved _uint32]
+   [timestamp _uint64]
+   [touchID _SDL_TouchID]
+   [fingerID _SDL_FingerID]
+   [x _float]           ; normalized 0...1
+   [y _float]           ; normalized 0...1
+   [dx _float]          ; normalized -1...1
+   [dy _float]          ; normalized -1...1
+   [pressure _float]    ; normalized 0...1
+   [windowID _SDL_WindowID]))
+
+;; ============================================================================
+;; Pen Event Structs
+;; ============================================================================
+
+;; SDL_PenProximityEvent - pen enters/leaves proximity
+(define-cstruct _SDL_PenProximityEvent
+  ([type _uint32]
+   [reserved _uint32]
+   [timestamp _uint64]
+   [windowID _SDL_WindowID]
+   [which _SDL_PenID]))
+
+;; SDL_PenMotionEvent - pen motion
+(define-cstruct _SDL_PenMotionEvent
+  ([type _uint32]
+   [reserved _uint32]
+   [timestamp _uint64]
+   [windowID _SDL_WindowID]
+   [which _SDL_PenID]
+   [pen_state _SDL_PenInputFlags]
+   [x _float]
+   [y _float]))
+
+;; SDL_PenTouchEvent - pen touches/lifts from surface
+(define-cstruct _SDL_PenTouchEvent
+  ([type _uint32]
+   [reserved _uint32]
+   [timestamp _uint64]
+   [windowID _SDL_WindowID]
+   [which _SDL_PenID]
+   [pen_state _SDL_PenInputFlags]
+   [x _float]
+   [y _float]
+   [eraser _stdbool]
+   [down _stdbool]))
+
+;; SDL_PenButtonEvent - pen button pressed/released
+(define-cstruct _SDL_PenButtonEvent
+  ([type _uint32]
+   [reserved _uint32]
+   [timestamp _uint64]
+   [windowID _SDL_WindowID]
+   [which _SDL_PenID]
+   [pen_state _SDL_PenInputFlags]
+   [x _float]
+   [y _float]
+   [button _uint8]
+   [down _stdbool]))
+
+;; SDL_PenAxisEvent - pen axis value changed
+(define-cstruct _SDL_PenAxisEvent
+  ([type _uint32]
+   [reserved _uint32]
+   [timestamp _uint64]
+   [windowID _SDL_WindowID]
+   [which _SDL_PenID]
+   [pen_state _SDL_PenInputFlags]
+   [x _float]
+   [y _float]
+   [axis _SDL_PenAxis]
+   [value _float]))
+
+;; ============================================================================
+;; Touch/Pen Event Conversion Helpers
+;; ============================================================================
+
+(define (event->touch-finger event-ptr)
+  (cast event-ptr _pointer _SDL_TouchFingerEvent-pointer))
+
+(define (event->pen-proximity event-ptr)
+  (cast event-ptr _pointer _SDL_PenProximityEvent-pointer))
+
+(define (event->pen-motion event-ptr)
+  (cast event-ptr _pointer _SDL_PenMotionEvent-pointer))
+
+(define (event->pen-touch event-ptr)
+  (cast event-ptr _pointer _SDL_PenTouchEvent-pointer))
+
+(define (event->pen-button event-ptr)
+  (cast event-ptr _pointer _SDL_PenButtonEvent-pointer))
+
+(define (event->pen-axis event-ptr)
+  (cast event-ptr _pointer _SDL_PenAxisEvent-pointer))
 
 ;; ============================================================================
 ;; Error Handling
