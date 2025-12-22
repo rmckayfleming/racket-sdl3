@@ -1,4 +1,5 @@
 # SDL3 Racket Bindings
+[📖 **Documentation**](https://ryan.mckayfleming.com/racket-sdl3/)
 
 Racket bindings for SDL3, providing both a safe idiomatic interface and low-level FFI access.
 
