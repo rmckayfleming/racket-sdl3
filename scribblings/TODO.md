@@ -14,46 +14,14 @@ This file tracks which modules need Scribble documentation.
 - [x] `texture.scrbl` - Texture loading, rendering, render targets
 - [x] `ttf.scrbl` - TrueType font rendering
 - [x] `audio.scrbl` - Audio playback and streams
+- [x] `collision.scrbl` - Rectangle collision detection
+- [x] `display.scrbl` - Display/monitor information
+- [x] `clipboard.scrbl` - Clipboard access
+- [x] `dialog.scrbl` - File dialogs and message boxes
+- [x] `image.scrbl` - Image loading/saving (SDL_image)
+- [x] `hints.scrbl` - Configuration hints
 
 ## Not Yet Documented
-
-### Medium Priority
-
-- [ ] `collision.scrbl` - Rectangle collision detection
-  - `make-rect`, `make-frect`
-  - `rect->values`, `frect->values`
-  - `rects-intersect?`, `frects-intersect?`
-  - `rect-intersection`, `frect-intersection`
-  - `rect-union`, `frect-union`
-  - `rect-line-intersection`, `frect-line-intersection`
-  - `rect-enclosing-points`, `frect-enclosing-points`
-
-- [ ] `display.scrbl` - Display/monitor information
-  - `get-displays`, `primary-display`
-  - `display-name`, `display-bounds`, `display-usable-bounds`
-  - `display-content-scale`
-  - `current-display-mode`, `desktop-display-mode`
-  - `fullscreen-display-modes`, `display-mode-resolution`, `display-mode-refresh-rate`
-
-- [ ] `clipboard.scrbl` - Clipboard access
-  - `clipboard-text`, `set-clipboard-text!`
-  - `clipboard-has-text?`
-  - Clipboard event handling
-
-- [ ] `dialog.scrbl` - File dialogs and message boxes
-  - `open-file-dialog`, `save-file-dialog`, `open-folder-dialog`
-  - `show-message-box`, `show-simple-message-box`
-
-- [ ] `image.scrbl` - Image loading/saving (SDL_image)
-  - `load-surface`, `load-texture` (via SDL_image)
-  - `save-png!`, `save-jpg!`
-  - Supported formats
-
-- [ ] `hints.scrbl` - Configuration hints
-  - `get-hint`, `get-hint-boolean`
-  - `set-hint!`, `reset-hint!`, `reset-hints!`
-  - `set-app-name!`, `set-app-metadata!`
-  - Common hint constants
 
 ### Lower Priority (specialized)
 
