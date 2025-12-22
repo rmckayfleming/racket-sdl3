@@ -298,12 +298,12 @@
         (render-present! renderer)
         (delay! 16)
 
-        (loop still-running?))
+        (loop still-running?)))
 
       ;; Cleanup
       (when tex (texture-destroy! tex))
       (surface-destroy! surf)
-      (printf "Goodbye!~n"))))
+      (printf "Goodbye!~n")))))
 
 (module+ main
   (main))

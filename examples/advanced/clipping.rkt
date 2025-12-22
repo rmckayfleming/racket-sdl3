@@ -89,7 +89,7 @@
       (for/or ([ev (in-events)])
         (match ev
           [(or (quit-event) (window-event 'close-requested)) #t]
-          [(key-event 'down (== (symbol->keycode 'escape)) _ _ _) #t]
+          [(key-event 'down 'escape _ _ _) #t]
           [_ #f])))
 
     (unless quit?

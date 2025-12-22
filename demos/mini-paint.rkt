@@ -408,7 +408,7 @@
       (for ([img (in-list loaded-images)])
         (texture-destroy! img))
 
-      (texture-destroy! canvas))))
+      (texture-destroy! canvas))))))
 
 ;; Helper to extract filename from path
 (define (file-name-from-path path)

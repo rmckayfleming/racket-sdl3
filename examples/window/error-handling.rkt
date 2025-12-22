@@ -278,7 +278,7 @@
         (render-present! renderer)
         (delay! 16)
 
-        (loop still-running?))
+        (loop still-running?))))
 
       ;; Clean up any loaded resources
       (when current-texture

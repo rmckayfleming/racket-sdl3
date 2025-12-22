@@ -155,11 +155,11 @@
         (render-present! renderer)
         (delay! 16)
 
-        (loop still-running?))
+        (loop still-running?))))
 
       ;; Make sure to release mouse before cleanup
       (when (relative-mouse-mode? window)
-        (set-relative-mouse-mode! window #f))))))
+        (set-relative-mouse-mode! window #f)))))
 
 ;; Run the example when executed directly
 (module+ main

@@ -212,7 +212,7 @@
 
         (render-present! renderer)
         (delay! 16)
-        (loop still-running?))))
+        (loop still-running?))))))
 
   (printf "~nDone.~n"))
 

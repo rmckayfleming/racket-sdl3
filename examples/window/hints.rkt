@@ -170,7 +170,7 @@
 
         (loop still-running? new-vsync? new-ss?)))
 
-      (close-font! font))))
+      (close-font! font)))))
 
 ;; Run the example when executed directly
 (module+ main

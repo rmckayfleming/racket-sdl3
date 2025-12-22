@@ -20,7 +20,7 @@
 
 (define (main)
   (with-sdl
-    (with-window "SDL3 Racket - Device Enumeration" 640 360 (win)
+    (with-window "SDL3 Racket - Device Enumeration" 640 360 win
       (printf "Has keyboard? ~a~n" (has-keyboard?))
       (printf "Has mouse? ~a~n" (has-mouse?))
       (print-device-list "Keyboards" (get-keyboards) get-keyboard-name-for-id)

@@ -47,6 +47,8 @@
              clicks)]
     [(text-input-event text)
      (format "TEXT: ~s" text)]
+    [(clipboard-event owner? mime-types)
+     (format "CLIPBOARD: owner=~a types=~a" owner? mime-types)]
     [(unknown-event type)
      (format "UNKNOWN: type=~a" type)]))
 

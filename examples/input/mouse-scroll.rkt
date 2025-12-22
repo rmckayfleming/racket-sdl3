@@ -234,7 +234,7 @@
 
         (render-present! renderer)
         (delay! 16)
-        (loop still-running?)))))
+        (loop still-running?))))))
 
   (printf "~nFinal scroll position: (~a, ~a)~n"
           (inexact->exact (round scroll-x))

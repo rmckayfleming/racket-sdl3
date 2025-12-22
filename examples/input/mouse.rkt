@@ -275,7 +275,7 @@
 
     ;; Re-enable auto-capture before exit if we disabled it
     (unless auto-capture?
-      (capture-mouse! #t))))
+      (capture-mouse! #t)))))
 
   (printf "~nDone.~n"))
 
