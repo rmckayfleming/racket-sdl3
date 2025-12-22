@@ -20,37 +20,13 @@ This file tracks which modules need Scribble documentation.
 - [x] `dialog.scrbl` - File dialogs and message boxes
 - [x] `image.scrbl` - Image loading/saving (SDL_image)
 - [x] `hints.scrbl` - Configuration hints
+- [x] `gamepad.scrbl` - Game controller support
+- [x] `joystick.scrbl` - Raw joystick access
+- [x] `camera.scrbl` - Camera/webcam capture
+- [x] `properties.scrbl` - SDL property bags
+- [x] `tray.scrbl` - System tray icons
 
 ## Not Yet Documented
-
-### Lower Priority (specialized)
-
-- [ ] `gamepad.scrbl` - Game controller support
-  - `open-gamepad`, `gamepad-destroy!`
-  - `gamepad-button`, `gamepad-axis`
-  - `gamepad-name`, `gamepad-type`
-  - `gamepad-rumble!`, `gamepad-set-led!`
-  - Gamepad events
-
-- [ ] `joystick.scrbl` - Raw joystick access
-  - `open-joystick`, `joystick-destroy!`
-  - Axis, button, hat, ball access
-  - Joystick events
-
-- [ ] `camera.scrbl` - Camera/webcam capture
-  - `open-camera`, `camera-destroy!`
-  - `camera-acquire-frame`, `camera-frame-release!`
-  - `camera-frame->texture`
-  - Camera enumeration and specs
-
-- [ ] `properties.scrbl` - SDL property bags
-  - `make-properties`, `destroy-properties!`
-  - `get-property-*`, `set-property-*`
-
-- [ ] `tray.scrbl` - System tray icons
-  - `make-tray`, `make-tray-menu`
-  - `insert-tray-entry!`, `remove-tray-entry!`
-  - Tray entry callbacks
 
 ### Advanced/Optional
 
