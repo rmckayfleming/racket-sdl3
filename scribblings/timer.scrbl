@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "timer"]{Timer Functions}
+@title[#:tag "timer" #:style 'quiet]{Timer Functions}
 
 This section covers timing and delay functions for animation and frame timing.
 

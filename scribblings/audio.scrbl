@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "audio"]{Audio}
+@title[#:tag "audio" #:style 'quiet]{Audio}
 
 This section covers audio playback using SDL3's stream-based audio model.
 

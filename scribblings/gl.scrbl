@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "gl"]{OpenGL}
+@title[#:tag "gl" #:style 'quiet]{OpenGL}
 
 This section covers OpenGL context management for use with external OpenGL
 libraries.

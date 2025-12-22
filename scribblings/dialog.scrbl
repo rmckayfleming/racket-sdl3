@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "dialog"]{Dialogs}
+@title[#:tag "dialog" #:style 'quiet]{Dialogs}
 
 This section covers message boxes and file dialogs.
 

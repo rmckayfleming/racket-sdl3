@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "clipboard"]{Clipboard}
+@title[#:tag "clipboard" #:style 'quiet]{Clipboard}
 
 This section covers system clipboard access.
 

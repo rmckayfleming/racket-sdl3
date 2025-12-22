@@ -5,7 +5,7 @@
                      racket/match
                      sdl3))
 
-@title[#:tag "events"]{Events}
+@title[#:tag "events" #:style 'quiet]{Events}
 
 SDL3 communicates user input and system notifications through events.
 The safe API provides transparent Racket structs that work seamlessly

@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "camera"]{Camera}
+@title[#:tag "camera" #:style 'quiet]{Camera}
 
 This section covers camera (webcam) capture.
 

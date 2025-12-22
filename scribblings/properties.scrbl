@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "properties"]{Properties}
+@title[#:tag "properties" #:style 'quiet]{Properties}
 
 This section covers SDL property bags, which are key-value stores used
 internally by SDL and available for application use.

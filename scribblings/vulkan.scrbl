@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "vulkan"]{Vulkan}
+@title[#:tag "vulkan" #:style 'quiet]{Vulkan}
 
 This section covers Vulkan surface creation for use with external Vulkan
 libraries.

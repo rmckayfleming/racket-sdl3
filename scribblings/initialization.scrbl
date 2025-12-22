@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "initialization"]{Initialization}
+@title[#:tag "initialization" #:style 'quiet]{Initialization}
 
 Before using any SDL3 functions, the library must be initialized.
 The safe API provides both syntax forms and procedural functions.

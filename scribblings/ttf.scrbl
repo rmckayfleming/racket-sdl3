@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "ttf"]{TrueType Fonts}
+@title[#:tag "ttf" #:style 'quiet]{TrueType Fonts}
 
 This section covers TrueType font loading and text rendering using SDL_ttf.
 

@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "image"]{Images and Surfaces}
+@title[#:tag "image" #:style 'quiet]{Images and Surfaces}
 
 This section covers image loading, saving, and surface operations using SDL_image.
 

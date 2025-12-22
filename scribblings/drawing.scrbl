@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "drawing"]{Drawing}
+@title[#:tag "drawing" #:style 'quiet]{Drawing}
 
 This section covers 2D drawing operations: colors, shapes, and rendering.
 

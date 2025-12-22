@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "keyboard"]{Keyboard Functions}
+@title[#:tag "keyboard" #:style 'quiet]{Keyboard Functions}
 
 This section covers keyboard input handling, including key state polling,
 modifier detection, and text input.

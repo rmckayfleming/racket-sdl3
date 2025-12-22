@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "tray"]{System Tray}
+@title[#:tag "tray" #:style 'quiet]{System Tray}
 
 This section covers system tray icon support.
 

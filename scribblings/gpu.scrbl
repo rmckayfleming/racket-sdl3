@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "gpu"]{GPU API}
+@title[#:tag "gpu" #:style 'quiet]{GPU API}
 
 This section covers SDL3's new GPU API, which provides a modern cross-platform
 graphics abstraction supporting Vulkan, Direct3D 12, and Metal backends.

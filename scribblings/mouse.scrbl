@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "mouse"]{Mouse Functions}
+@title[#:tag "mouse" #:style 'quiet]{Mouse Functions}
 
 This section covers mouse input handling, including mouse state polling,
 cursor control, and relative mouse mode for FPS-style input.

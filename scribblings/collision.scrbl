@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "collision"]{Rectangle Collision Detection}
+@title[#:tag "collision" #:style 'quiet]{Rectangle Collision Detection}
 
 This section covers rectangle creation and collision detection using both
 integer-based (@racket[SDL_Rect]) and floating-point (@racket[SDL_FRect])

@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "display"]{Display Information}
+@title[#:tag "display" #:style 'quiet]{Display Information}
 
 This section covers display/monitor enumeration and information.
 

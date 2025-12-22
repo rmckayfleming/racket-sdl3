@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "joystick"]{Joysticks}
+@title[#:tag "joystick" #:style 'quiet]{Joysticks}
 
 This section covers low-level joystick access. For a higher-level API with
 standardized button names, see @secref{gamepad}.

@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "hints"]{Configuration Hints}
+@title[#:tag "hints" #:style 'quiet]{Configuration Hints}
 
 This section covers SDL configuration hints, which are variables that affect
 SDL's behavior. Hints can be set before or during SDL initialization.

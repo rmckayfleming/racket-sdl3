@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "gamepad"]{Gamepads}
+@title[#:tag "gamepad" #:style 'quiet]{Gamepads}
 
 This section covers gamepad (game controller) support with standardized
 button and axis names. For lower-level joystick access, see @secref{joystick}.

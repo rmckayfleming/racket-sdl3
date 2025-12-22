@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "texture"]{Textures}
+@title[#:tag "texture" #:style 'quiet]{Textures}
 
 This section covers texture loading, creation, manipulation, and rendering.
 Textures are GPU-accelerated images that can be rendered efficiently.

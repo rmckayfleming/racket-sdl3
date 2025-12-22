@@ -4,7 +4,7 @@
                      racket/contract
                      sdl3))
 
-@title[#:tag "window"]{Windows and Renderers}
+@title[#:tag "window" #:style 'quiet]{Windows and Renderers}
 
 SDL3 applications display graphics through windows and renderers.
 A @deftech{window} is an OS window that can display content.
