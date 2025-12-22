@@ -364,7 +364,7 @@ Fences are used for GPU-CPU synchronization.
   Waits for all GPU work to complete.
 }
 
-@section{Blitting}
+@section[#:tag "gpu-blitting"]{Blitting}
 
 @defproc[(gpu-blit-texture! [cmd-buffer cpointer?]
                             [blit-info cpointer?]) void?]{

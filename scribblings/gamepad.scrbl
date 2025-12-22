@@ -9,7 +9,7 @@
 This section covers gamepad (game controller) support with standardized
 button and axis names. For lower-level joystick access, see @secref{joystick}.
 
-@section{Detection}
+@section[#:tag "gamepad-detection"]{Detection}
 
 @defproc[(has-gamepad?) boolean?]{
   Returns @racket[#t] if any gamepads are connected.
@@ -32,7 +32,7 @@ button and axis names. For lower-level joystick access, see @secref{joystick}.
   Returns @racket[#t] if the given joystick instance ID is a gamepad.
 }
 
-@section{Opening and Closing}
+@section[#:tag "gamepad-opening"]{Opening and Closing}
 
 @defproc[(open-gamepad [instance-id exact-nonnegative-integer?]) gamepad?]{
   Opens a gamepad by its instance ID.
@@ -100,7 +100,7 @@ button and axis names. For lower-level joystick access, see @secref{joystick}.
   Returns the serial number.
 }
 
-@subsection{Info by ID (before opening)}
+@subsection[#:tag "gamepad-info-by-id"]{Info by ID (before opening)}
 
 @defproc[(get-gamepad-name-for-id [instance-id exact-nonnegative-integer?]) (or/c string? #f)]{
   Returns the name of a gamepad before opening it.
@@ -192,7 +192,7 @@ For displaying button prompts that match the controller type.
   Returns the label for a button on a specific controller type.
 }
 
-@section{Player Index}
+@section[#:tag "gamepad-player-index"]{Player Index}
 
 @defproc[(gamepad-player-index [gp gamepad?]) exact-integer?]{
   Returns the player index (-1 if not set).
@@ -203,7 +203,7 @@ For displaying button prompts that match the controller type.
   Sets the player index.
 }
 
-@section{Rumble}
+@section[#:tag "gamepad-rumble"]{Rumble}
 
 @defproc[(gamepad-rumble! [gp gamepad?]
                           [low exact-nonnegative-integer?]
@@ -227,14 +227,14 @@ For displaying button prompts that match the controller type.
   Starts a trigger rumble effect (Xbox-style controllers).
 }
 
-@section{LED}
+@section[#:tag "gamepad-led"]{LED}
 
 @defproc[(gamepad-set-led! [gp gamepad?]
                            [r byte?] [g byte?] [b byte?]) boolean?]{
   Sets the LED color (if supported).
 }
 
-@section{Power}
+@section[#:tag "gamepad-power"]{Power}
 
 @defproc[(gamepad-power-info [gp gamepad?]) (values symbol? exact-integer?)]{
   Returns the power state and battery percentage.

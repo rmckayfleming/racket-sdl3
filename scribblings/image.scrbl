@@ -180,7 +180,7 @@ Some operations require locking the surface first.
   The procedure receives: @racket[(surface pixels width height pitch)].
 }
 
-@section{Blitting}
+@section[#:tag "surface-blitting"]{Blitting}
 
 @defproc[(blit-surface! [src surface?]
                         [dst surface?]

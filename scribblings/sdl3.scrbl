@@ -92,12 +92,6 @@ For more control, use the constructor and destructor functions directly:
 @; Core
 @; ============================================================================
 
-@section[#:tag "core" #:style 'toc]{Core}
-
-Initialization, windows, and basic rendering.
-
-@local-table-of-contents[]
-
 @include-section["initialization.scrbl"]
 @include-section["window.scrbl"]
 @include-section["timer.scrbl"]
@@ -107,12 +101,6 @@ Initialization, windows, and basic rendering.
 @; ============================================================================
 @; Graphics
 @; ============================================================================
-
-@section[#:tag "graphics" #:style 'toc]{Graphics}
-
-Drawing, textures, images, and text rendering.
-
-@local-table-of-contents[]
 
 @include-section["drawing.scrbl"]
 @include-section["texture.scrbl"]
@@ -124,12 +112,6 @@ Drawing, textures, images, and text rendering.
 @; Input
 @; ============================================================================
 
-@section[#:tag "input" #:style 'toc]{Input}
-
-Keyboard, mouse, and game controller handling.
-
-@local-table-of-contents[]
-
 @include-section["events.scrbl"]
 @include-section["keyboard.scrbl"]
 @include-section["mouse.scrbl"]
@@ -140,24 +122,12 @@ Keyboard, mouse, and game controller handling.
 @; Media
 @; ============================================================================
 
-@section[#:tag "media" #:style 'toc]{Media}
-
-Audio playback and camera capture.
-
-@local-table-of-contents[]
-
 @include-section["audio.scrbl"]
 @include-section["camera.scrbl"]
 
 @; ============================================================================
 @; System
 @; ============================================================================
-
-@section[#:tag "system" #:style 'toc]{System}
-
-Display info, clipboard, dialogs, and system tray.
-
-@local-table-of-contents[]
 
 @include-section["display.scrbl"]
 @include-section["clipboard.scrbl"]
@@ -167,12 +137,6 @@ Display info, clipboard, dialogs, and system tray.
 @; ============================================================================
 @; Advanced Graphics
 @; ============================================================================
-
-@section[#:tag "advanced-graphics" #:style 'toc]{Advanced Graphics}
-
-OpenGL, Vulkan, and the SDL GPU API for advanced rendering.
-
-@local-table-of-contents[]
 
 @include-section["gl.scrbl"]
 @include-section["vulkan.scrbl"]

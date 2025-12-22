@@ -9,7 +9,7 @@
 This section covers low-level joystick access. For a higher-level API with
 standardized button names, see @secref{gamepad}.
 
-@section{Detection}
+@section[#:tag "joystick-detection"]{Detection}
 
 @defproc[(has-joystick?) boolean?]{
   Returns @racket[#t] if any joysticks are connected.
@@ -23,7 +23,7 @@ standardized button names, see @secref{gamepad}.
   Returns the number of connected joysticks.
 }
 
-@section{Opening and Closing}
+@section[#:tag "joystick-opening"]{Opening and Closing}
 
 @defproc[(open-joystick [instance-id exact-nonnegative-integer?]) joystick?]{
   Opens a joystick by its instance ID.
@@ -79,7 +79,7 @@ standardized button names, see @secref{gamepad}.
   Returns the serial number.
 }
 
-@subsection{Info by ID (before opening)}
+@subsection[#:tag "joystick-info-by-id"]{Info by ID (before opening)}
 
 @defproc[(get-joystick-name-for-id [instance-id exact-nonnegative-integer?]) (or/c string? #f)]{
   Returns the name of a joystick before opening it.
@@ -148,7 +148,7 @@ standardized button names, see @secref{gamepad}.
   For compound directions (like up-right), returns @racket['(up right)].
 }
 
-@section{Player Index}
+@section[#:tag "joystick-player-index"]{Player Index}
 
 @defproc[(joystick-player-index [joy joystick?]) exact-integer?]{
   Returns the player index (-1 if not set).
@@ -159,7 +159,7 @@ standardized button names, see @secref{gamepad}.
   Sets the player index.
 }
 
-@section{Rumble}
+@section[#:tag "joystick-rumble"]{Rumble}
 
 @defproc[(joystick-rumble! [joy joystick?]
                            [low exact-nonnegative-integer?]
@@ -178,14 +178,14 @@ standardized button names, see @secref{gamepad}.
   Starts a trigger rumble effect (Xbox-style controllers).
 }
 
-@section{LED}
+@section[#:tag "joystick-led"]{LED}
 
 @defproc[(joystick-set-led! [joy joystick?]
                             [r byte?] [g byte?] [b byte?]) boolean?]{
   Sets the LED color (if supported).
 }
 
-@section{Power}
+@section[#:tag "joystick-power"]{Power}
 
 @defproc[(joystick-power-info [joy joystick?]) (values symbol? exact-integer?)]{
   Returns the power state and battery percentage.
