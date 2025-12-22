@@ -6,7 +6,7 @@
           scribble/core
           scribble/html-properties)
 
-@title[#:style (make-style #f (list (css-addition "scribblings/sdl3.css")))]{SDL3: Racket Bindings for SDL3}
+@title{SDL3: Racket Bindings for SDL3}
 @author{Ryan McKay-Fleming}
 
 @defmodule[sdl3]

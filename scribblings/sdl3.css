@@ -1,4 +1,0 @@
-/* Hide non-section links (defproc, defform, etc.) from the "on this page" sidebar */
-.tocsub .tocsubnonseclink {
-  display: none;
-}
