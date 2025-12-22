@@ -94,10 +94,7 @@ jobs:
         run: raco pkg install --auto --link --name sdl3 ${{ github.workspace }}
 
       - name: Build documentation
-        run: raco scribble --html --dest doc scribblings/sdl3.scrbl
-
-      - name: Create index.html redirect
-        run: echo '<meta http-equiv="refresh" content="0; url=sdl3.html">' > doc/index.html
+        run: raco scribble --htmls +m --redirect-main https://docs.racket-lang.org/ --dest doc scribblings/sdl3.scrbl
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
